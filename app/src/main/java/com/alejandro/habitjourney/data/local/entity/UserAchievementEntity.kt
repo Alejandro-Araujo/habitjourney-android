@@ -1,0 +1,33 @@
+package com.alejandro.habitjourney.data.local.entity
+
+import androidx.room.Entity
+import androidx.room.ColumnInfo
+import androidx.room.ForeignKey
+import androidx.room.PrimaryKey
+
+@Entity(
+    tableName = "user_achievements",
+    primaryKeys = ["user_id", "achievement_definition_id"],
+    foreignKeys = [
+        ForeignKey(
+            entity = UserEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["user_id"],
+            onDelete = ForeignKey.CASCADE),
+        ForeignKey(
+            entity = AchievementDefinitionEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["achievement_definition_id"],
+            onDelete = ForeignKey.CASCADE)
+    ]
+)
+data class UserAchievementEntity(
+    @PrimaryKey @ColumnInfo(name = "user_id")
+    val userId: Long,
+
+    @PrimaryKey @ColumnInfo(name = "achievement_definition_id")
+    val achievementDefinitionId: Long,
+
+    @ColumnInfo(name = "unlocked_at")
+    val unlockedAt: Long = System.currentTimeMillis()
+)
