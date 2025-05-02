@@ -3,6 +3,7 @@ package com.alejandro.habitjourney.data.local.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.alejandro.habitjourney.data.local.entity.enums.Priority
 import kotlinx.datetime.LocalDate
@@ -14,7 +15,12 @@ import kotlinx.datetime.LocalDate
         entity = UserEntity::class,
         parentColumns = ["id"],
         childColumns = ["user_id"],
-        onDelete = ForeignKey.CASCADE)]
+        onDelete = ForeignKey.CASCADE)],
+    indices = [
+        Index("user_id"),
+        Index("is_completed"),
+        Index("due_date")
+    ]
 )
 data class TaskEntity(
     @PrimaryKey(autoGenerate = true)
@@ -33,10 +39,13 @@ data class TaskEntity(
     val dueDate: LocalDate? = null,
 
     @ColumnInfo(name = "priority")
-    val priority: Priority? = null, // Using Enum
+    val priority: Priority? = null,
 
     @ColumnInfo(name = "is_completed")
     val isCompleted: Boolean = false,
+
+    @ColumnInfo(name = "is_deleted")
+    val isDeleted: Boolean = false,
 
     @ColumnInfo(name = "created_at") val createdAt: Long = System.currentTimeMillis()
 )

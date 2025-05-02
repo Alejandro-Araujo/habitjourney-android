@@ -21,11 +21,17 @@ data class NoteEntity(
     @ColumnInfo(name = "user_id")
     val userId: Long,
 
+    @ColumnInfo(name = "title")
+    val title: String,
+
     @ColumnInfo(name = "content")
     val content: String,
 
     @ColumnInfo(name = "is_archived")
     val isArchived: Boolean = false,
+
+    @ColumnInfo(name = "is_deleted")
+    val isDeleted: Boolean = false,
 
     @ColumnInfo(name = "created_at")
     val createdAt: Long = System.currentTimeMillis()

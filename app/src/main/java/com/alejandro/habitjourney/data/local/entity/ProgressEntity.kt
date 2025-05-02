@@ -22,5 +22,11 @@ data class ProgressEntity(
     val totalHabitsCompleted: Int = 0,
 
     @ColumnInfo(name = "total_xp")
-    val totalXp: Int = 0
+    val totalXp: Int = 0,
+
+    @ColumnInfo(name = "current_streak")
+    val currentStreak: Int = 0,
+
+    @ColumnInfo(name = "longest_streak")
+    val longestStreak: Int = 0,
 )

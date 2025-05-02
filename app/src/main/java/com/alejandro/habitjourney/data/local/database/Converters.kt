@@ -24,15 +24,16 @@ class Converters {
     @TypeConverter
     fun stringToLogStatus(value: String): LogStatus = LogStatus.valueOf(value)
 
-    // ========== Listas de Enums (Para frequencyDays) ==========
+    // ========== Listas de Enums ==========
+
     @TypeConverter
-    fun weekdaysToString(list: List<Weekday>?): String? {
-        return list?.joinToString(",") { it.name }
+    fun fromWeekdayList(weekdays: List<Weekday>?): String? {
+        return weekdays?.joinToString(",") { it.ordinal.toString() }
     }
 
     @TypeConverter
-    fun stringToWeekdays(data: String?): List<Weekday>? {
-        return data?.split(",")?.map { Weekday.valueOf(it) }
+    fun toWeekdayList(data: String?): List<Weekday>? {
+        return data?.split(",")?.map { Weekday.entries[it.toInt()] }
     }
 
     // ========== Fechas (LocalDate) ==========
@@ -43,7 +44,7 @@ class Converters {
     fun epochDayToLocalDate(epochDay: Long): LocalDate =
         LocalDate.fromEpochDays(epochDay.toInt())
 
-    // Si necesitas fecha+hora
+    // fecha+hora
     @TypeConverter
     fun localDateToMillis(date: LocalDate): Long =
         date.atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
