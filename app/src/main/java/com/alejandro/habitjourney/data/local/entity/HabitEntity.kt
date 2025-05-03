@@ -18,7 +18,11 @@ import kotlinx.datetime.LocalDate
         childColumns = ["user_id"],
         onDelete = ForeignKey.CASCADE
     )],
-    indices = [Index("user_id")]
+    indices = [
+        Index("user_id"),
+        Index("is_active"),
+        Index("frequency")
+    ]
 )
 data class HabitEntity(
     @PrimaryKey(autoGenerate = true)
