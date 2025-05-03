@@ -4,15 +4,20 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.alejandro.habitjourney.features.progress.data.entity.ProgressEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ProgressDao {
 
-    // Insertar progreso inicial  si ya existe
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveProgress(progress: ProgressEntity): Long
+    // Insertar progreso (solo si no existe)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertProgress(progress: ProgressEntity)
+
+    // Actualizar progreso existente
+    @Update
+    suspend fun updateProgress(progress: ProgressEntity): Int
 
     // Obtener progreso de un usuario
     @Query("SELECT * FROM progress WHERE user_id = :userId")
