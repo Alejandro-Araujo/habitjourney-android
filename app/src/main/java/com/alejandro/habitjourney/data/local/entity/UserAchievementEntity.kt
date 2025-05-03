@@ -3,6 +3,7 @@ package com.alejandro.habitjourney.data.local.entity
 import androidx.room.Entity
 import androidx.room.ColumnInfo
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
@@ -19,13 +20,17 @@ import androidx.room.PrimaryKey
             parentColumns = ["id"],
             childColumns = ["achievement_definition_id"],
             onDelete = ForeignKey.CASCADE)
+    ],
+    indices = [
+        Index("user_id"),
+        Index("achievement_definition_id")
     ]
 )
 data class UserAchievementEntity(
-    @PrimaryKey @ColumnInfo(name = "user_id")
+    @ColumnInfo(name = "user_id")
     val userId: Long,
 
-    @PrimaryKey @ColumnInfo(name = "achievement_definition_id")
+    @ColumnInfo(name = "achievement_definition_id")
     val achievementDefinitionId: Long,
 
     @ColumnInfo(name = "unlocked_at")

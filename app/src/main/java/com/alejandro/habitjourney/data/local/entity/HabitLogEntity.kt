@@ -10,7 +10,6 @@ import kotlinx.datetime.LocalDate
 
 @Entity(
     tableName = "habit_logs",
-    primaryKeys = ["id"],
     foreignKeys = [ForeignKey(
         entity = HabitEntity::class,
         parentColumns = ["id"],
@@ -21,6 +20,7 @@ import kotlinx.datetime.LocalDate
 data class HabitLogEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
+
     @ColumnInfo(name = "habit_id")
     val habitId: Long,
 

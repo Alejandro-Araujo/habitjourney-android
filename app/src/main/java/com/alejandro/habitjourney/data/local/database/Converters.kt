@@ -44,12 +44,4 @@ class Converters {
     fun epochDayToLocalDate(epochDay: Long): LocalDate =
         LocalDate.fromEpochDays(epochDay.toInt())
 
-    // fecha+hora
-    @TypeConverter
-    fun localDateToMillis(date: LocalDate): Long =
-        date.atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
-
-    @TypeConverter
-    fun millisToLocalDate(millis: Long): LocalDate =
-        Instant.fromEpochMilliseconds(millis).toLocalDateTime(TimeZone.UTC).date
 }

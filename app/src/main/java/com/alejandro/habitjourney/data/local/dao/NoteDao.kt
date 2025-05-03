@@ -15,7 +15,7 @@ interface NoteDao {
 
     // Actualizar nota
     @Update
-    suspend fun update(note: NoteEntity): Long
+    suspend fun update(note: NoteEntity)
 
     // Eliminar nota (soft delete)
     @Query("UPDATE notes SET is_deleted = 1 WHERE id = :noteId")

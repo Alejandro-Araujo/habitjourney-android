@@ -10,7 +10,6 @@ import kotlinx.datetime.LocalDate
 
 @Entity(
     tableName = "tasks",
-    primaryKeys = ["id"],
     foreignKeys = [ForeignKey(
         entity = UserEntity::class,
         parentColumns = ["id"],

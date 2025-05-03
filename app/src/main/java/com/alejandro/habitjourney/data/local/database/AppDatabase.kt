@@ -35,7 +35,7 @@ import com.alejandro.habitjourney.data.local.entity.UserEntity
         RewardEntity::class
     ],
     version = 1,
-    exportSchema = true
+    exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {

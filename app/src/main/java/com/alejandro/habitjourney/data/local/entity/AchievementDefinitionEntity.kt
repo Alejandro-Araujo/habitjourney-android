@@ -6,7 +6,6 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "achievement_definitions",
-    primaryKeys = ["id"],
     indices = [Index(value = ["code"], unique = true)])
 data class AchievementDefinitionEntity(
     @PrimaryKey(autoGenerate = true)

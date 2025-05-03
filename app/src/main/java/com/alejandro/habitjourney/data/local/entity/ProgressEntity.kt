@@ -3,16 +3,17 @@ package com.alejandro.habitjourney.data.local.entity
 import androidx.room.Entity
 import androidx.room.ColumnInfo
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "progress",
-    primaryKeys = ["user_id"],
     foreignKeys = [ForeignKey(
         entity = UserEntity::class,
         parentColumns = ["id"],
         childColumns = ["user_id"],
-        onDelete = ForeignKey.CASCADE)]
+        onDelete = ForeignKey.CASCADE)],
+    indices = [Index("user_id")]
 )
 data class ProgressEntity(
     @PrimaryKey @ColumnInfo(name = "user_id")
