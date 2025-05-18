@@ -2,7 +2,13 @@ package com.alejandro.habitjourney.core.di
 
 import android.content.Context
 import androidx.room.Room
+import com.alejandro.habitjourney.BuildConfig
 import com.alejandro.habitjourney.core.data.local.database.AppDatabase
+import com.alejandro.habitjourney.core.data.remote.exception.ErrorHandler
+import com.alejandro.habitjourney.core.data.remote.interceptor.AuthInterceptor
+import com.alejandro.habitjourney.core.data.remote.interceptor.ErrorInterceptor
+import com.alejandro.habitjourney.core.data.remote.interceptor.NetworkConnectionInterceptor
+import com.alejandro.habitjourney.core.data.remote.network.RetrofitClient
 import com.alejandro.habitjourney.features.achievement.data.dao.AchievementDefinitionDao
 import com.alejandro.habitjourney.features.achievement.data.dao.UserAchievementDao
 import com.alejandro.habitjourney.features.habit.data.dao.HabitDao
@@ -11,7 +17,10 @@ import com.alejandro.habitjourney.features.note.data.dao.NoteDao
 import com.alejandro.habitjourney.features.progress.data.dao.ProgressDao
 import com.alejandro.habitjourney.features.reward.data.dao.RewardDao
 import com.alejandro.habitjourney.features.task.data.dao.TaskDao
-import com.alejandro.habitjourney.features.user.data.dao.UserDao
+import com.alejandro.habitjourney.features.user.data.local.dao.UserDao
+import com.alejandro.habitjourney.features.user.data.local.preferences.UserPreferences
+import com.google.gson.GsonBuilder
+import com.google.gson.Strictness
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,6 +28,11 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -43,6 +57,73 @@ object AppModule {
         )
             .fallbackToDestructiveMigration()  // Solo para desarrollo
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserPreferences(@ApplicationContext context: Context): UserPreferences {
+        return UserPreferences(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNetworkConnectionInterceptor(@ApplicationContext context: Context): NetworkConnectionInterceptor {
+        return NetworkConnectionInterceptor(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideErrorInterceptor(): ErrorInterceptor {
+        return ErrorInterceptor()
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthInterceptor(userPreferences: UserPreferences): AuthInterceptor {
+        return AuthInterceptor(userPreferences)
+    }
+
+    @Provides
+    @Singleton
+    fun provideErrorHandler(@ApplicationContext context: Context): ErrorHandler {
+        return ErrorHandler(context)
+    }
+
+    // Retrofit
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(
+        networkConnectionInterceptor: NetworkConnectionInterceptor,
+        errorInterceptor: ErrorInterceptor,
+        authInterceptor: AuthInterceptor,
+    ): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor(networkConnectionInterceptor)
+            .addInterceptor(errorInterceptor)
+            .addInterceptor(authInterceptor)
+            .apply {
+                if (BuildConfig.DEBUG) {
+                    addInterceptor(HttpLoggingInterceptor().apply {
+                        level = HttpLoggingInterceptor.Level.BODY
+                    })
+                }
+            }
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideRetrofitClient(okHttpClient: OkHttpClient): RetrofitClient {
+        return RetrofitClient(okHttpClient)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRetrofit(retrofitClient: RetrofitClient): Retrofit {
+        return retrofitClient.create()
     }
 
     // DAOs

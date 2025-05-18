@@ -6,7 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.alejandro.habitjourney.core.data.local.enums.Priority
-import com.alejandro.habitjourney.features.user.data.entity.UserEntity
+import com.alejandro.habitjourney.features.user.data.local.entity.UserEntity
 import kotlinx.datetime.LocalDate
 
 @Entity(

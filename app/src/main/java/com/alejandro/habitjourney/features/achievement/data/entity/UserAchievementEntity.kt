@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.ColumnInfo
 import androidx.room.ForeignKey
 import androidx.room.Index
-import com.alejandro.habitjourney.features.user.data.entity.UserEntity
+import com.alejandro.habitjourney.features.user.data.local.entity.UserEntity
 
 @Entity(
     tableName = "user_achievements",

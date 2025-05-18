@@ -4,7 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.alejandro.habitjourney.core.data.local.database.AppDatabase
 import com.alejandro.habitjourney.core.util.TestCoroutineRule
 import com.alejandro.habitjourney.core.util.TestDataFactory
-import com.alejandro.habitjourney.features.user.data.dao.UserDao
+import com.alejandro.habitjourney.features.user.data.local.dao.UserDao
 import junit.framework.TestCase.*
 import kotlinx.coroutines.flow.first
 import org.junit.After

@@ -6,7 +6,7 @@ import com.alejandro.habitjourney.core.data.local.database.AppDatabase
 import com.alejandro.habitjourney.core.util.TestCoroutineRule
 import com.alejandro.habitjourney.core.util.TestDataFactory
 import com.alejandro.habitjourney.features.note.data.entity.NoteEntity
-import com.alejandro.habitjourney.features.user.data.dao.UserDao
+import com.alejandro.habitjourney.features.user.data.local.dao.UserDao
 import kotlinx.coroutines.flow.first
 import org.junit.After
 import org.junit.Assert.*

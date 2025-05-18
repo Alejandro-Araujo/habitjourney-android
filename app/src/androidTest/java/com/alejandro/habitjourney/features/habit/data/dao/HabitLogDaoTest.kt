@@ -8,7 +8,7 @@ import com.alejandro.habitjourney.core.data.local.enums.LogStatus
 import com.alejandro.habitjourney.core.util.TestCoroutineRule
 import com.alejandro.habitjourney.core.util.TestDataFactory
 import com.alejandro.habitjourney.features.habit.data.entity.HabitLogEntity
-import com.alejandro.habitjourney.features.user.data.dao.UserDao
+import com.alejandro.habitjourney.features.user.data.local.dao.UserDao
 import kotlinx.coroutines.flow.first
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate

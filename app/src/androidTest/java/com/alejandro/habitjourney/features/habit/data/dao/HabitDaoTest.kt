@@ -8,7 +8,7 @@ import com.alejandro.habitjourney.core.data.local.enums.Weekday
 import com.alejandro.habitjourney.core.util.TestCoroutineRule
 import com.alejandro.habitjourney.core.util.TestDataFactory
 import com.alejandro.habitjourney.features.habit.data.entity.HabitEntity
-import com.alejandro.habitjourney.features.user.data.dao.UserDao
+import com.alejandro.habitjourney.features.user.data.local.dao.UserDao
 import kotlinx.coroutines.flow.first
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone

@@ -1,4 +1,4 @@
-package com.alejandro.habitjourney.features.user.data.entity
+package com.alejandro.habitjourney.features.user.data.local.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

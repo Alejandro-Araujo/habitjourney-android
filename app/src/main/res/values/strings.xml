@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">HabitJourney</string>
+
+    <string name="no_internet_connection">No hay conexión a internet</string>
+    <string name="connection_timeout">La conexión ha tardado demasiado. Inténtalo de nuevo</string>
+    <string name="server_not_found">No se pudo encontrar el servidor</string>
+    <string name="session_expired">Sesión expirada. Por favor, inicia sesión de nuevo</string>
+    <string name="permission_denied">No tienes permiso para realizar esta acción</string>
+    <string name="resource_not_found">Recurso no encontrado</string>
+    <string name="server_error">Error en el servidor. Inténtalo más tarde</string>
+    <string name="network_error">Error de red: %1$d</string>
+    <string name="api_error">Error del API: %1$d - %2$s</string>
+    <string name="unexpected_network_error">Error de red inesperado</string>
+    <string name="unexpected_error">Ha ocurrido un error inesperado</string>
+    <string name="response_body_null">El cuerpo de la respuesta es nulo</string>
+
 </resources>

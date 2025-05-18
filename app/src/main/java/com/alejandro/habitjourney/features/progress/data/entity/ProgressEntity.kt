@@ -5,7 +5,7 @@ import androidx.room.ColumnInfo
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.alejandro.habitjourney.features.user.data.entity.UserEntity
+import com.alejandro.habitjourney.features.user.data.local.entity.UserEntity
 
 @Entity(
     tableName = "progress",

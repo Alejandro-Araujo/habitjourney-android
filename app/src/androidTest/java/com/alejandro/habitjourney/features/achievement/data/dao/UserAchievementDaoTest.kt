@@ -8,7 +8,7 @@ import com.alejandro.habitjourney.core.util.TestDataFactory
 import com.alejandro.habitjourney.core.util.TestDataFactory.TEST_TIMESTAMP
 import com.alejandro.habitjourney.features.achievement.data.entity.AchievementDefinitionEntity
 import com.alejandro.habitjourney.features.achievement.data.entity.UserAchievementEntity
-import com.alejandro.habitjourney.features.user.data.dao.UserDao
+import com.alejandro.habitjourney.features.user.data.local.dao.UserDao
 import kotlinx.coroutines.flow.first
 import kotlinx.datetime.Clock
 import org.junit.After

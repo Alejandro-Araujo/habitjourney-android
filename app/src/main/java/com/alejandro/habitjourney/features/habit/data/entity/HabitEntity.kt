@@ -7,7 +7,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.alejandro.habitjourney.core.data.local.enums.HabitType
 import com.alejandro.habitjourney.core.data.local.enums.Weekday
-import com.alejandro.habitjourney.features.user.data.entity.UserEntity
+import com.alejandro.habitjourney.features.user.data.local.entity.UserEntity
 import kotlinx.datetime.LocalDate
 
 

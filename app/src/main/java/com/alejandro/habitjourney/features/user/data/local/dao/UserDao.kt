@@ -1,10 +1,10 @@
-package com.alejandro.habitjourney.features.user.data.dao
+package com.alejandro.habitjourney.features.user.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import com.alejandro.habitjourney.features.user.data.entity.UserEntity
+import com.alejandro.habitjourney.features.user.data.local.entity.UserEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

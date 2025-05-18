@@ -16,7 +16,7 @@ import com.alejandro.habitjourney.features.note.data.entity.NoteEntity
 import com.alejandro.habitjourney.features.progress.data.entity.ProgressEntity
 import com.alejandro.habitjourney.features.reward.data.entity.RewardEntity
 import com.alejandro.habitjourney.features.task.data.entity.TaskEntity
-import com.alejandro.habitjourney.features.user.data.entity.UserEntity
+import com.alejandro.habitjourney.features.user.data.local.entity.UserEntity
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
