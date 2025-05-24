@@ -16,7 +16,7 @@ import com.alejandro.habitjourney.features.note.data.entity.NoteEntity
 import com.alejandro.habitjourney.features.progress.data.entity.ProgressEntity
 import com.alejandro.habitjourney.features.reward.data.entity.RewardEntity
 import com.alejandro.habitjourney.features.task.data.entity.TaskEntity
-import com.alejandro.habitjourney.features.user.data.entity.UserEntity
+import com.alejandro.habitjourney.features.user.data.local.entity.UserEntity
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -50,16 +50,12 @@ object TestDataFactory {
     fun createUserEntity(
         id: Long = 0, // 0 para que Room asigne un ID automáticamente
         name: String = "Test User ${System.currentTimeMillis()}",
-        email: String = "test${System.currentTimeMillis()}@example.com",
-        passwordHash: String = "hashed_password",
-        createdAt: Long = TEST_TIMESTAMP
+        email: String = "test${System.currentTimeMillis()}@example.com"
     ): UserEntity {
         return UserEntity(
             id = id,
             name = name,
-            email = email,
-            passwordHash = passwordHash,
-            createdAt = createdAt
+            email = email
         )
     }
 

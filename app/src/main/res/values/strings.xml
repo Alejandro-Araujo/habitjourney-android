@@ -1,3 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">HabitJourney</string>
+
+    ---
+
+    <string name="no_internet_connection">No hay conexión a internet.</string>
+    <string name="connection_timeout">La conexión ha tardado demasiado. Inténtalo de nuevo.</string>
+    <string name="server_not_found">No se pudo encontrar el servidor.</string>
+    <string name="session_expired">Sesión expirada. Por favor, inicia sesión de nuevo.</string>
+    <string name="permission_denied">No tienes permiso para realizar esta acción.</string>
+    <string name="resource_not_found">Recurso no encontrado.</string>
+    <string name="server_error">Error en el servidor. Inténtalo más tarde.</string>
+    <string name="network_error">Error de red: %1$d.</string>
+    <string name="api_error">Error del API: %1$d - %2$s.</string>
+    <string name="unexpected_network_error">Ha ocurrido un error de red inesperado.</string>
+    <string name="unexpected_error">Ha ocurrido un error inesperado.</string>
+    <string name="response_body_null">El cuerpo de la respuesta es nulo.</string>
+    <string name="error_unknown">Error desconocido.</string> ---
+
+    <string name="welcome_back_title">¡Bienvenida de vuelta!</string>
+    <string name="login_subtitle">Inicia sesión para continuar con tus hábitos.</string>
+    <string name="email_label">Email</string>
+    <string name="password_label">Contraseña</string>
+    <string name="login_button_text">Iniciar Sesión</string>
+    <string name="no_account_question">¿No tienes cuenta? </string>
+    <string name="register_link_text">Regístrate</string>
+
+    ---
+
+    <string name="create_account_title">Crear Cuenta</string>
+    <string name="register_subtitle">Únete a HabitJourney y comienza tu transformación.</string>
+    <string name="full_name_label">Nombre completo</string>
+    <string name="confirm_password_label">Confirmar contraseña</string>
+    <string name="register_button_text">Crear Cuenta</string>
+    <string name="password_hint_text">Mínimo 6 caracteres, debe contener al menos una letra.</string>
+    <string name="terms_and_privacy_text">Al registrarte, aceptas nuestros Términos de Servicio y Política de Privacidad.</string>
+    <string name="already_have_account_question">¿Ya tienes cuenta? </string>
+    <string name="login_here_link_text">Inicia sesión aquí</string> <string name="account_created_success">¡Cuenta creada exitosamente! Redirigiendo…</string>
+
+    ---
+
+    <string name="error_email_empty">El email no puede estar vacío.</string>
+    <string name="error_email_invalid_format">Formato de email inválido.</string>
+    <string name="error_password_empty">La contraseña no puede estar vacía.</string>
+    <string name="error_password_min_length">La contraseña debe tener al menos 6 caracteres.</string>
+    <string name="error_password_max_length">La contraseña no puede exceder 128 caracteres.</string>
+    <string name="error_password_no_letter">La contraseña debe contener al menos una letra.</string>
+    <string name="error_confirm_password_empty">Debe confirmar la contraseña.</string>
+    <string name="error_password_mismatch">Las contraseñas no coinciden.</string>
+    <string name="error_name_empty">El nombre no puede estar vacío.</string>
+    <string name="error_name_min_length">El nombre debe tener al menos 2 caracteres.</string>
+    <string name="error_name_max_length">El nombre no puede exceder 50 caracteres.</string>
+    <string name="error_name_invalid_format">El nombre solo puede contener letras y espacios.</string>
+
+    ---
+
+    <string name="content_description_email_icon">Icono de email.</string>
+    <string name="content_description_lock_icon">Icono de candado.</string>
+    <string name="content_description_person_icon">Icono de persona.</string>
+    <string name="content_description_confirm_password_icon">Icono de confirmar contraseña.</string>
+    <string name="show_password_content_description">Mostrar contraseña.</string>
+    <string name="hide_password_content_description">Ocultar contraseña.</string>
+
+    ---
+
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_habits">Hábitos</string>
+    <string name="nav_tasks">Tareas</string>
+    <string name="nav_notes">Notas</string>
+    <string name="nav_progress">Progreso</string>
+    <string name="nav_achievements">Logros</string>
+    <string name="nav_settings">Configuración</string>
+
+    ---
+
+    <string name="action_save">Guardar</string>
+    <string name="action_cancel">Cancelar</string>
+    <string name="action_delete">Eliminar</string>
+    <string name="action_edit">Editar</string>
+    <string name="action_back">Atrás</string>
+    <string name="action_logout">Cerrar Sesión</string>
+    <string name="action_refresh">Actualizar</string>
+
+    ---
+
+    <string name="loading">Cargando…</string>
+    <string name="processing">Procesando…</string>
+
+    ---
+
+    <string name="success_login">¡Bienvenido de vuelta!</string>
+    <string name="success_register">¡Cuenta creada exitosamente!</string>
+    <string name="success_logout">Sesión cerrada exitosamente.</string>
+
+    ---
+
+    <string name="placeholder_dashboard_title">Dashboard</string>
+    <string name="placeholder_habit_list_title">Lista de Hábitos</string>
+    <string name="placeholder_task_list_title">Lista de Tareas</string>
+    <string name="placeholder_note_list_title">Lista de Notas</string>
+    <string name="placeholder_progress_title">Progreso</string>
+    <string name="placeholder_achievements_title">Logros</string>
+    <string name="placeholder_settings_title">Configuración</string>
+
 </resources>

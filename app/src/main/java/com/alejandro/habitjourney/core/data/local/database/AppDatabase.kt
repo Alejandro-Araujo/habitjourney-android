@@ -11,7 +11,7 @@ import com.alejandro.habitjourney.features.progress.data.dao.ProgressDao
 import com.alejandro.habitjourney.features.reward.data.dao.RewardDao
 import com.alejandro.habitjourney.features.task.data.dao.TaskDao
 import com.alejandro.habitjourney.features.achievement.data.dao.UserAchievementDao
-import com.alejandro.habitjourney.features.user.data.dao.UserDao
+import com.alejandro.habitjourney.features.user.data.local.dao.UserDao
 import com.alejandro.habitjourney.features.achievement.data.entity.AchievementDefinitionEntity
 import com.alejandro.habitjourney.features.habit.data.entity.HabitEntity
 import com.alejandro.habitjourney.features.habit.data.entity.HabitLogEntity
@@ -20,7 +20,7 @@ import com.alejandro.habitjourney.features.progress.data.entity.ProgressEntity
 import com.alejandro.habitjourney.features.reward.data.entity.RewardEntity
 import com.alejandro.habitjourney.features.task.data.entity.TaskEntity
 import com.alejandro.habitjourney.features.achievement.data.entity.UserAchievementEntity
-import com.alejandro.habitjourney.features.user.data.entity.UserEntity
+import com.alejandro.habitjourney.features.user.data.local.entity.UserEntity
 
 @Database(
     entities = [
