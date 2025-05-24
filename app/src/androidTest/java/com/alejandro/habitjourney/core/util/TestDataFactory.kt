@@ -50,16 +50,12 @@ object TestDataFactory {
     fun createUserEntity(
         id: Long = 0, // 0 para que Room asigne un ID automáticamente
         name: String = "Test User ${System.currentTimeMillis()}",
-        email: String = "test${System.currentTimeMillis()}@example.com",
-        passwordHash: String = "hashed_password",
-        createdAt: Long = TEST_TIMESTAMP
+        email: String = "test${System.currentTimeMillis()}@example.com"
     ): UserEntity {
         return UserEntity(
             id = id,
             name = name,
-            email = email,
-            passwordHash = passwordHash,
-            createdAt = createdAt
+            email = email
         )
     }
 

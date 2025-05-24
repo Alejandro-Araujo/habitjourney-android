@@ -5,21 +5,19 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
+/**
+ * Entidad de Room para almacenar la información básica del usuario autenticado.
+ * Esta entidad representa el perfil del usuario en la base de datos local.
+ * NO debe contener información sensible como contraseñas.
+ */
 @Entity(tableName = "users",
     indices = [Index(value = ["email"], unique = true)])
-data class UserEntity (
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0L,
 
-    @ColumnInfo (name = "email")
-    val email: String,
-
+data class UserEntity(
+    @PrimaryKey (autoGenerate = false)
+    val id: Long,
     @ColumnInfo(name = "name")
     val name: String,
-
-    @ColumnInfo(name = "password_hash")
-    val passwordHash: String,
-
-    @ColumnInfo(name = "created_at")
-    val createdAt: Long = System.currentTimeMillis()
+    @ColumnInfo (name = "email")
+    val email: String
 )

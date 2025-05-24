@@ -19,6 +19,7 @@ import com.alejandro.habitjourney.features.reward.data.dao.RewardDao
 import com.alejandro.habitjourney.features.task.data.dao.TaskDao
 import com.alejandro.habitjourney.features.user.data.local.dao.UserDao
 import com.alejandro.habitjourney.features.user.data.local.preferences.UserPreferences
+import com.alejandro.habitjourney.features.user.data.remote.api.AuthApi
 import com.google.gson.GsonBuilder
 import com.google.gson.Strictness
 import dagger.Module
@@ -89,23 +90,30 @@ object AppModule {
         return ErrorHandler(context)
     }
 
+    @Provides
+    @Singleton
+    fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
+        return HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+    }
+
     // Retrofit
     @Provides
     @Singleton
     fun provideOkHttpClient(
         networkConnectionInterceptor: NetworkConnectionInterceptor,
-        errorInterceptor: ErrorInterceptor,
         authInterceptor: AuthInterceptor,
+        errorInterceptor: ErrorInterceptor,
+        loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(networkConnectionInterceptor)
-            .addInterceptor(errorInterceptor)
             .addInterceptor(authInterceptor)
+            .addInterceptor(errorInterceptor)
             .apply {
                 if (BuildConfig.DEBUG) {
-                    addInterceptor(HttpLoggingInterceptor().apply {
-                        level = HttpLoggingInterceptor.Level.BODY
-                    })
+                    addInterceptor(loggingInterceptor)
                 }
             }
             .connectTimeout(30, TimeUnit.SECONDS)
@@ -124,6 +132,12 @@ object AppModule {
     @Singleton
     fun provideRetrofit(retrofitClient: RetrofitClient): Retrofit {
         return retrofitClient.create()
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthApi(retrofit: Retrofit): AuthApi {
+        return retrofit.create(AuthApi::class.java)
     }
 
     // DAOs
@@ -165,4 +179,22 @@ object AppModule {
     @Singleton
     fun provideRewardDao(database: AppDatabase): RewardDao = database.rewardDao()
 
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(
+        @ApplicationContext context: Context,
+        authApi:AuthApi,
+        userDao:UserDao,
+        userPreferences: UserPreferences,
+        errorHandler: ErrorHandler
+    ): com.alejandro.habitjourney.features.user.domain.repository.UserRepository {
+        return com.alejandro.habitjourney.features.user.data.repository.UserRepositoryImpl(
+            context,
+            authApi,
+            userDao,
+            userPreferences,
+            errorHandler
+        )
+    }
 }

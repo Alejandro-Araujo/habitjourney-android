@@ -31,7 +31,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "API_BASE_URL", "\"https://localhost:8080/api/\"")
+            buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:8080/api/\"")
         }
         release {
             isMinifyEnabled = false
@@ -39,7 +39,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "API_BASE_URL", "\"https://localhost:8080/api/\"")
+            buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:8080/api/\"")
         }
     }
     compileOptions {
@@ -79,6 +79,15 @@ dependencies {
     implementation(libs.androidx.datastore.core.android)
     implementation(libs.androidx.datastore.preferences.core.android)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.espresso.core)
+    implementation(libs.androidx.material3.lint)
+    implementation(libs.androidx.material)
+    implementation(libs.androidx.material.icons.core)
+    implementation(libs.androidx.material.icons.extended)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.lifecycle.extensions)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
     androidTestImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.runner)
     ksp(libs.androidx.room.compiler)
