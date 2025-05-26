@@ -10,17 +10,14 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alejandro.habitjourney.R
-import com.alejandro.habitjourney.features.user.presentation.viewmodel.AuthViewModel // Importar AuthViewModel
+import com.alejandro.habitjourney.features.user.presentation.viewmodel.AuthViewModel
 
 /**
  * Composable principal de la aplicación que maneja la navegación
@@ -44,16 +41,12 @@ fun HabitJourneyApp() {
 
     // Decidir el destino inicial basándose en el estado de autenticación
     val startDestination = if (isLoadingAuth) {
-        // Mientras se carga el estado de autenticación, puedes mostrar un SplashScreen
-        // O simplemente dejar que la pantalla de login/dashboard se decida después
-        // Por ahora, lo dejamos en login por defecto si no hay un dashboard cargado previamente.
         Screen.Login.route
     } else if (isLoggedIn) {
         Screen.Dashboard.route
     } else {
         Screen.Login.route
     }
-
 
     Scaffold(
         bottomBar = {
@@ -65,7 +58,6 @@ fun HabitJourneyApp() {
             }
         }
     ) { innerPadding ->
-        // Pasar el padding a NavGraph para que el contenido no se solape con la BottomBar
         NavGraph(
             navController = navController,
             startDestination = startDestination,
@@ -91,23 +83,17 @@ private fun HabitJourneyBottomNavigation(
                 icon = {
                     Icon(
                         imageVector = item.icon,
-                        contentDescription = stringResource(id = item.contentDescriptionResId) // Usar stringResource
+                        contentDescription = stringResource(id = item.contentDescriptionResId)
                     )
                 },
-                label = { Text(stringResource(id = item.titleResId)) }, // Usar stringResource
+                label = { Text(stringResource(id = item.titleResId)) },
                 selected = isSelected,
                 onClick = {
                     navController.navigate(item.route) {
-                        // Pop up to the start destination of the graph to
-                        // avoid building up a large stack of destinations
-                        // on the back stack as users select items
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }
-                        // Avoid multiple copies of the same destination when
-                        // reselecting the same item
                         launchSingleTop = true
-                        // Restore state when reselecting a previously selected item
                         restoreState = true
                     }
                 }
@@ -122,8 +108,8 @@ private fun HabitJourneyBottomNavigation(
 private data class BottomNavItem(
     val route: String,
     val icon: androidx.compose.ui.graphics.vector.ImageVector,
-    val titleResId: Int, // Referencia al ID del string
-    val contentDescriptionResId: Int // Referencia al ID del string para accesibilidad
+    val titleResId: Int,
+    val contentDescriptionResId: Int
 )
 
 /**
@@ -134,7 +120,7 @@ private val bottomNavItems = listOf(
         route = Screen.Dashboard.route,
         icon = Icons.Default.Home,
         titleResId = R.string.nav_dashboard,
-        contentDescriptionResId = R.string.nav_dashboard // Puedes crear un content_description específico si lo deseas
+        contentDescriptionResId = R.string.nav_dashboard
     ),
     BottomNavItem(
         route = Screen.HabitList.route,

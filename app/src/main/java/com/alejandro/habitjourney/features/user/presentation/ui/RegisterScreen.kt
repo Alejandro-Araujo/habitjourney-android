@@ -15,28 +15,37 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.*
+import androidx.compose.material3.* // Mantenemos Material3 para Card, Icon, IconButton, etc.
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.alejandro.habitjourney.R
 import com.alejandro.habitjourney.features.user.presentation.state.RegisterState
 import com.alejandro.habitjourney.features.user.presentation.viewmodel.RegisterViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+// Importa tus componentes personalizados
+import com.alejandro.habitjourney.core.presentation.ui.components.HabitJourneyButton
+import com.alejandro.habitjourney.core.presentation.ui.components.HabitJourneyButtonType
+import com.alejandro.habitjourney.core.presentation.ui.components.HabitJourneyTextField
+
+// Importa tus dimensiones y colores personalizados
+import com.alejandro.habitjourney.core.presentation.ui.theme.Dimensions
+import com.alejandro.habitjourney.core.presentation.ui.theme.BaseClara
+import com.alejandro.habitjourney.core.presentation.ui.theme.BaseOscura
+import com.alejandro.habitjourney.core.presentation.ui.theme.AcentoInformativo
+import com.alejandro.habitjourney.core.presentation.ui.theme.InactivoDeshabilitado
+import com.alejandro.habitjourney.core.presentation.ui.theme.Error
+import com.alejandro.habitjourney.core.presentation.ui.theme.Exito // Para el mensaje de éxito
+
 @Composable
 fun RegisterScreen(
     onNavigateToLogin: () -> Unit,
@@ -67,59 +76,54 @@ fun RegisterScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF8FAFC))
+            .background(BaseClara)
             .verticalScroll(rememberScrollState())
-            .padding(24.dp),
+            .padding(Dimensions.SpacingLarge),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(48.dp))
+        Spacer(modifier = Modifier.height(Dimensions.ButtonHeight))
 
         // Header
         Text(
             text = stringResource(R.string.create_account_title),
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFF2D3748),
+            style = MaterialTheme.typography.displayLarge,
+            color = BaseOscura,
             textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Dimensions.SpacingSmall))
 
         Text(
             text = stringResource(R.string.register_subtitle),
-            fontSize = 16.sp,
-            color = Color(0xFFA0AEC0),
+            style = MaterialTheme.typography.bodyLarge,
+            color = InactivoDeshabilitado,
             textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(Dimensions.ButtonHeight - Dimensions.SpacingSmall))
 
         // Formulario
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
-                containerColor = Color.White
+                containerColor = MaterialTheme.colorScheme.surface
             ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-            shape = RoundedCornerShape(8.dp)
+            elevation = CardDefaults.cardElevation(defaultElevation = Dimensions.ElevationLevel1),
+            shape = RoundedCornerShape(Dimensions.CornerRadius)
         ) {
             Column(
-                modifier = Modifier.padding(24.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                modifier = Modifier.padding(Dimensions.SpacingLarge),
+                verticalArrangement = Arrangement.spacedBy(Dimensions.SpacingMedium)
             ) {
                 // Campo Nombre
-                OutlinedTextField(
+                HabitJourneyTextField(
                     value = name,
                     onValueChange = viewModel::onNameChanged,
-                    label =  { Text(stringResource(R.string.full_name_label)) },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = stringResource(R.string.content_description_person_icon),
-                            tint = Color(0xFF4299E1)
-                        )
-                    },
+                    label = stringResource(R.string.full_name_label),
                     modifier = Modifier.fillMaxWidth(),
+                    isError = nameError != null,
+                    helperText = nameError,
+                    singleLine = true,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Next
@@ -127,49 +131,24 @@ fun RegisterScreen(
                     keyboardActions = KeyboardActions(
                         onNext = { focusManager.moveFocus(FocusDirection.Down) }
                     ),
-                    singleLine = true,
-                    isError = nameError != null,
-                    supportingText = {
-                        AnimatedVisibility(
-                            visible = nameError != null,
-                            enter = slideInVertically(
-                                initialOffsetY = { -it },
-                                animationSpec = tween(300)
-                            ) + fadeIn(animationSpec = tween(300)),
-                            exit = slideOutVertically(
-                                targetOffsetY = { -it },
-                                animationSpec = tween(300)
-                            ) + fadeOut(animationSpec = tween(300))
-                        ) {
-                            Text(
-                                text = nameError ?: "",
-                                color = MaterialTheme.colorScheme.error,
-                                fontSize = 12.sp
-                            )
-                        }
-                    },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color(0xFF4299E1),
-                        focusedLabelColor = Color(0xFF4299E1),
-                        cursorColor = Color(0xFF4299E1),
-                        errorBorderColor = MaterialTheme.colorScheme.error,
-                        errorLabelColor = MaterialTheme.colorScheme.error
-                    )
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = stringResource(R.string.content_description_person_icon),
+                            tint = AcentoInformativo
+                        )
+                    }
                 )
 
                 // Campo Email
-                OutlinedTextField(
+                HabitJourneyTextField(
                     value = email,
                     onValueChange = viewModel::onEmailChanged,
-                    label = { Text(stringResource(R.string.email_label)) },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Email,
-                            contentDescription = stringResource(R.string.content_description_email_icon),
-                            tint = Color(0xFF4299E1)
-                        )
-                    },
+                    label = stringResource(R.string.email_label),
                     modifier = Modifier.fillMaxWidth(),
+                    isError = emailError != null,
+                    helperText = emailError,
+                    singleLine = true,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
                         imeAction = ImeAction.Next
@@ -177,46 +156,38 @@ fun RegisterScreen(
                     keyboardActions = KeyboardActions(
                         onNext = { focusManager.moveFocus(FocusDirection.Down) }
                     ),
-                    singleLine = true,
-                    isError = emailError != null,
-                    supportingText = {
-                        AnimatedVisibility(
-                            visible = emailError != null,
-                            enter = slideInVertically(
-                                initialOffsetY = { -it },
-                                animationSpec = tween(300)
-                            ) + fadeIn(animationSpec = tween(300)),
-                            exit = slideOutVertically(
-                                targetOffsetY = { -it },
-                                animationSpec = tween(300)
-                            ) + fadeOut(animationSpec = tween(300))
-                        ) {
-                            Text(
-                                text = emailError ?: "",
-                                color = MaterialTheme.colorScheme.error,
-                                fontSize = 12.sp
-                            )
-                        }
-                    },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color(0xFF4299E1),
-                        focusedLabelColor = Color(0xFF4299E1),
-                        cursorColor = Color(0xFF4299E1),
-                        errorBorderColor = MaterialTheme.colorScheme.error,
-                        errorLabelColor = MaterialTheme.colorScheme.error
-                    )
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Email,
+                            contentDescription = stringResource(R.string.content_description_email_icon),
+                            tint = AcentoInformativo
+                        )
+                    }
                 )
 
                 // Campo Contraseña
-                OutlinedTextField(
+                HabitJourneyTextField(
                     value = password,
                     onValueChange = viewModel::onPasswordChanged,
-                    label = { Text(stringResource(R.string.password_label)) },
+                    label = stringResource(R.string.password_label),
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = passwordError != null,
+                    helperText = passwordError ?: stringResource(R.string.password_hint_text),
+                    singleLine = true,
+                    visualTransformation = if (isPasswordVisible) VisualTransformation.None
+                    else PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                    ),
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Lock,
                             contentDescription = stringResource(R.string.content_description_lock_icon),
-                            tint = Color(0xFF4299E1)
+                            tint = AcentoInformativo
                         )
                     },
                     trailingIcon = {
@@ -226,84 +197,23 @@ fun RegisterScreen(
                                 else Icons.Default.VisibilityOff,
                                 contentDescription = if (isPasswordVisible) stringResource(R.string.hide_password_content_description)
                                 else stringResource(R.string.show_password_content_description),
-                                tint = Color(0xFFA0AEC0)
+                                tint = InactivoDeshabilitado
                             )
                         }
-                    },
-                    visualTransformation = if (isPasswordVisible) VisualTransformation.None
-                    else PasswordVisualTransformation(),
-                    modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Password,
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onNext = { focusManager.moveFocus(FocusDirection.Down) }
-                    ),
-                    singleLine = true,
-                    isError = passwordError != null,
-                    supportingText = {
-                        if (passwordError != null) {
-                            AnimatedVisibility(
-                                visible = true,
-                                enter = slideInVertically(
-                                    initialOffsetY = { -it },
-                                    animationSpec = tween(300)
-                                ) + fadeIn(animationSpec = tween(300)),
-                                exit = slideOutVertically(
-                                    targetOffsetY = { -it },
-                                    animationSpec = tween(300)
-                                ) + fadeOut(animationSpec = tween(300))
-                            ) {
-                                Text(
-                                    text = passwordError!!,
-                                    color = MaterialTheme.colorScheme.error,
-                                    fontSize = 12.sp
-                                )
-                            }
-                        } else {
-                            Text(
-                                text = stringResource(R.string.password_hint_text),
-                                fontSize = 12.sp,
-                                color = Color(0xFFA0AEC0)
-                            )
-                        }
-                    },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color(0xFF4299E1),
-                        focusedLabelColor = Color(0xFF4299E1),
-                        cursorColor = Color(0xFF4299E1),
-                        errorBorderColor = MaterialTheme.colorScheme.error,
-                        errorLabelColor = MaterialTheme.colorScheme.error
-                    )
+                    }
                 )
 
                 // Campo Confirmar Contraseña
-                OutlinedTextField(
+                HabitJourneyTextField(
                     value = confirmPassword,
                     onValueChange = viewModel::onConfirmPasswordChanged,
-                    label = { Text(stringResource(R.string.confirm_password_label)) },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Lock,
-                            contentDescription = stringResource(R.string.content_description_confirm_password_icon),
-                            tint = Color(0xFF4299E1)
-                        )
-                    },
-                    trailingIcon = {
-                        IconButton(onClick = viewModel::toggleConfirmPasswordVisibility) {
-                            Icon(
-                                imageVector = if (isConfirmPasswordVisible) Icons.Default.Visibility
-                                else Icons.Default.VisibilityOff,
-                                contentDescription = if (isConfirmPasswordVisible) stringResource(R.string.hide_password_content_description)
-                                else stringResource(R.string.show_password_content_description),
-                                tint = Color(0xFFA0AEC0)
-                            )
-                        }
-                    },
+                    label = stringResource(R.string.confirm_password_label),
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = confirmPasswordError != null,
+                    helperText = confirmPasswordError,
+                    singleLine = true,
                     visualTransformation = if (isConfirmPasswordVisible) VisualTransformation.None
                     else PasswordVisualTransformation(),
-                    modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Password,
                         imeAction = ImeAction.Done
@@ -314,65 +224,36 @@ fun RegisterScreen(
                             viewModel.register()
                         }
                     ),
-                    singleLine = true,
-                    isError = confirmPasswordError != null,
-                    supportingText = {
-                        AnimatedVisibility(
-                            visible = confirmPasswordError != null,
-                            enter = slideInVertically(
-                                initialOffsetY = { -it },
-                                animationSpec = tween(300)
-                            ) + fadeIn(animationSpec = tween(300)),
-                            exit = slideOutVertically(
-                                targetOffsetY = { -it },
-                                animationSpec = tween(300)
-                            ) + fadeOut(animationSpec = tween(300))
-                        ) {
-                            Text(
-                                text = confirmPasswordError ?: "",
-                                color = MaterialTheme.colorScheme.error,
-                                fontSize = 12.sp
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Lock,
+                            contentDescription = stringResource(R.string.content_description_confirm_password_icon),
+                            tint = AcentoInformativo
+                        )
+                    },
+                    trailingIcon = {
+                        IconButton(onClick = viewModel::toggleConfirmPasswordVisibility) {
+                            Icon(
+                                imageVector = if (isConfirmPasswordVisible) Icons.Default.Visibility
+                                else Icons.Default.VisibilityOff,
+                                contentDescription = if (isConfirmPasswordVisible) stringResource(R.string.hide_password_content_description)
+                                else stringResource(R.string.show_password_content_description),
+                                tint = InactivoDeshabilitado
                             )
                         }
-                    },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color(0xFF4299E1),
-                        focusedLabelColor = Color(0xFF4299E1),
-                        cursorColor = Color(0xFF4299E1),
-                        errorBorderColor = MaterialTheme.colorScheme.error,
-                        errorLabelColor = MaterialTheme.colorScheme.error
-                    )
+                    }
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(Dimensions.SpacingSmall))
 
                 // Botón de Registro
-                Button(
+                HabitJourneyButton(
+                    text = stringResource(R.string.register_button_text),
                     onClick = viewModel::register,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(48.dp),
+                    type = HabitJourneyButtonType.PRIMARY,
                     enabled = registerState !is RegisterState.Loading,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF4299E1),
-                        contentColor = Color.White
-                    ),
-                    shape = RoundedCornerShape(8.dp)
-                ) {
-                    if (registerState is RegisterState.Loading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(20.dp),
-                            color = Color.White,
-                            strokeWidth = 2.dp
-                        )
-                    } else {
-                        Text(
-                            text = stringResource(R.string.register_button_text),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
-                }
+                    isLoading = registerState is RegisterState.Loading
+                )
 
                 // Mensaje de error general
                 AnimatedVisibility(
@@ -389,15 +270,16 @@ fun RegisterScreen(
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(
-                            containerColor = Color(0xFFFED7D7)
+                            containerColor = Error.copy(alpha = 0.2f)
                         ),
-                        shape = RoundedCornerShape(8.dp)
+                        shape = RoundedCornerShape(Dimensions.CornerRadius)
                     ) {
                         Text(
                             text = (registerState as? RegisterState.Error)?.message ?: stringResource(R.string.error_unknown),
-                            modifier = Modifier.padding(12.dp),
-                            color = Color(0xFFC53030),
-                            fontSize = 14.sp
+                            modifier = Modifier.padding(Dimensions.SpacingMedium),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Error,
+                            textAlign = TextAlign.Center
                         )
                     }
                 }
@@ -417,33 +299,34 @@ fun RegisterScreen(
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(
-                            containerColor = Color(0xFFC6F6D5)
+                            containerColor = Exito.copy(alpha = 0.2f)
                         ),
-                        shape = RoundedCornerShape(8.dp)
+                        shape = RoundedCornerShape(Dimensions.CornerRadius)
                     ) {
                         Text(
                             text = stringResource(R.string.account_created_success),
-                            modifier = Modifier.padding(12.dp),
-                            color = Color(0xFF22543D),
-                            fontSize = 14.sp
+                            modifier = Modifier.padding(Dimensions.SpacingMedium),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Exito,
+                            textAlign = TextAlign.Center
                         )
                     }
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(Dimensions.SpacingLarge))
 
         // Términos y condiciones
         Text(
             text = stringResource(R.string.terms_and_privacy_text),
-            fontSize = 12.sp,
-            color = Color(0xFFA0AEC0),
+            style = MaterialTheme.typography.bodySmall,
+            color = InactivoDeshabilitado,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.padding(horizontal = Dimensions.SpacingMedium)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(Dimensions.SpacingMedium))
 
         // Enlace a login
         Row(
@@ -452,23 +335,16 @@ fun RegisterScreen(
         ) {
             Text(
                 text = stringResource(R.string.already_have_account_question),
-                color = Color(0xFFA0AEC0),
-                fontSize = 14.sp
+                style = MaterialTheme.typography.bodyMedium,
+                color = InactivoDeshabilitado
             )
-            TextButton(
+            HabitJourneyButton(
+                text = stringResource(R.string.login_here_link_text),
                 onClick = onNavigateToLogin,
-                colors = ButtonDefaults.textButtonColors(
-                    contentColor = Color(0xFF4299E1)
-                )
-            ) {
-                Text(
-                    text = stringResource(R.string.login_here_link_text),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium
-                )
-            }
+                type = HabitJourneyButtonType.TERTIARY
+            )
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(Dimensions.SpacingLarge))
     }
 }

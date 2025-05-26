@@ -20,8 +20,6 @@ import com.alejandro.habitjourney.features.task.data.dao.TaskDao
 import com.alejandro.habitjourney.features.user.data.local.dao.UserDao
 import com.alejandro.habitjourney.features.user.data.local.preferences.UserPreferences
 import com.alejandro.habitjourney.features.user.data.remote.api.AuthApi
-import com.google.gson.GsonBuilder
-import com.google.gson.Strictness
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,7 +30,6 @@ import kotlinx.coroutines.SupervisorJob
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -56,7 +53,7 @@ object AppModule {
             AppDatabase::class.java,
             "habitjourney_db"
         )
-            .fallbackToDestructiveMigration()  // Solo para desarrollo
+            .addMigrations(AppDatabase.MIGRATION_1_2)
             .build()
     }
 

@@ -2,6 +2,7 @@ package com.alejandro.habitjourney.features.habit.data.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
@@ -12,13 +13,18 @@ import kotlinx.datetime.LocalDate
 @Dao
 interface HabitLogDao {
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLog(log: HabitLogEntity)
 
     // Insertar múltiples logs en una transacción
-    @Insert
     @Transaction
-    suspend fun insertLogs(logs: List<HabitLogEntity>)
+    suspend fun insertMultipleLogs(logs: List<HabitLogEntity>) {
+        logs.forEach { insertLog(it) }
+    }
+
+    @Query("SELECT * FROM habit_logs WHERE habit_id = :habitId AND date = :date")
+    fun getHabitLogForDate(habitId: Long, date: LocalDate): Flow<HabitLogEntity?>
+
 
     // Obtener logs de un hábito en un rango de fechas
     @Query("""

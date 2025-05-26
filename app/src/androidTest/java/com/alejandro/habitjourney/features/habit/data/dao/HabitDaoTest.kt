@@ -123,7 +123,8 @@ class HabitDaoTest {
         habitDao.insertHabit(deletedHabit)
 
         // When
-        val result = habitDao.getActiveHabitsPaged(userId, limit = 10, offset = 0)
+        // CHANGE HERE: Collect the flow's first emitted value
+        val result = habitDao.getActiveHabitsPaged(userId, limit = 10, offset = 0).first()
 
         // Then
         assertEquals(5, result.size)

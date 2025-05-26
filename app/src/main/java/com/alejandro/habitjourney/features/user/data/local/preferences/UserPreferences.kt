@@ -53,16 +53,20 @@ class UserPreferences @Inject constructor(
             .apply()
     }
 
-    suspend fun saveUserId(userId: String) {
+    suspend fun saveUserId(userId: Long) {
         context.dataStore.edit { preferences ->
-            preferences[USER_ID] = userId
+            preferences[USER_ID] = userId.toString()
         }
     }
 
-    val userIdFlow: Flow<String?> = context.dataStore.data
+    val userIdFlow: Flow<Long?> = context.dataStore.data
         .map { preferences ->
-            preferences[USER_ID]
+            preferences[USER_ID]?.toLongOrNull()
         }
+
+    suspend fun getUserId(): Long? {
+        return userIdFlow.first()
+    }
 
     suspend fun clear() {
         // Limpiar DataStore
