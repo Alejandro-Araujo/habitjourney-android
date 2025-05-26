@@ -20,6 +20,13 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    packaging {
+        resources.excludes.add("META-INF/LICENSE.md")
+        resources.excludes.add("META-INF/LICENSE-notice.md")
+        resources.excludes.add("META-INF/licenses/**")
+        resources.excludes.add("/META-INF/{AL2.0,LGPL2.1}")
+    }
+
     buildFeatures {
         buildConfig = true
     }
@@ -31,7 +38,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:8080/api/\"")
+            buildConfigField("String", "API_BASE_URL", "\"http://192.168.0.194:8080/api/\"")
         }
         release {
             isMinifyEnabled = false
@@ -39,7 +46,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:8080/api/\"")
+            buildConfigField("String", "API_BASE_URL", "\"http://192.168.0.194:8080/api/\"")
         }
     }
     compileOptions {
@@ -88,6 +95,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.extensions)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.accompanist.systemuicontroller)
+    debugImplementation(libs.mockk)
     androidTestImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.runner)
     ksp(libs.androidx.room.compiler)

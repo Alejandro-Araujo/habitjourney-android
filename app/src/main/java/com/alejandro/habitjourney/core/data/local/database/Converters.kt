@@ -24,12 +24,12 @@ class Converters {
 
     @TypeConverter
     fun fromWeekdayList(weekdays: List<Weekday>?): String? {
-        return weekdays?.joinToString(",") { it.ordinal.toString() }
+        return weekdays?.joinToString(",") { it.ordinal.toString() }?.let { ",$it," }
     }
 
     @TypeConverter
     fun toWeekdayList(data: String?): List<Weekday>? {
-        return data?.split(",")?.map { Weekday.entries[it.toInt()] }
+        return data?.trim(',')?.split(",")?.mapNotNull { it.toIntOrNull() }?.map { Weekday.entries[it] }
     }
 
     // ========== Fechas (LocalDate) ==========

@@ -4,7 +4,7 @@ package com.alejandro.habitjourney.navigation
  * Sealed class que define todas las rutas de navegación de la aplicación.
  * Cada screen tiene su ruta única y parámetros opcionales.
  */
-sealed class Screen(val route: String) { // route es val, por defecto ya es "final"
+sealed class Screen(val route: String) {
 
     // Authentication Routes
     data object Login : Screen("login")

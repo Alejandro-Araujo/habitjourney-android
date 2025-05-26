@@ -1,10 +1,7 @@
 package com.alejandro.habitjourney.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -12,28 +9,26 @@ import androidx.navigation.navArgument
 import androidx.navigation.NavType
 import com.alejandro.habitjourney.features.user.presentation.ui.LoginScreen
 import com.alejandro.habitjourney.features.user.presentation.ui.RegisterScreen
-import androidx.compose.ui.Modifier // Importar Modifier
-import androidx.compose.foundation.layout.fillMaxSize // Importar fillMaxSize
-import androidx.compose.foundation.layout.padding // Importar padding
-import androidx.compose.foundation.layout.Arrangement // Importar Arrangement
-import androidx.compose.foundation.layout.Column // Importar Column
-import androidx.compose.foundation.layout.Spacer // Importar Spacer
-import androidx.compose.foundation.layout.height // Importar height
-import androidx.compose.material3.Button // Importar Button
-import androidx.compose.material3.MaterialTheme // Importar MaterialTheme
-import androidx.compose.material3.OutlinedButton // Importar OutlinedButton
-import androidx.compose.material3.Text // Importar Text
-import androidx.compose.ui.Alignment // Importar Alignment
-import androidx.compose.ui.unit.dp // Importar dp
+import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.dp
+import com.alejandro.habitjourney.features.habit.presentation.ui.CreateEditHabitScreen
+import com.alejandro.habitjourney.features.habit.presentation.ui.HabitDetailScreen
+import com.alejandro.habitjourney.features.habit.presentation.ui.HabitListScreen
+import com.alejandro.habitjourney.features.habit.presentation.viewmodel.CreateEditHabitViewModel
+import com.alejandro.habitjourney.features.habit.presentation.viewmodel.HabitDetailViewModel
+import com.alejandro.habitjourney.features.habit.presentation.viewmodel.HabitListViewModel
 
-// Asegúrate de que tus pantallas reales estén importadas o comentadas si no existen aún
-// import com.alejandro.habitjourney.features.dashboard.presentation.ui.DashboardScreen
-// import com.alejandro.habitjourney.features.habit.presentation.ui.*
-// import com.alejandro.habitjourney.features.task.presentation.ui.*
-// import com.alejandro.habitjourney.features.note.presentation.ui.*
-// import com.alejandro.habitjourney.features.achievement.presentation.ui.*
-// import com.alejandro.habitjourney.features.settings.presentation.ui.*
-// import com.alejandro.habitjourney.features.progress.presentation.ui.*
 
 /**
  * Composable principal que maneja toda la navegación de la aplicación.
@@ -45,13 +40,13 @@ import androidx.compose.ui.unit.dp // Importar dp
 @Composable
 fun NavGraph(
     navController: NavHostController,
-    startDestination: String, // Ahora el startDestination ya viene decidido
+    startDestination: String,
     modifier: Modifier = Modifier
 ) {
     NavHost(
         navController = navController,
-        startDestination = startDestination, // Usa el startDestination que ya viene
-        modifier = modifier // Aplica el modificador
+        startDestination = startDestination,
+        modifier = modifier
     ) {
 
         // ==========================================
@@ -59,7 +54,6 @@ fun NavGraph(
         // ==========================================
 
         composable(Screen.Login.route) { backStackEntry ->
-            // Inyectar el AuthViewModel aquí para poder usar sus funciones de estado
             val authViewModel = hiltViewModel<com.alejandro.habitjourney.features.user.presentation.viewmodel.AuthViewModel>(backStackEntry) // Especificar el paquete completo
             LoginScreen(
                 onNavigateToRegister = {
@@ -68,7 +62,7 @@ fun NavGraph(
                     }
                 },
                 onLoginSuccess = {
-                    authViewModel.onLoginSuccess() // Notificar al AuthViewModel del login exitoso
+                    authViewModel.onLoginSuccess()
                     navController.navigate(Screen.Dashboard.route) {
                         popUpTo(Screen.Login.route) { inclusive = true }
                         launchSingleTop = true
@@ -87,7 +81,7 @@ fun NavGraph(
                     }
                 },
                 onRegisterSuccess = {
-                    authViewModel.onLoginSuccess() // Asumimos que un registro exitoso implica un login
+                    authViewModel.onLoginSuccess()
                     navController.navigate(Screen.Dashboard.route) {
                         popUpTo(Screen.Register.route) { inclusive = true }
                         launchSingleTop = true
@@ -133,22 +127,16 @@ fun NavGraph(
         // HABIT MANAGEMENT GRAPH
         // ==========================================
 
-        composable(Screen.HabitList.route) {
-            // TODO: Implementar HabitListScreen
-            // HabitListScreen(
-            //     onNavigateToHabitDetail = { habitId ->
-            //         navController.navigate(Screen.HabitDetail.createRoute(habitId))
-            //     },
-            //     onNavigateToCreateHabit = {
-            //         navController.navigate(Screen.CreateEditHabit.createRoute())
-            //     },
-            //     onNavigateBack = { navController.popBackStack() }
-            // )
-
-            // Placeholder temporal
-            PlaceholderScreen(
-                title = "Habit List",
-                onNavigateBack = { navController.popBackStack() }
+        composable(Screen.HabitList.route) { backStackEntry ->
+            val viewModel = hiltViewModel<HabitListViewModel>(backStackEntry)
+            HabitListScreen(
+                onNavigateToCreateHabit = {
+                    navController.navigate(Screen.CreateEditHabit.createRoute())
+                },
+                onNavigateToHabitDetail = { habitId ->
+                    navController.navigate(Screen.HabitDetail.createRoute(habitId))
+                },
+                viewModel = viewModel
             )
         }
 
@@ -157,25 +145,19 @@ fun NavGraph(
             arguments = listOf(
                 navArgument("habitId") {
                     type = NavType.LongType
-                    defaultValue = -1L // Añadido defaultValue por seguridad
+                    defaultValue = -1L
                 }
             )
         ) { backStackEntry ->
-            val habitId = backStackEntry.arguments?.getLong("habitId") ?: -1L // Usar -1L si es nulo
-
-            // TODO: Implementar HabitDetailScreen
-            // HabitDetailScreen(
-            //     habitId = habitId,
-            //     onNavigateToEdit = {
-            //         navController.navigate(Screen.CreateEditHabit.createRoute(habitId))
-            //     },
-            //     onNavigateBack = { navController.popBackStack() }
-            // )
-
-            // Placeholder temporal
-            PlaceholderScreen(
-                title = "Habit Detail #$habitId",
-                onNavigateBack = { navController.popBackStack() }
+            val habitId = backStackEntry.arguments?.getLong("habitId") ?: -1L
+            val viewModel = hiltViewModel<HabitDetailViewModel>(backStackEntry)
+            HabitDetailScreen(
+                habitId = habitId,
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToEditHabit = { idToEdit ->
+                    navController.navigate(Screen.CreateEditHabit.createRoute(idToEdit))
+                },
+                viewModel = viewModel
             )
         }
 
@@ -184,25 +166,20 @@ fun NavGraph(
             arguments = listOf(
                 navArgument("habitId") {
                     type = NavType.LongType
-                    defaultValue = -1L // Asegura que el valor por defecto sea -1L
+                    defaultValue = -1L
                     nullable = false
                 }
             )
         ) { backStackEntry ->
             val habitId = backStackEntry.arguments?.getLong("habitId")
+            // Si el habitId es -1L, es una creación. Si es otro valor, es edición.
             val isEditing = habitId != null && habitId != -1L
 
-            // TODO: Implementar CreateEditHabitScreen
-            // CreateEditHabitScreen(
-            //     habitId = if (isEditing) habitId else null,
-            //     onHabitSaved = { navController.popBackStack() },
-            //     onNavigateBack = { navController.popBackStack() }
-            // )
-
-            // Placeholder temporal
-            PlaceholderScreen(
-                title = if (isEditing) "Edit Habit #$habitId" else "Create Habit",
-                onNavigateBack = { navController.popBackStack() }
+            val viewModel = hiltViewModel<CreateEditHabitViewModel>(backStackEntry)
+            CreateEditHabitScreen(
+                habitId = if (isEditing) habitId else null, // Si es edición, pasa el ID, si no, pasa null.
+                onNavigateBack = { navController.popBackStack() },
+                viewModel = viewModel
             )
         }
 

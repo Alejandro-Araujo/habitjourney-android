@@ -2,8 +2,6 @@
 <resources>
     <string name="app_name">HabitJourney</string>
 
-    ---
-
     <string name="no_internet_connection">No hay conexión a internet.</string>
     <string name="connection_timeout">La conexión ha tardado demasiado. Inténtalo de nuevo.</string>
     <string name="server_not_found">No se pudo encontrar el servidor.</string>
@@ -16,7 +14,7 @@
     <string name="unexpected_network_error">Ha ocurrido un error de red inesperado.</string>
     <string name="unexpected_error">Ha ocurrido un error inesperado.</string>
     <string name="response_body_null">El cuerpo de la respuesta es nulo.</string>
-    <string name="error_unknown">Error desconocido.</string> ---
+    <string name="error_unknown">Error desconocido.</string>
 
     <string name="welcome_back_title">¡Bienvenida de vuelta!</string>
     <string name="login_subtitle">Inicia sesión para continuar con tus hábitos.</string>
@@ -25,8 +23,7 @@
     <string name="login_button_text">Iniciar Sesión</string>
     <string name="no_account_question">¿No tienes cuenta? </string>
     <string name="register_link_text">Regístrate</string>
-
-    ---
+    <string name="success_login">¡Bienvenido de vuelta!</string>
 
     <string name="create_account_title">Crear Cuenta</string>
     <string name="register_subtitle">Únete a HabitJourney y comienza tu transformación.</string>
@@ -36,9 +33,9 @@
     <string name="password_hint_text">Mínimo 6 caracteres, debe contener al menos una letra.</string>
     <string name="terms_and_privacy_text">Al registrarte, aceptas nuestros Términos de Servicio y Política de Privacidad.</string>
     <string name="already_have_account_question">¿Ya tienes cuenta? </string>
-    <string name="login_here_link_text">Inicia sesión aquí</string> <string name="account_created_success">¡Cuenta creada exitosamente! Redirigiendo…</string>
-
-    ---
+    <string name="login_here_link_text">Inicia sesión aquí</string>
+    <string name="account_created_success">¡Cuenta creada exitosamente! Redirigiendo…</string>
+    <string name="success_register">¡Cuenta creada exitosamente!</string>
 
     <string name="error_email_empty">El email no puede estar vacío.</string>
     <string name="error_email_invalid_format">Formato de email inválido.</string>
@@ -52,8 +49,11 @@
     <string name="error_name_min_length">El nombre debe tener al menos 2 caracteres.</string>
     <string name="error_name_max_length">El nombre no puede exceder 50 caracteres.</string>
     <string name="error_name_invalid_format">El nombre solo puede contener letras y espacios.</string>
-
-    ---
+    <string name="error_marking_habit">Error al marcar hábito: %1$s</string>
+    <string name="error_saving_habit">Error al guardar hábito</string>
+    <string name="error_habit_name_empty">El nombre del hábito no puede estar vacío</string>
+    <string name="error_loading_habit_details">Error al cargar detalles del hábito</string>
+    <string name="error_user_not_logged_in">Usuario no autenticado. Por favor, inicie sesión.</string>
 
     <string name="content_description_email_icon">Icono de email.</string>
     <string name="content_description_lock_icon">Icono de candado.</string>
@@ -61,8 +61,19 @@
     <string name="content_description_confirm_password_icon">Icono de confirmar contraseña.</string>
     <string name="show_password_content_description">Mostrar contraseña.</string>
     <string name="hide_password_content_description">Ocultar contraseña.</string>
-
-    ---
+    <string name="content_description_leading_icon">Icono principal</string>
+    <string name="content_description_trailing_icon">Icono secundario</string>
+    <string name="content_description_info_icon">Icono de información</string>
+    <string name="content_description_warning_icon">Icono de advertencia</string>
+    <string name="content_description_error_icon">Icono de error</string>
+    <string name="content_description_success_icon">Icono de éxito</string>
+    <string name="content_description_confirmation_icon">Icono de confirmación</string>
+    <string name="content_description_add_icon">Icono de añadir</string>
+    <string name="content_description_close_icon">Icono de cerrar</string>
+    <string name="content_description_edit_icon">Icono de editar</string>
+    <string name="content_description_play_icon">Icono de reproducir</string>
+    <string name="content_description_go_to_details">Ir a detalles</string>
+    <string name="content_description_completed_habit">Hábito completado</string>
 
     <string name="nav_dashboard">Dashboard</string>
     <string name="nav_habits">Hábitos</string>
@@ -71,9 +82,6 @@
     <string name="nav_progress">Progreso</string>
     <string name="nav_achievements">Logros</string>
     <string name="nav_settings">Configuración</string>
-
-    ---
-
     <string name="action_save">Guardar</string>
     <string name="action_cancel">Cancelar</string>
     <string name="action_delete">Eliminar</string>
@@ -81,19 +89,10 @@
     <string name="action_back">Atrás</string>
     <string name="action_logout">Cerrar Sesión</string>
     <string name="action_refresh">Actualizar</string>
-
-    ---
+    <string name="action_ok">Aceptar</string> <string name="success_logout">Sesión cerrada exitosamente.</string>
 
     <string name="loading">Cargando…</string>
     <string name="processing">Procesando…</string>
-
-    ---
-
-    <string name="success_login">¡Bienvenido de vuelta!</string>
-    <string name="success_register">¡Cuenta creada exitosamente!</string>
-    <string name="success_logout">Sesión cerrada exitosamente.</string>
-
-    ---
 
     <string name="placeholder_dashboard_title">Dashboard</string>
     <string name="placeholder_habit_list_title">Lista de Hábitos</string>
@@ -102,5 +101,210 @@
     <string name="placeholder_progress_title">Progreso</string>
     <string name="placeholder_achievements_title">Logros</string>
     <string name="placeholder_settings_title">Configuración</string>
+
+    <string name="welcome_onboarding_title">Bienvenida</string>
+    <string name="welcome_onboarding_subtitle">¡Emprende tu viaje hacia hábitos saludables y un estilo de vida más pleno!</string>
+    <string name="value_prop_onboarding_title">Propuesta de Valor</string>
+    <string name="value_prop_onboarding_bullet1">Organiza tus hábitos y tareas diarias de forma sencilla.</string>
+    <string name="value_prop_onboarding_bullet2">Visualiza tu progreso y mantente motivado con rachas y logros.</string>
+    <string name="value_prop_onboarding_bullet3">Personaliza tus recordatorios para nunca perder el ritmo.</string>
+    <string name="onboarding_next_button">Siguiente</string>
+    <string name="onboarding_back_button">Atrás</string>
+    <string name="onboarding_skip_button">Omitir</string>
+
+    <string name="dashboard_greeting">Hola, %1$s!</string>
+    <string name="dashboard_level_xp">Nivel %1$d - %2$d XP</string>
+    <string name="dashboard_daily_summary_title">Resumen Diario</string>
+    <string name="dashboard_habits_progress">Hábitos: %1$d/%2$d</string>
+    <string name="dashboard_tasks_pending">Tareas Pendientes: %1$d</string>
+    <string name="dashboard_daily_habits_title">Hábitos Diarios</string>
+    <string name="dashboard_priority_tasks_title">Tareas Prioritarias</string>
+    <string name="dashboard_view_all_cta">Ver todas</string>
+    <string name="dashboard_streak_title">Racha Actual</string>
+    <string name="dashboard_productive_days_title">Días Productivos este mes</string>
+    <string name="dashboard_recent_achievements_title">Logros Recientes</string>
+    <string name="dashboard_add_new_fab_content_description">Añadir nuevo hábito, tarea o nota</string>
+
+    <string name="create_habit_title">Crear Hábito</string>
+    <string name="edit_habit_title">Editar Hábito</string>
+    <string name="habit_name_label">Nombre del Hábito</string>
+    <string name="habit_icon_selector_label">Icono del Hábito</string>
+    <string name="habit_category_label">Categoría</string>
+    <string name="habit_description_label">Descripción (Opcional)</string>
+    <string name="habit_daily_target_label">Meta Diaria (opcional)</string> <string name="habit_step1_title">Información Básica</string>
+    <string name="habit_step2_title">Configuración</string>
+    <string name="habit_type_label">Tipo de Hábito</string>
+    <string name="habit_type_yes_no">Sí/No</string>
+    <string name="habit_type_quantitative">Cuantitativo</string>
+    <string name="habit_type_timer">Temporizador</string>
+    <string name="habit_type_do_once">Una Sola Vez</string>
+    <string name="habit_goal_label">Meta</string>
+    <string name="habit_frequency_label">Frecuencia</string>
+    <string name="habit_frequency_daily">Diario</string>
+    <string name="habit_frequency_weekly">Semanal</string>
+    <string name="habit_frequency_custom">Personalizado</string>
+    <string name="habit_days_of_week_label">Días de la semana</string>
+    <string name="habit_frequency_days_label">Días de la Semana</string>
+    <string name="habit_step3_title">Recordatorios</string>
+    <string name="habit_enable_reminders_toggle">Habilitar recordatorios</string>
+    <string name="habit_add_time_label">Añadir hora</string>
+    <string name="habit_custom_message_label">Mensaje personalizado (Opcional)</string>
+    <string name="habit_repeat_label">Repetición</string>
+    <string name="habit_preview_title">Vista Previa</string>
+    <string name="select_habit_type">Seleccionar Tipo de Hábito</string>
+    <string name="select_habit_frequency">Seleccionar Frecuencia del Hábito</string>
+    <string name="select_frequency_days">Seleccionar Días</string>
+    <string name="weekday_monday">Lunes</string>
+    <string name="weekday_tuesday">Martes</string>
+    <string name="weekday_wednesday">Miércoles</string>
+    <string name="weekday_thursday">Jueves</string>
+    <string name="weekday_friday">Viernes</string>
+    <string name="weekday_saturday">Sábado</string>
+    <string name="weekday_sunday">Domingo</string>
+    <string name="habit_saved_success_title">¡Hábito Guardado!</string>
+    <string name="habit_saved_success_message">Tu hábito se ha guardado exitosamente.</string>
+
+    <string name="content_description_habit_name_icon">Icono de nombre del hábito</string>
+    <string name="content_description_habit_description_icon">Icono de descripción del hábito</string>
+    <string name="content_description_habit_type_selector">Selector de tipo de hábito</string>
+    <string name="content_description_habit_frequency_selector">Selector de frecuencia de hábito</string>
+    <string name="content_description_habit_daily_target_icon">Icono de meta diaria</string> <string name="content_description_habit_frequency_days_selector">Selecciona los días en que ocurrirá tu hábito</string>
+    <string name="content_description_habit_icon">Icono del hábito %1$s</string>
+
+
+    <string name="dialog_confirm_button_text">Confirmar</string>
+    <string name="dialog_cancel_button_text">Cancelar</string>
+    <string name="dialog_ok_button_text">Aceptar</string>
+    <string name="dialog_understood_button_text">Entendido</string>
+    <string name="dialog_great_button_text">Genial</string>
+    <string name="dialog_error_title">Error</string>
+    <string name="dialog_success_title">¡Éxito!</string>
+    <string name="dialog_confirmation_title">Confirmación</string>
+    <string name="dialog_delete_confirmation_message">¿Estás seguro de que quieres eliminar este elemento de forma permanente?</string>
+    <string name="dialog_info_title">Información</string>
+    <string name="dialog_info_message">Este es un mensaje informativo para el usuario.</string>
+    <string name="dialog_error_default_message">No se pudo completar la operación. Por favor, inténtalo de nuevo más tarde.</string>
+    <string name="dialog_success_default_message">Tu acción se ha realizado correctamente. ¡Bien hecho!</string>
+
+    <string name="fab_add_habit_text">Nuevo Hábito</string>
+    <string name="fab_edit_text">Editar</string>
+    <string name="content_description_add_habit_fab">Añadir nuevo hábito</string>
+    <string name="content_description_open_quick_action_fab">Abrir acciones rápidas</string>
+    <string name="content_description_close_quick_action_fab">Cerrar acciones rápidas</string>
+    <string name="content_description_start_habit_fab">Iniciar hábito</string>
+    <string name="content_description_edit_fab">Editar elemento</string>
+    <string name="content_description_add_default_fab">Botón de añadir</string>
+    <string name="content_description_add_small_fab">Botón pequeño de añadir</string>
+    <string name="content_description_add_large_fab">Botón grande de añadir</string>
+    <string name="specialized_fabs_title">FABs Especializados</string>
+    <string name="content_description_edit_habit_fab">Editar hábito</string>
+    <string name="fab_add_new_habit">Nuevo Hábito</string>
+
+    <string name="progress_default_label">Progreso</string>
+    <string name="progress_percentage_format">%1$d%%</string>
+    <string name="habit_streak_progress_label">Racha: %1$d / %2$d días</string>
+    <string name="weekly_goal_progress_label">%1$d/%2$d</string>
+    <string name="linear_progress_example_label">Hábitos completados hoy</string>
+    <string name="circular_progress_example_label_90">90%</string>
+    <string name="mini_progress_habit_label">Hábito %1$d</string>
+
+    <string name="item_task_title_1">Mi primera tarea del día</string>
+    <string name="item_task_subtitle_1">Fecha límite: 25 May</string>
+    <string name="content_description_task_icon">Icono de tarea</string>
+    <string name="item_task_title_2">Revisar email</string>
+    <string name="item_task_title_3">Comprar víveres</string>
+    <string name="item_task_title_disabled">Hábito Completado</string>
+    <string name="item_task_subtitle_disabled">Marcado el 24 de Mayo</string>
+    <string name="item_task_title_urgent">Tarea Urgente</string>
+    <string name="item_task_subtitle_urgent">Prioridad alta</string>
+    <string name="habit_card_water_title">Beber Agua</string>
+    <string name="habit_card_water_description">8 vasos al día para mantenerte hidratado y sano. ¡Vamos!</string>
+    <string name="content_description_water_habit_icon">Icono de hábito de beber agua</string>
+    <string name="habit_card_read_title">Leer 10min</string>
+    <string name="habit_card_read_description">Dedica un tiempo a la lectura cada día.</string>
+    <string name="content_description_read_habit_icon">Icono de hábito de lectura</string>
+
+    <string name="habit_list_screen_title">Mis Hábitos</string> <string name="habit_list_all_habits_title">Todos los Hábitos Activos</string> <string name="habit_list_no_all_habits">No se encontraron hábitos activos. ¡Crea uno!</string> <string name="habit_list_no_habits_today">¡No tienes hábitos programados para hoy! Tómate un descanso o crea uno nuevo.</string>
+    <string name="habit_completed_today">Completado hoy</string>
+    <string name="habit_list_show_today_only">Mostrar solo hábitos de hoy</string>
+    <string name="habit_list_today_habits_title">Hábitos de Hoy</string>
+
+    <string name="habit_detail_title">Detalles del Hábito</string>
+    <string name="habit_detail_section_info">Información General</string>
+    <string name="habit_detail_section_progress">Progreso</string>
+    <string name="habit_detail_section_history">Historial de Registros</string>
+    <string name="habit_detail_completion_rate">Completado: %1$d de %2$d</string>
+    <string name="habit_detail_no_history">No hay registros de este hábito aún.</string>
+    <string name="habit_start_date">Fecha de Inicio</string>
+    <string name="habit_end_date">Fecha de Fin</string>
+    <string name="log_status_completed">Completado</string>
+    <string name="log_status_skipped">Saltado</string>
+    <string name="log_status_pending">Pendiente</string>
+    <string name="log_status_missed">Perdido</string>
+
+    <string name="preview_today_habits_title">Hábitos de Hoy</string>
+    <string name="preview_water_habit_name">Beber Agua</string>
+    <string name="preview_water_habit_description">Beber 8 vasos de agua al día</string>
+    <string name="preview_read_habit_name">Leer un Libro</string>
+    <string name="preview_read_habit_description">Leer 20 páginas de un libro</string>
+    <string name="preview_all_habits_title">Todos los Hábitos</string>
+    <string name="preview_meditation_habit_name">Meditación Diaria</string>
+    <string name="preview_meditation_habit_description">10 minutos de atención plena</string>
+    <string name="content_description_meditation_habit_icon">Icono de hábito de meditación</string>
+
+    <!-- Error messages -->
+    <string name="error_loading_habit">Error al cargar el hábito</string>
+    <string name="error_daily_target_required">El objetivo diario es requerido para este tipo de hábito</string>
+    <string name="error_frequency_days_required">Los días de la semana son requeridos para esta frecuencia</string>
+
+    <!-- Labels for daily target -->
+    <string name="habit_daily_target_quantity_label">Objetivo diario (cantidad)</string>
+    <string name="habit_daily_target_time_label">Objetivo diario (minutos)</string>
+
+    <!-- Frequency options -->
+    <string name="frequency_daily">Diario</string>
+    <string name="frequency_weekly">Semanal</string>
+    <string name="frequency_custom">Personalizado</string>
+
+    <!-- Placeholder -->
+    <string name="select_days_placeholder">Seleccionar días</string>
+    <string name="content_description_completed">Completada!</string>
+    <string name="action_decrease">Bajar</string>
+    <string name="action_increase">Aumentar</string>
+    <string name="action_undo">Deshacer</string>
+    <string name="action_complete">Completar</string>
+    <string name="action_skip">Saltar</string>
+    <string name="error_updating_habit">Error al actualizar el hábito</string>
+    <string name="habit_progress_text">Progeso del hábito</string>
+    <string name="log_status_partial">Parcial</string>
+    <string name="action_undo_skip">Deshacer saltar</string>
+    <string name="content_description_skipped">Saltada</string>
+    <string name="habit_card_complete">Completada</string>
+    <string name="action_unarchive_habit">Desarchivar hábito</string>
+    <string name="action_archive_habit">Archivar hábito</string>
+    <string name="error_archiving_habit">Error al archivar el hábito</string>
+    <string name="log_status_not_completed">Sin completar</string>
+    <string name="action_confirm">Confirmar</string>
+    <string name="action_clear_date">Quitar fecha</string>
+    <string name="content_description_end_date_picker">Selector de fechas</string>
+    <string name="habit_end_date_label">Fecha de fin</string>
+    <string name="content_description_start_date_picker">Fecha de inicio</string>
+    <string name="habit_start_date_label">Fecha de inicio</string>
+    <string name="error_marking_habit_skipped">Error al marcar saltar</string>
+    <string name="error_updating_habit_progress">Errpr al actualixar el progreso</string>
+    <string name="error_processing_missed_habits">Error al procesar los hábitos perdidos</string>
+    <string name="content_description_missed">Perdida</string>
+    <string name="error_undoing_skip">Error al deshacer el salto</string>
+
+    <string name="habit_status_label">Estado</string>
+    <string name="habit_status_active">Activo</string>
+    <string name="habit_status_archived">Archivado</string>
+
+    <string name="habit_detail_today_progress">Progreso de hoy</string>
+    <string name="habit_detail_overall_progress">Progreso general</string>
+    <string name="status_completed">Completado</string>
+    <string name="status_partial">Parcial (%1$d)</string>
+    <string name="status_not_completed">No completado</string>
+    <string name="status_not_started">Sin iniciar</string>
 
 </resources>

@@ -9,17 +9,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable // Asegúrate de importar esto si lo usas en un @Composable
 import androidx.compose.ui.Modifier
-import com.alejandro.habitjourney.core.ui.theme.HabitJourneyTheme
+import com.alejandro.habitjourney.core.presentation.ui.theme.HabitJourneyTheme
 import com.alejandro.habitjourney.navigation.HabitJourneyApp // Importar HabitJourneyApp
 import dagger.hilt.android.AndroidEntryPoint
-import com.alejandro.habitjourney.core.ui.theme.HabitJourneyTheme
+import com.alejandro.habitjourney.core.presentation.ui.theme.HabitJourneyTheme
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        super.onCreate(savedInstanceState)
 
         setContent {
             HabitJourneyTheme {
@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    HabitJourneyApp() // Llama a tu composable principal
+                    HabitJourneyApp()
                 }
             }
         }
