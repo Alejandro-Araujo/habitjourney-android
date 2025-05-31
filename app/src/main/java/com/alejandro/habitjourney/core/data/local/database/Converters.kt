@@ -40,4 +40,21 @@ class Converters {
     fun epochDayToLocalDate(epochDay: Long): LocalDate =
         LocalDate.fromEpochDays(epochDay.toInt())
 
+
+    // ========== Priority Enum ==========
+    @TypeConverter
+    fun priorityToString(priority: com.alejandro.habitjourney.core.data.local.enums.Priority?): String? = priority?.name
+
+    @TypeConverter
+    fun stringToPriority(value: String?): com.alejandro.habitjourney.core.data.local.enums.Priority? =
+        value?.let { com.alejandro.habitjourney.core.data.local.enums.Priority.valueOf(it) }
+
+    // ========== LocalDateTime ==========
+    @TypeConverter
+    fun localDateTimeToString(dateTime: kotlinx.datetime.LocalDateTime?): String? = dateTime?.toString()
+
+    @TypeConverter
+    fun stringToLocalDateTime(value: String?): kotlinx.datetime.LocalDateTime? =
+        value?.let { kotlinx.datetime.LocalDateTime.parse(it) }
+
 }

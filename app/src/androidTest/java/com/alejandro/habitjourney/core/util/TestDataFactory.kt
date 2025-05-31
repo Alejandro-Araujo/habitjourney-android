@@ -86,8 +86,7 @@ object TestDataFactory {
             frequencyDays = frequencyDays,
             startDate = startDate,
             endDate = endDate,
-            isActive = isActive,
-            isDeleted = isDeleted,
+            isArchived = isDeleted,
             createdAt = createdAt
         )
     }
@@ -135,7 +134,7 @@ object TestDataFactory {
             dueDate = dueDate,
             priority = priority,
             isCompleted = isCompleted,
-            isDeleted = isDeleted,
+            isArchived = isDeleted,
             createdAt = createdAt
         )
     }

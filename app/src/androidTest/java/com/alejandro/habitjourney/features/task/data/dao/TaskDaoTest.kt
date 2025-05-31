@@ -11,6 +11,7 @@ import com.alejandro.habitjourney.features.user.data.local.dao.UserDao
 import kotlinx.coroutines.flow.first
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import org.junit.After
@@ -47,6 +48,7 @@ class TaskDaoTest {
         // Crear un usuario para las pruebas
         coroutineRule.runTest {
             val user = TestDataFactory.createUserEntity(
+                id = 1L,
                 name = "testuser",
                 email = "test@example.com"
             )
@@ -86,13 +88,14 @@ class TaskDaoTest {
         taskDao.update(updatedTask)
 
         // Then
-        val result = taskDao.getActiveTasksPaged(userId, 10, 0).first { it.id == taskId }
-        assertEquals("Updated Task", result.title)
+        val result = taskDao.getTaskById(taskId).first()
+        assertNotNull(result)
+        assertEquals("Updated Task", result!!.title)
         assertEquals("Updated description", result.description)
     }
 
     @Test
-    fun getActiveTasksPaged_returnsOnlyActiveTasks() = coroutineRule.runTest {
+    fun getActiveTasks_returnsOnlyActiveTasks() = coroutineRule.runTest {
         // Given
         // Insert active tasks
         val activeTasks = listOf(
@@ -106,18 +109,18 @@ class TaskDaoTest {
         val completedTask = createTestTask(title = "Completed Task", isCompleted = true)
         taskDao.insert(completedTask)
 
-        // Insert deleted task
-        val deletedTask = createTestTask(title = "Deleted Task", isDeleted = true)
-        taskDao.insert(deletedTask)
+        // Insert archived task
+        val archivedTask = createTestTask(title = "Archived Task", isArchived = true)
+        taskDao.insert(archivedTask)
 
         // When
-        val result = taskDao.getActiveTasksPaged(userId, 10, 0)
+        val result = taskDao.getActiveTasks(userId).first()
 
         // Then
         assertEquals(3, result.size)
         result.forEach { task ->
             assertFalse(task.isCompleted)
-            assertFalse(task.isDeleted)
+            assertFalse(task.isArchived)
         }
     }
 
@@ -139,49 +142,72 @@ class TaskDaoTest {
         )
         completedTasks.forEach { taskDao.insert(it) }
 
-        // Insert deleted task
-        val deletedTask = createTestTask(title = "Deleted Task", isDeleted = true)
-        taskDao.insert(deletedTask)
+        // Insert archived task
+        val archivedTask = createTestTask(title = "Archived Task", isArchived = true)
+        taskDao.insert(archivedTask)
 
         // When
-        val result = taskDao.getCompletedTasks(userId, true, 10, 0).first()
+        val result = taskDao.getCompletedTasks(userId).first()
 
         // Then
         assertEquals(3, result.size)
         result.forEach { task ->
             assertTrue(task.isCompleted)
-            assertFalse(task.isDeleted)
+            assertFalse(task.isArchived)
         }
     }
 
     @Test
-    fun getTasks_returnsAllNonDeletedTasks() = coroutineRule.runTest {
+    fun getArchivedTasks_returnsOnlyArchivedTasks() = coroutineRule.runTest {
         // Given
-        // Insert active tasks
         val activeTasks = listOf(
             createTestTask(title = "Active Task 1"),
             createTestTask(title = "Active Task 2")
         )
         activeTasks.forEach { taskDao.insert(it) }
 
-        // Insert completed tasks
+        val archivedTasks = listOf(
+            createTestTask(title = "Archived Task 1", isArchived = true),
+            createTestTask(title = "Archived Task 2", isArchived = true),
+            createTestTask(title = "Archived Task 3", isArchived = true, isCompleted = true)
+        )
+        archivedTasks.forEach { taskDao.insert(it) }
+
+        // When
+        val result = taskDao.getArchivedTasks(userId).first()
+
+        // Then
+        assertEquals(3, result.size)
+        result.forEach { task ->
+            assertTrue(task.isArchived)
+        }
+    }
+
+    @Test
+    fun getAllTasks_returnsAllNonArchivedTasks() = coroutineRule.runTest {
+        // Given
+        val activeTasks = listOf(
+            createTestTask(title = "Active Task 1"),
+            createTestTask(title = "Active Task 2")
+        )
+        activeTasks.forEach { taskDao.insert(it) }
+
         val completedTasks = listOf(
             createTestTask(title = "Completed Task 1", isCompleted = true),
             createTestTask(title = "Completed Task 2", isCompleted = true)
         )
         completedTasks.forEach { taskDao.insert(it) }
 
-        // Insert deleted task
-        val deletedTask = createTestTask(title = "Deleted Task", isDeleted = true)
-        taskDao.insert(deletedTask)
+        val archivedTask = createTestTask(title = "Archived Task", isArchived = true)
+        taskDao.insert(archivedTask)
 
         // When
-        val result = taskDao.getTasks(userId, 10, 0).first()
+        val result = taskDao.getAllTasks(userId).first()
 
         // Then
-        assertEquals(4, result.size)
+        assertEquals(4, result.size) // 2 active + 2 completed (no archived)
         result.forEach { task ->
-            assertFalse(task.isDeleted)
+            assertFalse(task.isArchived)
         }
     }
 
@@ -205,12 +231,63 @@ class TaskDaoTest {
         )
         taskDao.insert(completedOverdueTask)
 
+        val archivedOverdueTask = createTestTask(
+            title = "Archived Overdue Task",
+            dueDate = yesterday,
+            isArchived = true
+        )
+        taskDao.insert(archivedOverdueTask)
+
         // When
-        val result = taskDao.getOverdueTasks(userId, today, 10, 0).first()
+        val result = taskDao.getOverdueTasks(userId, today).first()
 
         // Then
         assertEquals(1, result.size)
         assertEquals("Overdue Task", result[0].title)
+    }
+
+    @Test
+    fun getTaskById_returnsTaskIncludingArchived() = coroutineRule.runTest {
+        // Given
+        val activeTask = createTestTask(title = "Active Task")
+        val activeTaskId = taskDao.insert(activeTask)
+
+        val archivedTask = createTestTask(title = "Archived Task", isArchived = true)
+        val archivedTaskId = taskDao.insert(archivedTask)
+
+        // When & Then - Active task
+        val activeResult = taskDao.getTaskById(activeTaskId).first()
+        assertNotNull(activeResult)
+        assertEquals("Active Task", activeResult!!.title)
+
+        // When & Then - Archived task (should be found now)
+        val archivedResult = taskDao.getTaskById(archivedTaskId).first()
+        assertNotNull(archivedResult)
+        assertEquals("Archived Task", archivedResult!!.title)
+        assertTrue(archivedResult.isArchived)
+    }
+
+    @Test
+    fun searchTasks_returnsMatchingTasks() = coroutineRule.runTest {
+        // Given
+        val tasks = listOf(
+            createTestTask(title = "Important meeting"),
+            createTestTask(title = "Buy groceries"),
+            createTestTask(title = "Important project", description = "Very important"),
+            createTestTask(title = "Regular task")
+        )
+        tasks.forEach { taskDao.insert(it) }
+
+        val archivedTask = createTestTask(title = "Important archived", isArchived = true)
+        taskDao.insert(archivedTask)
+
+        // When
+        val result = taskDao.searchTasks(userId, "important").first()
+
+        // Then
+        assertEquals(2, result.size) // No debe incluir la archivada
+        assertTrue(result.any { it.title.contains("Important meeting") })
+        assertTrue(result.any { it.title.contains("Important project") })
     }
 
     @Test
@@ -220,15 +297,47 @@ class TaskDaoTest {
         val taskId = taskDao.insert(task)
 
         // When
-        taskDao.setCompleted(taskId, true)
+        taskDao.setCompleted(taskId, true, today)
 
         // Then
-        val result = taskDao.getTasks(userId, 10, 0).first().first { it.id == taskId }
-        assertTrue(result.isCompleted)
+        val result = taskDao.getTaskById(taskId).first()
+        assertNotNull(result)
+        assertTrue(result!!.isCompleted)
+        assertEquals(today, result.completionDate)
     }
 
     @Test
-    fun deleteTask_marksTaskAsDeleted() = coroutineRule.runTest {
+    fun archiveTask_marksTaskAsArchived() = coroutineRule.runTest {
+        // Given
+        val task = createTestTask()
+        val taskId = taskDao.insert(task)
+
+        // When
+        taskDao.archiveTask(taskId)
+
+        // Then
+        val result = taskDao.getTaskById(taskId).first()
+        assertNotNull(result)
+        assertTrue(result!!.isArchived)
+    }
+
+    @Test
+    fun unarchiveTask_marksTaskAsNotArchived() = coroutineRule.runTest {
+        // Given
+        val task = createTestTask(isArchived = true)
+        val taskId = taskDao.insert(task)
+
+        // When
+        taskDao.unarchiveTask(taskId)
+
+        // Then
+        val result = taskDao.getTaskById(taskId).first()
+        assertNotNull(result)
+        assertFalse(result!!.isArchived)
+    }
+
+    @Test
+    fun deleteTask_removesTaskCompletely() = coroutineRule.runTest {
         // Given
         val task = createTestTask()
         val taskId = taskDao.insert(task)
@@ -237,27 +346,52 @@ class TaskDaoTest {
         taskDao.deleteTask(taskId)
 
         // Then
-        val allTasks = taskDao.getTasks(userId, 10, 0).first()
-        assertTrue(allTasks.none { it.id == taskId })
+        val result = taskDao.getTaskById(taskId).first()
+        assertNull(result) // La tarea debe estar completamente eliminada
     }
 
-    // Función auxiliar para crear una tarea de prueba usando TestDataFactory
+    @Test
+    fun insertTaskWithReminder_savesReminderCorrectly() = coroutineRule.runTest {
+        // Given
+        val reminderDateTime = LocalDateTime(today.year, today.month, today.dayOfMonth, 14, 30)
+        val task = createTestTask(
+            title = "Task with reminder",
+            reminderDateTime = reminderDateTime,
+            isReminderSet = true
+        )
+
+        // When
+        val taskId = taskDao.insert(task)
+
+        // Then
+        val result = taskDao.getTaskById(taskId).first()
+        assertNotNull(result)
+        assertTrue(result!!.isReminderSet)
+        assertEquals(reminderDateTime, result.reminderDateTime)
+    }
+
     private fun createTestTask(
         title: String = "Test Task",
-        description: String = "Test description",
+        description: String? = "Test description",
         dueDate: LocalDate? = today,
         priority: Priority? = Priority.MEDIUM,
         isCompleted: Boolean = false,
-        isDeleted: Boolean = false
+        isArchived: Boolean = false,
+        reminderDateTime: LocalDateTime? = null,
+        isReminderSet: Boolean = false
     ): TaskEntity {
-        return TestDataFactory.createTaskEntity(
+        return TaskEntity(
             userId = userId,
             title = title,
             description = description,
             dueDate = dueDate,
             priority = priority,
             isCompleted = isCompleted,
-            isDeleted = isDeleted
+            completionDate = if (isCompleted) today else null,
+            isArchived = isArchived,
+            createdAt = System.currentTimeMillis(),
+            reminderDateTime = reminderDateTime,
+            isReminderSet = isReminderSet
         )
     }
 }

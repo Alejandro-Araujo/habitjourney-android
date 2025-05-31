@@ -98,11 +98,11 @@ class HabitDaoTest {
         val habitId = habitDao.insertHabit(habit)
 
         // When
-        habitDao.deleteHabit(habitId)
+        habitDao.archiveHabit(habitId)
 
         // Then
         val result = habitDao.getHabitWithLogs(habitId).first()
-        assertTrue(result.habit.isDeleted)
+        assertTrue(result.habit.isArchived)
     }
 
     @Test
@@ -124,13 +124,12 @@ class HabitDaoTest {
 
         // When
         // CHANGE HERE: Collect the flow's first emitted value
-        val result = habitDao.getActiveHabitsPaged(userId, limit = 10, offset = 0).first()
+        val result = habitDao.getActiveHabitsForUser(userId).first()
 
         // Then
         assertEquals(5, result.size)
         result.forEach { habit ->
-            assertTrue(habit.isActive)
-            assertFalse(habit.isDeleted)
+            assertFalse(habit.isArchived)
         }
     }
 
@@ -209,7 +208,6 @@ class HabitDaoTest {
             frequencyDays = frequencyDays,
             startDate = today,
             endDate = null,
-            isActive = isActive,
             isDeleted = isDeleted
         )
     }

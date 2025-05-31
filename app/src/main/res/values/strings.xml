@@ -307,4 +307,139 @@
     <string name="status_not_completed">No completado</string>
     <string name="status_not_started">Sin iniciar</string>
 
+    <!-- Strings básicos de Task -->
+    <string name="tasks">Tareas</string>
+    <string name="create_task">Crear Tarea</string>
+    <string name="edit_task">Editar Tarea</string>
+    <string name="task_details">Detalles de Tarea</string>
+    <string name="update_task">Actualizar Tarea</string>
+    <string name="delete_task">Eliminar Tarea</string>
+    <string name="archive_task">Archivar Tarea</string>
+    <string name="unarchive_task">Desarchivar Tarea</string>
+
+    <!-- Formularios -->
+    <string name="task_title">Título de la tarea</string>
+    <string name="task_title_placeholder">Ingresa el título de la tarea</string>
+    <string name="task_description">Descripción</string>
+    <string name="task_description_placeholder">Describe la tarea (opcional)</string>
+    <string name="due_date">Fecha de vencimiento</string>
+    <string name="select_date">Seleccionar fecha</string>
+    <string name="clear_date">Limpiar fecha</string>
+
+    <!-- Prioridades -->
+    <string name="priority">Prioridad</string>
+    <string name="select_priority">Seleccionar prioridad</string>
+    <string name="priority_high">Alta</string>
+    <string name="priority_medium">Media</string>
+    <string name="priority_low">Baja</string>
+    <string name="no_priority">Sin prioridad</string>
+    <string name="clear_priority">Limpiar prioridad</string>
+
+    <!-- Recordatorios -->
+    <string name="reminder">Recordatorio</string>
+    <string name="select_reminder_time">Seleccionar hora</string>
+    <string name="clear_reminder">Limpiar recordatorio</string>
+
+    <!-- Filtros -->
+    <string name="filter_active">Activas</string>
+    <string name="filter_completed">Completadas</string>
+    <string name="filter_archived">Archivadas</string>
+    <string name="filter_overdue">Vencidas</string>
+
+    <!-- Estados vacíos -->
+    <string name="no_active_tasks">No hay tareas activas</string>
+    <string name="no_completed_tasks">No hay tareas completadas</string>
+    <string name="no_archived_tasks">No hay tareas archivadas</string>
+    <string name="no_overdue_tasks">No hay tareas vencidas</string>
+    <string name="no_active_tasks_subtitle">Crea tu primera tarea para empezar</string>
+    <string name="no_completed_tasks_subtitle">Las tareas completadas aparecerán aquí</string>
+    <string name="no_archived_tasks_subtitle">Las tareas archivadas aparecerán aquí</string>
+    <string name="no_overdue_tasks_subtitle">¡Genial! No tienes tareas vencidas</string>
+    <string name="create_first_task">Crear primera tarea</string>
+
+    <!-- Acciones -->
+    <string name="add_task">Añadir tarea</string>
+    <string name="search_tasks">Buscar tareas</string>
+    <string name="more_options">Más opciones</string>
+    <string name="navigate_back">Volver</string>
+    <string name="save">Guardar</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancelar</string>
+    <string name="delete">Eliminar</string>
+    <string name="archive">Archivar</string>
+    <string name="unarchive">Desarchivar</string>
+
+    <!-- Estados -->
+    <string name="task_overdue">Vencida</string>
+    <string name="description">Descripción</string>
+    <string name="dates">Fechas</string>
+    <string name="completion_date">Fecha de finalización</string>
+    <string name="created_date">Fecha de creación</string>
+    <string name="task_status">Estado de la tarea</string>
+    <string name="status">Estado</string>
+    <string name="active">Activa</string>
+    <string name="completed">Completada</string>
+    <string name="archived">Archivada</string>
+
+    <!-- Diálogos -->
+    <string name="delete_task_title">¿Eliminar tarea?</string>
+    <string name="delete_task_message">Esta acción no se puede deshacer.</string>
+    <string name="archive_task_title">¿Archivar tarea?</string>
+    <string name="archive_task_message">La tarea se moverá al archivo.</string>
+    <string name="unarchive_task_title">¿Desarchivar tarea?</string>
+    <string name="unarchive_task_message">La tarea se moverá a activas.</string>
+
+    <!-- DateTime picker strings -->
+    <string name="select_time">Seleccionar hora</string>
+    <string name="select_date_and_time">Seleccionar fecha y hora</string>
+
+    <!-- Debugging strings -->
+    <string name="error_creating_task">Error al crear la tarea</string>
+    <string name="task_created_successfully">Tarea creada exitosamente</string>
+    <string name="task_updated_successfully">Tarea actualizada exitosamente</string>
+    <string name="filter_all">Todas</string>
+    <string name="no_tasks">Todavía no has creado ninguna tarea :D</string>
+    <string name="no_tasks_subtitle">No se han creado tareas</string>
+
+    <!-- Filters -->
+    <string name="filter_by">Filtrar por</string>
+
+    <!-- Search -->
+    <string name="search_tasks_placeholder">Buscar tareas…</string>
+    <string name="close_search">Cerrar búsqueda</string>
+    <string name="clear_search">Limpiar</string>
+
+    <!-- Date/Time -->
+    <string name="date_label">Fecha</string>
+    <string name="time_label">Hora</string>
+
+    <!-- Permissions -->
+    <string name="permissions_needed">Permisos Necesarios</string>
+    <string name="permissions_reminder_description">Para que los recordatorios funcionen correctamente, necesitas habilitar:</string>
+    <string name="permission_exact_alarm">Alarmas exactas</string>
+    <string name="permission_notification">Permisos de notificación</string>
+    <string name="permission_notification_settings">Notificaciones habilitadas</string>
+    <string name="permission_exact_alarm_desc">Para programar recordatorios precisos</string>
+    <string name="permission_notification_desc">Para mostrar notificaciones</string>
+    <string name="permission_notification_settings_desc">Para que aparezcan las notificaciones</string>
+    <string name="go_to_settings">Ir a Configuración</string>
+
+    <!-- Notifications -->
+    <string name="task_reminders_channel">Recordatorios de Tareas</string>
+    <string name="task_reminders_channel_desc">Notificaciones para recordatorios de tareas</string>
+    <string name="task_reminder_title">Recordatorio de Tarea</string>
+    <string name="task_reminder_default">Recordatorio de tarea</string>
+    <string name="task_reminder_text">Recordatorio: %1$s a las %2$s</string>
+    <string name="complete_action">Completar</string>
+    <string name="task_completed">Tarea completada</string>
+    <string name="error_completing_task">Error al completar tarea</string>
+
+    <!-- Form validation -->
+    <string name="title_required">El título es obligatorio</string>
+    <string name="user_not_found">Usuario no encontrado</string>
+    <string name="permissions_needed_for_reminders">Se necesitan permisos para programar recordatorios</string>
+    <string name="task_saved_reminder_error">Tarea guardada, pero no se pudo programar el recordatorio: %1$s</string>
+    <string name="unknown_error">Error desconocido</string>
+
+
 </resources>

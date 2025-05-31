@@ -184,14 +184,72 @@ fun NavGraph(
         }
 
         // ==========================================
-        // TASK MANAGEMENT GRAPH
+        // TASK MANAGEMENT GRAPH - ACTUALIZADO
         // ==========================================
 
-        composable(Screen.TaskList.route) {
-            // TODO: Implementar TaskListScreen
-            PlaceholderScreen(
-                title = "Task List",
-                onNavigateBack = { navController.popBackStack() }
+        composable(Screen.TaskList.route) { backStackEntry ->
+            val viewModel = hiltViewModel<com.alejandro.habitjourney.features.task.presentation.viewmodel.TaskListViewModel>(backStackEntry)
+            com.alejandro.habitjourney.features.task.presentation.ui.TaskListScreen(
+                onNavigateToCreateTask = {
+                    navController.navigate(Screen.CreateTask.route)
+                },
+                onNavigateToEditTask = { taskId ->
+                    navController.navigate(Screen.EditTask.createRoute(taskId))
+                },
+                onNavigateToTaskDetail = { taskId ->
+                    navController.navigate(Screen.TaskDetail.createRoute(taskId))
+                },
+                viewModel = viewModel
+            )
+        }
+
+        composable(
+            route = Screen.TaskDetail.route,
+            arguments = listOf(
+                navArgument("taskId") {
+                    type = NavType.LongType
+                    defaultValue = -1L
+                }
+            )
+        ) { backStackEntry ->
+            val taskId = backStackEntry.arguments?.getLong("taskId") ?: -1L
+            val viewModel = hiltViewModel<com.alejandro.habitjourney.features.task.presentation.viewmodel.TaskDetailsViewModel>(backStackEntry)
+            com.alejandro.habitjourney.features.task.presentation.ui.TaskDetailsScreen(
+                taskId = taskId,
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToEdit = { idToEdit ->
+                    navController.navigate(Screen.EditTask.createRoute(idToEdit))
+                },
+                viewModel = viewModel
+            )
+        }
+
+        composable(Screen.CreateTask.route) { backStackEntry ->
+            val viewModel = hiltViewModel<com.alejandro.habitjourney.features.task.presentation.viewmodel.CreateEditTaskViewModel>(backStackEntry)
+            com.alejandro.habitjourney.features.task.presentation.ui.CreateEditTaskScreen(
+                taskId = null, // null para crear nueva tarea
+                isReadOnly = false,
+                onNavigateBack = { navController.popBackStack() },
+                viewModel = viewModel
+            )
+        }
+
+        composable(
+            route = Screen.EditTask.route,
+            arguments = listOf(
+                navArgument("taskId") {
+                    type = NavType.LongType
+                    defaultValue = -1L
+                }
+            )
+        ) { backStackEntry ->
+            val taskId = backStackEntry.arguments?.getLong("taskId") ?: -1L
+            val viewModel = hiltViewModel<com.alejandro.habitjourney.features.task.presentation.viewmodel.CreateEditTaskViewModel>(backStackEntry)
+            com.alejandro.habitjourney.features.task.presentation.ui.CreateEditTaskScreen(
+                taskId = taskId, // taskId para editar tarea existente
+                isReadOnly = false,
+                onNavigateBack = { navController.popBackStack() },
+                viewModel = viewModel
             )
         }
 

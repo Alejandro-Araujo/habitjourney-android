@@ -96,6 +96,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.accompanist.systemuicontroller)
+    implementation(libs.androidx.media3.common.ktx)
     debugImplementation(libs.mockk)
     androidTestImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.runner)
