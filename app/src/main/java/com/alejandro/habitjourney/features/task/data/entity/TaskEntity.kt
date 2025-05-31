@@ -8,18 +8,24 @@ import androidx.room.PrimaryKey
 import com.alejandro.habitjourney.core.data.local.enums.Priority
 import com.alejandro.habitjourney.features.user.data.local.entity.UserEntity
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 
 @Entity(
     tableName = "tasks",
-    foreignKeys = [ForeignKey(
-        entity = UserEntity::class,
-        parentColumns = ["id"],
-        childColumns = ["user_id"],
-        onDelete = ForeignKey.CASCADE)],
+    foreignKeys = [
+        ForeignKey(
+            entity = UserEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["user_id"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
     indices = [
-        Index("user_id"),
-        Index("is_completed"),
-        Index("due_date")
+        Index(value = ["user_id"]),
+        Index(value = ["due_date"]),
+        Index(value = ["is_completed"]),
+        Index(value = ["is_archived"]),
+        Index(value = ["priority"])
     ]
 )
 data class TaskEntity(
@@ -44,8 +50,18 @@ data class TaskEntity(
     @ColumnInfo(name = "is_completed")
     val isCompleted: Boolean = false,
 
-    @ColumnInfo(name = "is_deleted")
-    val isDeleted: Boolean = false,
+    @ColumnInfo(name = "completion_date")
+    val completionDate: LocalDate? = null,
 
-    @ColumnInfo(name = "created_at") val createdAt: Long = System.currentTimeMillis()
+    @ColumnInfo(name = "is_archived")
+    val isArchived: Boolean = false,
+
+    @ColumnInfo(name = "created_at")
+    val createdAt: Long,
+
+    @ColumnInfo(name = "reminder_date_time")
+    val reminderDateTime: LocalDateTime? = null,
+
+    @ColumnInfo(name = "is_reminder_set")
+    val isReminderSet: Boolean = false
 )

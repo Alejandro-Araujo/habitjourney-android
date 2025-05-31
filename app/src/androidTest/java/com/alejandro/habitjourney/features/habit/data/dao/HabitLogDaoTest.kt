@@ -98,7 +98,7 @@ class HabitLogDaoTest {
         )
 
         // When
-        habitLogDao.insertLogs(logs)
+        habitLogDao.insertMultipleLogs(logs)
 
         // Then
         val startDate = today.minus(DatePeriod(days = 3))
@@ -115,7 +115,7 @@ class HabitLogDaoTest {
             createTestLog(date = today.minus(DatePeriod(days = 2))),
             createTestLog(date = today.minus(DatePeriod(days = 10)))
         )
-        habitLogDao.insertLogs(logs)
+        habitLogDao.insertMultipleLogs(logs)
 
         // When
         val startDate = today.minus(DatePeriod(days = 3))
@@ -137,7 +137,7 @@ class HabitLogDaoTest {
             createTestLog(date = today.minus(DatePeriod(days = 2))),
             createTestLog(date = today.plus(DatePeriod(days = 1))) // Futuro, no debería incluirse
         )
-        habitLogDao.insertLogs(logs)
+        habitLogDao.insertMultipleLogs(logs)
 
         // When
         val result = habitLogDao.getLogsForStreakCalculation(habitId, today)
@@ -159,7 +159,7 @@ class HabitLogDaoTest {
             createTestLog(date = today.minus(DatePeriod(days = 2)), status = LogStatus.SKIPPED),
             createTestLog(date = today.minus(DatePeriod(days = 3)), status = LogStatus.MISSED)
         )
-        habitLogDao.insertLogs(logs)
+        habitLogDao.insertMultipleLogs(logs)
 
         // When
         val startDate = today.minus(DatePeriod(days = 3))

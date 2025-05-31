@@ -9,6 +9,8 @@ import com.alejandro.habitjourney.core.data.remote.interceptor.AuthInterceptor
 import com.alejandro.habitjourney.core.data.remote.interceptor.ErrorInterceptor
 import com.alejandro.habitjourney.core.data.remote.interceptor.NetworkConnectionInterceptor
 import com.alejandro.habitjourney.core.data.remote.network.RetrofitClient
+import com.alejandro.habitjourney.core.utils.resources.ResourceProvider
+import com.alejandro.habitjourney.core.utils.resources.ResourceProviderImpl
 import com.alejandro.habitjourney.features.achievement.data.dao.AchievementDefinitionDao
 import com.alejandro.habitjourney.features.achievement.data.dao.UserAchievementDao
 import com.alejandro.habitjourney.features.habit.data.dao.HabitDao
@@ -53,9 +55,16 @@ object AppModule {
             AppDatabase::class.java,
             "habitjourney_db"
         )
-            .addMigrations(AppDatabase.MIGRATION_1_2)
+            .fallbackToDestructiveMigration(true)
             .build()
     }
+
+    @Provides
+    @Singleton
+    fun provideResourceProvider(
+        @ApplicationContext context: Context
+    ): ResourceProvider = ResourceProviderImpl(context)
+
 
     @Provides
     @Singleton

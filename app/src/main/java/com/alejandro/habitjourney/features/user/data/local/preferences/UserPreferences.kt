@@ -68,6 +68,10 @@ class UserPreferences @Inject constructor(
         return userIdFlow.first()
     }
 
+    fun getCurrentUserId(): Flow<Long?> {
+        return userIdFlow
+    }
+
     suspend fun clear() {
         // Limpiar DataStore
         context.dataStore.edit { preferences ->

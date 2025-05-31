@@ -26,8 +26,15 @@ sealed class Screen(val route: String) {
         }
     }
 
-    // Task Routes
+    // Task Routes - NUEVAS RUTAS AÑADIDAS
     data object TaskList : Screen("task_list")
+    data object TaskDetail : Screen("task_detail/{taskId}") {
+        fun createRoute(taskId: Long) = "task_detail/$taskId"
+    }
+    data object CreateTask : Screen("create_task")
+    data object EditTask : Screen("edit_task/{taskId}") {
+        fun createRoute(taskId: Long) = "edit_task/$taskId"
+    }
 
     // Note Routes
     data object NoteList : Screen("note_list")
@@ -54,6 +61,9 @@ object NavigationRoutes {
         Screen.HabitDetail.route,
         Screen.CreateEditHabit.route,
         Screen.TaskList.route,
+        Screen.TaskDetail.route,
+        Screen.CreateTask.route,
+        Screen.EditTask.route,
         Screen.NoteList.route,
         Screen.Achievements.route,
         Screen.Settings.route,

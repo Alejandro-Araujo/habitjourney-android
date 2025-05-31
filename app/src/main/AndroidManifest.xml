@@ -4,6 +4,15 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Permisos para recordatorios -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- Permiso para alarmas inexactas (fallback) -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <application
         android:name=".HabitJourneyApplication"
         android:allowBackup="true"
@@ -26,6 +35,33 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <receiver
+            android:name=".features.task.data.local.ReminderReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.alejandro.habitjourney.TASK_REMINDER" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".features.task.data.local.TaskActionReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
+        <!-- Receiver para reactivar alarmas después de reiniciar el dispositivo -->
+        <receiver
+            android:name=".features.task.data.local.BootReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter android:priority="1000">
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.PACKAGE_REPLACED" />
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
