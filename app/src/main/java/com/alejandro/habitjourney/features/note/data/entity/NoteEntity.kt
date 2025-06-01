@@ -7,14 +7,23 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.alejandro.habitjourney.features.user.data.local.entity.UserEntity
 
+
 @Entity(
     tableName = "notes",
-    foreignKeys = [ForeignKey(
-        entity = UserEntity::class,
-        parentColumns = ["id"],
-        childColumns = ["user_id"],
-        onDelete = ForeignKey.CASCADE)],
-    indices = [Index("user_id")]
+    foreignKeys = [
+        ForeignKey(
+            entity = UserEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["user_id"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
+    indices = [
+        Index(value = ["user_id"]),
+        Index(value = ["is_archived"]),
+        Index(value = ["created_at"]),
+        Index(value = ["updated_at"])
+    ]
 )
 data class NoteEntity(
     @PrimaryKey(autoGenerate = true)
@@ -29,12 +38,25 @@ data class NoteEntity(
     @ColumnInfo(name = "content")
     val content: String,
 
+    @ColumnInfo(name = "note_type")
+    val noteType: String = "TEXT",
+
+    @ColumnInfo(name = "list_items")
+    val listItems: String? = null,
+
     @ColumnInfo(name = "is_archived")
     val isArchived: Boolean = false,
 
-    @ColumnInfo(name = "is_deleted")
-    val isDeleted: Boolean = false,
-
     @ColumnInfo(name = "created_at")
-    val createdAt: Long = System.currentTimeMillis()
+    val createdAt: Long,
+
+    @ColumnInfo(name = "updated_at")
+    val updatedAt: Long,
+
+    @ColumnInfo(name = "word_count")
+    val wordCount: Int = 0,
+
+    @ColumnInfo(name = "is_favorite")
+    val isFavorite: Boolean = false
 )
+

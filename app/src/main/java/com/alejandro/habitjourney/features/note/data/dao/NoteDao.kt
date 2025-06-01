@@ -2,6 +2,7 @@ package com.alejandro.habitjourney.features.note.data.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.alejandro.habitjourney.features.note.data.entity.NoteEntity
@@ -9,49 +10,78 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NoteDao {
-    // Insertar nota
-    @Insert
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(note: NoteEntity): Long
 
-    // Actualizar nota
     @Update
     suspend fun update(note: NoteEntity)
 
-    // Eliminar nota (soft delete)
-    @Query("UPDATE notes SET is_deleted = 1 WHERE id = :noteId")
-    suspend fun deleteNote(noteId: Long)
+    @Query("SELECT * FROM notes WHERE id = :noteId")
+    fun getNoteById(noteId: Long): Flow<NoteEntity?>
 
-    // Obtener notas activas del usuario
+    // Notas activas (no archivadas)
     @Query("""
         SELECT * FROM notes 
         WHERE user_id = :userId 
         AND is_archived = 0 
-        AND is_deleted = 0
-        ORDER BY created_at DESC
-        LIMIT :limit OFFSET :offset
+        ORDER BY updated_at DESC
     """)
-    suspend fun getActiveNotesPaged(userId: Long, limit: Int, offset: Int): List<NoteEntity>
+    fun getActiveNotes(userId: Long): Flow<List<NoteEntity>>
 
-
-    @Query("UPDATE notes SET is_archived = :archived WHERE id = :noteId")
-    suspend fun archiveNote(noteId: Long, archived: Boolean)
-
-    // Buscar nota por título o contenido
+    // Todas las notas (incluye archivadas)
     @Query("""
         SELECT * FROM notes 
         WHERE user_id = :userId 
-        AND is_deleted = 0 
-        AND (title LIKE '%' || :query || '%' OR content LIKE '%' || :query || '%')
-        ORDER BY created_at DESC
+        ORDER BY updated_at DESC
     """)
-    fun searchNotes(userId: Long, query: String): Flow<List<NoteEntity>>
+    fun getAllNotes(userId: Long): Flow<List<NoteEntity>>
 
-    // Contar notas activas
+    // Notas archivadas
     @Query("""
-        SELECT COUNT(*) FROM notes
-        WHERE user_id = :userId
-        AND is_archived = 0
-        AND is_deleted = 0
+        SELECT * FROM notes 
+        WHERE user_id = :userId 
+        AND is_archived = 1 
+        ORDER BY updated_at DESC
     """)
-    suspend fun countActiveNotes(userId: Long): Int
+    fun getArchivedNotes(userId: Long): Flow<List<NoteEntity>>
+
+    // Notas favoritas
+    @Query("""
+        SELECT * FROM notes 
+        WHERE user_id = :userId 
+        AND is_favorite = 1 
+        AND is_archived = 0 
+        ORDER BY updated_at DESC
+    """)
+    fun getFavoriteNotes(userId: Long): Flow<List<NoteEntity>>
+
+    // Búsqueda
+    @Query("""
+        SELECT * FROM notes 
+        WHERE user_id = :userId 
+        AND is_archived = 0 
+        AND (title LIKE '%' || :searchQuery || '%' OR content LIKE '%' || :searchQuery || '%')
+        ORDER BY updated_at DESC
+    """)
+    fun searchNotes(userId: Long, searchQuery: String): Flow<List<NoteEntity>>
+
+    // Archivar/desarchivar
+    @Query("UPDATE notes SET is_archived = :isArchived WHERE id = :noteId")
+    suspend fun archiveNote(noteId: Long, isArchived: Boolean)
+
+    // Marcar/desmarcar favorito
+    @Query("UPDATE notes SET is_favorite = :isFavorite WHERE id = :noteId")
+    suspend fun setFavorite(noteId: Long, isFavorite: Boolean)
+
+    // Eliminar permanentemente
+    @Query("DELETE FROM notes WHERE id = :noteId")
+    suspend fun deleteNote(noteId: Long)
+
+    // Estadísticas
+    @Query("SELECT COUNT(*) FROM notes WHERE user_id = :userId AND is_archived = 0")
+    suspend fun getActiveNotesCount(userId: Long): Int
+
+    @Query("SELECT SUM(word_count) FROM notes WHERE user_id = :userId AND is_archived = 0")
+    suspend fun getTotalWordCount(userId: Long): Int?
 }

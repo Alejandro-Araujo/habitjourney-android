@@ -36,7 +36,7 @@ import com.alejandro.habitjourney.features.user.data.local.entity.UserEntity
         UserAchievementEntity::class,
         RewardEntity::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

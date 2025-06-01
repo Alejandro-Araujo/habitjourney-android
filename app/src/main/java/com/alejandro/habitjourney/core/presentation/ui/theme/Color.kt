@@ -1,5 +1,6 @@
 package com.alejandro.habitjourney.core.presentation.ui.theme
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.Color
 
 // Colores Primarios (de tu guía de estilo)
@@ -45,3 +46,6 @@ val OnError = Color.White // Texto sobre el color de error
 // Colores específicos de tu guía que puedes usar directamente si no encajan en la paleta M3 estándar
 val Gold = Logro
 val Purple = Premium
+
+val ListCompletedItem = AcentoPositivo.copy(alpha = 0.6f)
+val NoteTypeIndicator = AcentoInformativo

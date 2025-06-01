@@ -15,13 +15,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.StickyNote2
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.StickyNote2
+import androidx.compose.material.icons.filled.Task
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
+import com.alejandro.habitjourney.core.presentation.ui.components.HabitJourneyButton
+import com.alejandro.habitjourney.core.presentation.ui.components.HabitJourneyButtonType
+import com.alejandro.habitjourney.core.presentation.ui.theme.Dimensions
 import com.alejandro.habitjourney.features.habit.presentation.ui.CreateEditHabitScreen
 import com.alejandro.habitjourney.features.habit.presentation.ui.HabitDetailScreen
 import com.alejandro.habitjourney.features.habit.presentation.ui.HabitListScreen
@@ -112,10 +121,12 @@ fun NavGraph(
 
             // Placeholder temporal
             PlaceholderScreen(
-                title = "Dashboard",
+                title = "HabitJourney Dashboard",
                 onNavigateToHabits = { navController.navigate(Screen.HabitList.route) },
+                onNavigateToTasks = { navController.navigate(Screen.TaskList.route) },
+                onNavigateToNotes = { navController.navigate(Screen.NoteList.route) },
                 onLogout = {
-                    authViewModel.logout() // Llamar a logout del AuthViewModel
+                    authViewModel.logout()
                     navController.navigate(Screen.Login.route) {
                         popUpTo(0) { inclusive = true }
                     }
@@ -172,7 +183,6 @@ fun NavGraph(
             )
         ) { backStackEntry ->
             val habitId = backStackEntry.arguments?.getLong("habitId")
-            // Si el habitId es -1L, es una creación. Si es otro valor, es edición.
             val isEditing = habitId != null && habitId != -1L
 
             val viewModel = hiltViewModel<CreateEditHabitViewModel>(backStackEntry)
@@ -184,12 +194,12 @@ fun NavGraph(
         }
 
         // ==========================================
-        // TASK MANAGEMENT GRAPH - ACTUALIZADO
+        // TASK MANAGEMENT GRAPH
         // ==========================================
 
         composable(Screen.TaskList.route) { backStackEntry ->
             val viewModel = hiltViewModel<com.alejandro.habitjourney.features.task.presentation.viewmodel.TaskListViewModel>(backStackEntry)
-            com.alejandro.habitjourney.features.task.presentation.ui.TaskListScreen(
+            com.alejandro.habitjourney.features.task.presentation.screen.TaskListScreen(
                 onNavigateToCreateTask = {
                     navController.navigate(Screen.CreateTask.route)
                 },
@@ -214,7 +224,7 @@ fun NavGraph(
         ) { backStackEntry ->
             val taskId = backStackEntry.arguments?.getLong("taskId") ?: -1L
             val viewModel = hiltViewModel<com.alejandro.habitjourney.features.task.presentation.viewmodel.TaskDetailsViewModel>(backStackEntry)
-            com.alejandro.habitjourney.features.task.presentation.ui.TaskDetailsScreen(
+            com.alejandro.habitjourney.features.task.presentation.screen.TaskDetailsScreen(
                 taskId = taskId,
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToEdit = { idToEdit ->
@@ -226,7 +236,7 @@ fun NavGraph(
 
         composable(Screen.CreateTask.route) { backStackEntry ->
             val viewModel = hiltViewModel<com.alejandro.habitjourney.features.task.presentation.viewmodel.CreateEditTaskViewModel>(backStackEntry)
-            com.alejandro.habitjourney.features.task.presentation.ui.CreateEditTaskScreen(
+            com.alejandro.habitjourney.features.task.presentation.screen.CreateEditTaskScreen(
                 taskId = null, // null para crear nueva tarea
                 isReadOnly = false,
                 onNavigateBack = { navController.popBackStack() },
@@ -245,7 +255,7 @@ fun NavGraph(
         ) { backStackEntry ->
             val taskId = backStackEntry.arguments?.getLong("taskId") ?: -1L
             val viewModel = hiltViewModel<com.alejandro.habitjourney.features.task.presentation.viewmodel.CreateEditTaskViewModel>(backStackEntry)
-            com.alejandro.habitjourney.features.task.presentation.ui.CreateEditTaskScreen(
+            com.alejandro.habitjourney.features.task.presentation.screen.CreateEditTaskScreen(
                 taskId = taskId, // taskId para editar tarea existente
                 isReadOnly = false,
                 onNavigateBack = { navController.popBackStack() },
@@ -257,11 +267,45 @@ fun NavGraph(
         // NOTE MANAGEMENT GRAPH
         // ==========================================
 
-        composable(Screen.NoteList.route) {
-            // TODO: Implementar NoteListScreen
-            PlaceholderScreen(
-                title = "Note List",
-                onNavigateBack = { navController.popBackStack() }
+        composable(Screen.NoteList.route) { backStackEntry ->
+            val viewModel = hiltViewModel<com.alejandro.habitjourney.features.note.presentation.viewmodel.NoteListViewModel>(backStackEntry)
+            com.alejandro.habitjourney.features.note.presentation.screen.NoteListScreen(
+                onNavigateToCreateNote = {
+                    navController.navigate(Screen.CreateNote.route)
+                },
+                onNavigateToEditNote = { noteId ->
+                    navController.navigate(Screen.EditNote.createRoute(noteId))
+                },
+                viewModel = viewModel
+            )
+        }
+
+        composable(Screen.CreateNote.route) { backStackEntry ->
+            val viewModel = hiltViewModel<com.alejandro.habitjourney.features.note.presentation.viewmodel.CreateEditNoteViewModel>(backStackEntry)
+            com.alejandro.habitjourney.features.note.presentation.screen.CreateEditNoteScreen(
+                noteId = null,
+                isReadOnly = false,
+                onNavigateBack = { navController.popBackStack() },
+                viewModel = viewModel
+            )
+        }
+
+        composable(
+            route = Screen.EditNote.route,
+            arguments = listOf(
+                navArgument("noteId") {
+                    type = NavType.LongType
+                    defaultValue = -1L
+                }
+            )
+        ) { backStackEntry ->
+            val noteId = backStackEntry.arguments?.getLong("noteId") ?: -1L
+            val viewModel = hiltViewModel<com.alejandro.habitjourney.features.note.presentation.viewmodel.CreateEditNoteViewModel>(backStackEntry)
+            com.alejandro.habitjourney.features.note.presentation.screen.CreateEditNoteScreen(
+                noteId = noteId,
+                isReadOnly = false,
+                onNavigateBack = { navController.popBackStack() },
+                viewModel = viewModel
             )
         }
 
@@ -311,6 +355,8 @@ private fun PlaceholderScreen(
     title: String,
     onNavigateBack: (() -> Unit)? = null,
     onNavigateToHabits: (() -> Unit)? = null,
+    onNavigateToTasks: (() -> Unit)? = null,
+    onNavigateToNotes: (() -> Unit)? = null,
     onLogout: (() -> Unit)? = null
 ) {
     Column(
@@ -326,30 +372,57 @@ private fun PlaceholderScreen(
         )
 
         if (onNavigateBack != null) {
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = onNavigateBack
-            ) {
-                Text("Back")
-            }
+            Spacer(modifier = Modifier.height(Dimensions.SpacingLarge))
+            HabitJourneyButton(
+                text = "Volver",
+                onClick = onNavigateBack,
+                type = HabitJourneyButtonType.SECONDARY,
+                modifier = Modifier.fillMaxWidth(0.6f)
+            )
         }
 
         if (onNavigateToHabits != null) {
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = onNavigateToHabits
-            ) {
-                Text("Go to Habits")
-            }
+            HabitJourneyButton(
+                text = "Hábitos",
+                onClick = onNavigateToHabits,
+                type = HabitJourneyButtonType.PRIMARY,
+                leadingIcon = Icons.Default.CheckCircle,
+                modifier = Modifier.fillMaxWidth(0.8f)
+            )
+            Spacer(modifier = Modifier.height(Dimensions.SpacingMedium))
         }
 
+        if (onNavigateToTasks != null) {
+            HabitJourneyButton(
+                text = "Tareas",
+                onClick = onNavigateToTasks,
+                type = HabitJourneyButtonType.PRIMARY,
+                leadingIcon = Icons.Default.Task,
+                modifier = Modifier.fillMaxWidth(0.8f)
+            )
+            Spacer(modifier = Modifier.height(Dimensions.SpacingMedium))
+        }
+
+        if (onNavigateToNotes != null) {
+            HabitJourneyButton(
+                text = "Notas",
+                onClick = onNavigateToNotes,
+                type = HabitJourneyButtonType.PRIMARY,
+                leadingIcon = Icons.AutoMirrored.Filled.StickyNote2,
+                modifier = Modifier.fillMaxWidth(0.8f)
+            )
+            Spacer(modifier = Modifier.height(Dimensions.SpacingMedium))
+        }
+
+
         if (onLogout != null) {
-            Spacer(modifier = Modifier.height(16.dp))
-            OutlinedButton(
-                onClick = onLogout
-            ) {
-                Text("Logout")
-            }
+            Spacer(modifier = Modifier.height(Dimensions.SpacingLarge))
+            HabitJourneyButton(
+                text = "Cerrar Sesión",
+                onClick = onLogout,
+                type = HabitJourneyButtonType.TERTIARY,
+                modifier = Modifier.fillMaxWidth(0.6f)
+            )
         }
     }
 }

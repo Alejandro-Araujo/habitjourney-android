@@ -38,6 +38,10 @@ sealed class Screen(val route: String) {
 
     // Note Routes
     data object NoteList : Screen("note_list")
+    data object CreateNote : Screen("create_note")
+    data object EditNote : Screen("edit_note/{noteId}") {
+        fun createRoute(noteId: Long) = "edit_note/$noteId"
+    }
 
     // Achievement Routes
     data object Achievements : Screen("achievements")
@@ -65,6 +69,8 @@ object NavigationRoutes {
         Screen.CreateTask.route,
         Screen.EditTask.route,
         Screen.NoteList.route,
+        Screen.CreateNote.route,
+        Screen.EditNote.route,
         Screen.Achievements.route,
         Screen.Settings.route,
         Screen.Progress.route

@@ -4,6 +4,8 @@ import androidx.compose.ui.unit.dp
 
 object Dimensions {
 
+
+
     // Espaciado
     val SpacingSmall = 8.dp
     val SpacingMedium = 16.dp
@@ -37,4 +39,21 @@ object Dimensions {
     val IconSizeCardList = 40.dp
 
     val FabBottomPadding = 80.dp
+
+    val NoteCardMinHeight = 120.dp
+    val NoteCardMaxHeight = 200.dp
+    val ListItemIndentSize = 16.dp
+    val ListItemMinHeight = 48.dp
+    val NoteEditorMinHeight = 200.dp
+    val ProgressBarHeight = 4.dp
+
+    const val ListPreviewMaxItems = 3
+    const val NotePreviewMaxLines= 3
+    const val StateFlowTimeout = 5000L
+    const val WordCountDebounceMs = 300L
+    const val MaxIndentLevel = 3
+    const val AutoSaveDelayMs = 2000L
+
+    val ListItemDragElevation = 8.dp
+    val ListItemDragCornerRadius = 12.dp
 }
