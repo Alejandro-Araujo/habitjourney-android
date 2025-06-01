@@ -41,7 +41,6 @@ fun HabitJourneyButton(
     isLoading: Boolean = false,
     leadingIcon: ImageVector? = null,
     trailingIcon: ImageVector? = null,
-    // Nuevo parámetro para la descripción de contenido de los iconos
     iconContentDescription: String? = null
 ) {
     val buttonContent: @Composable () -> Unit = {

@@ -70,10 +70,11 @@ object TestDataFactory {
         type: HabitType = HabitType.DO,
         frequency: String = "daily",
         frequencyDays: List<Weekday>? = null,
+        dailyTarget: Int? = null, // ¡Añadido!
         startDate: LocalDate? = TODAY,
         endDate: LocalDate? = null,
-        isActive: Boolean = true,
-        isDeleted: Boolean = false,
+        // isActive: Boolean = true, // ¡Eliminado!
+        isArchived: Boolean = false, // ¡Renombrado de isDeleted a isArchived!
         createdAt: Long = TEST_TIMESTAMP
     ): HabitEntity {
         return HabitEntity(
@@ -84,9 +85,11 @@ object TestDataFactory {
             type = type,
             frequency = frequency,
             frequencyDays = frequencyDays,
+            dailyTarget = dailyTarget, // ¡Añadido!
             startDate = startDate,
             endDate = endDate,
-            isArchived = isDeleted,
+            // isActive = isActive, // ¡Eliminado!
+            isArchived = isArchived, // ¡Renombrado!
             createdAt = createdAt
         )
     }
@@ -123,7 +126,7 @@ object TestDataFactory {
         dueDate: LocalDate? = TODAY,
         priority: Priority? = null,
         isCompleted: Boolean = false,
-        isDeleted: Boolean = false,
+        isDeleted: Boolean = false, // Asumo que `isDeleted` para TaskEntity sigue siendo `isDeleted` y no `isArchived`
         createdAt: Long = TEST_TIMESTAMP
     ): TaskEntity {
         return TaskEntity(
@@ -134,7 +137,7 @@ object TestDataFactory {
             dueDate = dueDate,
             priority = priority,
             isCompleted = isCompleted,
-            isArchived = isDeleted,
+            isArchived = isDeleted, // Aquí también asumo que `isArchived` en TaskEntity corresponde a `isDeleted` del parámetro
             createdAt = createdAt
         )
     }
@@ -147,18 +150,26 @@ object TestDataFactory {
         id: Long = 0,
         title: String = "Test Note ${System.currentTimeMillis()}",
         content: String = "Test note content",
+        noteType: String = "TEXT", // ¡Añadido! Valor por defecto
+        listItems: String? = null, // ¡Añadido! Valor por defecto
         isArchived: Boolean = false,
-        isDeleted: Boolean = false,
-        createdAt: Long = TEST_TIMESTAMP
+        createdAt: Long = TEST_TIMESTAMP,
+        updatedAt: Long = TEST_TIMESTAMP, // ¡Añadido! Valor por defecto
+        wordCount: Int = 0, // ¡Añadido! Valor por defecto
+        isFavorite: Boolean = false // ¡Añadido! Valor por defecto
     ): NoteEntity {
         return NoteEntity(
             id = id,
             userId = userId,
             title = title,
             content = content,
+            noteType = noteType, // ¡Añadido!
+            listItems = listItems, // ¡Añadido!
             isArchived = isArchived,
-            isDeleted = isDeleted,
-            createdAt = createdAt
+            createdAt = createdAt,
+            updatedAt = updatedAt, // ¡Añadido!
+            wordCount = wordCount, // ¡Añadido!
+            isFavorite = isFavorite // ¡Añadido!
         )
     }
 
@@ -192,7 +203,6 @@ object TestDataFactory {
         totalXp: Int = 0,
         currentStreak: Int = 0,
         longestStreak: Int = 0
-
     ): ProgressEntity {
         return ProgressEntity(
             userId = userId,

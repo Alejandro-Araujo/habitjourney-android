@@ -1,4 +1,4 @@
-package com.alejandro.habitjourney.features.task.presentation.ui
+package com.alejandro.habitjourney.features.task.presentation.screen
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn

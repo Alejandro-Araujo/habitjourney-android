@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
+    kotlin("plugin.serialization")
 }
 
 android {
@@ -25,6 +26,7 @@ android {
         resources.excludes.add("META-INF/LICENSE-notice.md")
         resources.excludes.add("META-INF/licenses/**")
         resources.excludes.add("/META-INF/{AL2.0,LGPL2.1}")
+        resources.excludes.add("META-INF/versions/9/OSGI-INF/MANIFEST.MF")
     }
 
     buildFeatures {
@@ -97,6 +99,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.androidx.media3.common.ktx)
+    implementation(libs.identity.jvm)
+    implementation(libs.kotlinx.serialization.json)
     debugImplementation(libs.mockk)
     androidTestImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.runner)

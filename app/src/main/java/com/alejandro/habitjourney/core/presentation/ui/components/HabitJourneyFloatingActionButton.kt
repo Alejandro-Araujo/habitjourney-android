@@ -58,9 +58,10 @@ fun HabitJourneyFloatingActionButton(
     contentColor: Color = Color.White,
     size: Dp = Dimensions.FabSize,
     elevation: Dp = Dimensions.ElevationLevel2,
-    isRotated: Boolean = false, // Para animaciones como cambiar + por X
+    isRotated: Boolean = false,
     animateRotation: Boolean = true,
-    iconContentDescription: String? = null
+    iconContentDescription: String? = null,
+    isLoading: Boolean = false
 ) {
     val rotationAngle by animateFloatAsState(
         targetValue = if (isRotated) 45f else 0f,

@@ -114,12 +114,8 @@ class HabitDaoTest {
             habitDao.insertHabit(habit)
         }
 
-        // Insert inactive habit
-        val inactiveHabit = createTestHabit(name = "Inactive Habit", isActive = false)
-        habitDao.insertHabit(inactiveHabit)
-
         // Insert deleted habit
-        val deletedHabit = createTestHabit(name = "Deleted Habit", isDeleted = true)
+        val deletedHabit = createTestHabit(name = "Deleted Habit", isArchived = true)
         habitDao.insertHabit(deletedHabit)
 
         // When
@@ -196,8 +192,7 @@ class HabitDaoTest {
         type: HabitType = HabitType.DO,
         frequency: String = "daily",
         frequencyDays: List<Weekday>? = null,
-        isActive: Boolean = true,
-        isDeleted: Boolean = false
+        isArchived: Boolean = false
     ): HabitEntity {
         return TestDataFactory.createHabitEntity(
             userId = userId,
@@ -208,7 +203,7 @@ class HabitDaoTest {
             frequencyDays = frequencyDays,
             startDate = today,
             endDate = null,
-            isDeleted = isDeleted
+            isArchived = isArchived
         )
     }
 }

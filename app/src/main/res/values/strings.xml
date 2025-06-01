@@ -442,4 +442,115 @@
     <string name="unknown_error">Error desconocido</string>
 
 
+    <!-- Notes feature -->
+    <string name="notes">Notas</string>
+    <string name="add_note">Agregar nota</string>
+    <string name="edit_note">Editar nota</string>
+    <string name="note_details">Detalles de nota</string>
+    <string name="create_note">Crear nota</string>
+    <string name="save_note">Guardar nota</string>
+    <string name="delete_note">Eliminar nota</string>
+
+    <!-- Note types -->
+    <string name="note_type_text">Texto libre</string>
+    <string name="note_type_list">Lista de tareas</string>
+
+    <!-- Note filters -->
+    <string name="filter_notes_all">Todas</string>
+    <string name="filter_notes_active">Activas</string>
+    <string name="filter_notes_archived">Archivadas</string>
+    <string name="filter_notes_favorites">Favoritas</string>
+
+    <!-- Note content -->
+    <string name="note_title_hint">Título de la nota</string>
+    <string name="note_content_hint">Escribe tu nota aquí…</string>
+    <string name="note_untitled">Sin título</string>
+    <string name="list_item_hint">Escribe aquí…</string>
+    <string name="add_list_item">Añadir elemento</string>
+
+    <!-- Note actions -->
+    <string name="archive_note">Archivar nota</string>
+    <string name="unarchive_note">Desarchivar nota</string>
+    <string name="favorite_note">Marcar como favorita</string>
+    <string name="unfavorite_note">Quitar de favoritas</string>
+    <string name="share_note">Compartir nota</string>
+    <string name="duplicate_note">Duplicar nota</string>
+
+    <!-- Note stats -->
+    <string name="note_word_count">%1$d palabras</string>
+    <string name="list_completion">%1$d/%2$d completados</string>
+    <string name="list_completion_percentage">%1$d%% completado</string>
+    <string name="notes_statistics">Estadísticas</string>
+    <string name="total_notes">Total de notas</string>
+    <string name="total_words">Total de palabras</string>
+
+    <!-- Search -->
+    <string name="search_notes">Buscar notas</string>
+    <string name="search_notes_hint">Buscar en títulos y contenido…</string>
+    <string name="no_notes_found">No se encontraron notas</string>
+
+    <!-- Empty states -->
+    <string name="empty_notes_title">¡Empieza a escribir!</string>
+    <string name="empty_notes_description">Crea tu primera nota para organizar tus ideas</string>
+    <string name="empty_archived_notes">No hay notas archivadas</string>
+    <string name="empty_favorite_notes">No hay notas favoritas</string>
+    <string name="empty_search_results">No se encontraron resultados</string>
+
+    <!-- Dialogs -->
+    <string name="delete_note_title">Eliminar nota</string>
+    <string name="delete_note_message">¿Estás seguro de que quieres eliminar esta nota? Esta acción no se puede deshacer.</string>
+    <string name="archive_note_title">Archivar nota</string>
+    <string name="archive_note_message">¿Quieres archivar esta nota?</string>
+    <string name="unarchive_note_title">Desarchivar nota</string>
+    <string name="unarchive_note_message">¿Quieres desarchivar esta nota?</string>
+
+    <!-- Indentation -->
+    <string name="increase_indent">Aumentar indentación</string>
+    <string name="decrease_indent">Reducir indentación</string>
+
+    <!-- Errors -->
+    <string name="error_saving_note">Error al guardar la nota</string>
+    <string name="error_loading_note">Error al cargar la nota</string>
+    <string name="error_deleting_note">Error al eliminar la nota</string>
+    <string name="note_not_found">Nota no encontrada</string>
+
+    <!-- Auto-save and validation -->
+    <string name="empty_note_cannot_save">No se puede guardar una nota vacía</string>
+    <string name="auto_saved">Guardado automáticamente</string>
+    <string name="unsaved_changes">Cambios sin guardar</string>
+
+    <!-- Drag and drop -->
+    <string name="drag_to_reorder">Arrastra para reordenar</string>
+    <string name="reorder_items">Reordenar elementos</string>
+
+    <!-- Error messages -->
+    <string name="error_archiving_note">Error al archivar la nota</string>
+    <string name="error_updating_note">Error al actualizar la nota</string>
+
+    <string name="filter_notes_by">Filtrar por</string>
+    <string name="delete_item">Eliminar elemento</string>
+    <string name="and_more_items">… y %1$d más</string>
+    <string name="unsaved_changes_dialog_message">Tienes cambios sin guardar. ¿Quieres descartarlos?</string>
+    <string name="discard_changes">Descartar cambios</string>
+    <string name="try_different_search">Prueba con otros términos de búsqueda</string>
+    <string name="archived_notes_appear_here">Las notas archivadas aparecerán aquí</string>
+    <string name="favorite_notes_appear_here">Las notas favoritas aparecerán aquí</string>
+    <string name="create_first_note">Crear mi primera nota</string>
+
+    <string name="navigate_to_habits">Ir a Hábitos</string>
+    <string name="navigate_to_tasks">Ir a Tareas</string>
+    <string name="navigate_to_notes">Ir a Notas</string>
+    <string name="back_to_dashboard">Volver al Dashboard</string>
+    <string name="logout">Cerrar Sesión</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_title">HabitJourney Dashboard</string>
+    <string name="habits_section">Hábitos</string>
+    <string name="tasks_section">Tareas</string>
+    <string name="notes_section">Notas</string>
+    <string name="note_type_label">Tipo de nota</string>
+    <string name="discard">Descartar</string>
+    <string name="keep_editing">Continuar editando</string>
+
+
 </resources>
