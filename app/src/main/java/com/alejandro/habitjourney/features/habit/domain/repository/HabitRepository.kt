@@ -10,9 +10,7 @@ import kotlinx.datetime.LocalDate
 interface HabitRepository {
     suspend fun createHabit(habit: Habit): Long
     suspend fun updateHabit(habit: Habit)
-    // CAMBIADO: Renombrado de `deleteHabit` a `archiveHabit`
     suspend fun archiveHabit(habitId: Long)
-    // NUEVO: Función para desarchivar, si la quieres exponer a los Use Cases
     suspend fun unarchiveHabit(habitId: Long)
 
     suspend fun getHabitById(habitId: Long): Habit?

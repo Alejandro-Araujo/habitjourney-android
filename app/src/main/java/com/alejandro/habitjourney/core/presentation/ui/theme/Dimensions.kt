@@ -4,12 +4,12 @@ import androidx.compose.ui.unit.dp
 
 object Dimensions {
 
-
-
     // Espaciado
     val SpacingSmall = 8.dp
     val SpacingMedium = 16.dp
     val SpacingLarge = 24.dp
+    val SpacingExtraSmall= 4.dp
+
 
     // Alturas de componentes
     val ButtonHeight = 48.dp

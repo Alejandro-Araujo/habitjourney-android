@@ -73,8 +73,6 @@ class HabitRepositoryImpl @Inject constructor(
         }
     }
 
-    // CAMBIADO: Implementación de toggleHabitArchived ahora usa los métodos explícitos del DAO
-    // Esto es más limpio y directo que copiar la entidad y llamar a update.
     override suspend fun toggleHabitArchived(habitId: Long, archive: Boolean) {
         if (archive) {
             habitDao.archiveHabit(habitId)
