@@ -17,4 +17,5 @@ interface TaskRepository {
     fun getAllTasks(userId: Long): Flow<List<Task>>
     suspend fun setCompleted(taskId: Long, isCompleted: Boolean, completionDate: LocalDate?)
     suspend fun archiveTask(taskId: Long, isArchived: Boolean)
+    fun getCompletedTasksToday(userId: Long, date: LocalDate): Flow<List<Task>>
 }

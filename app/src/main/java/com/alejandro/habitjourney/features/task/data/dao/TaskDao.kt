@@ -115,4 +115,13 @@ interface TaskDao {
 
     @Query("SELECT * FROM tasks WHERE id = :taskId AND is_archived = 0")
     suspend fun getActiveTaskByIdSync(taskId: Long): TaskEntity?
+
+    @Query("""
+        SELECT * FROM tasks 
+        WHERE user_id = :userId 
+        AND is_completed = 1 
+        AND completion_date = :date
+        ORDER BY completion_date DESC
+    """)
+    fun getCompletedTasksByDate(userId: Long, date: LocalDate): Flow<List<TaskEntity>>
 }

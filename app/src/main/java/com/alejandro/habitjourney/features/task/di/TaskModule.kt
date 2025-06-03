@@ -9,7 +9,17 @@ import com.alejandro.habitjourney.features.task.data.repository.ReminderReposito
 import com.alejandro.habitjourney.features.task.data.repository.TaskRepositoryImpl
 import com.alejandro.habitjourney.features.task.domain.repository.ReminderRepository
 import com.alejandro.habitjourney.features.task.domain.repository.TaskRepository
+import com.alejandro.habitjourney.features.task.domain.usecase.ArchiveTaskUseCase
+import com.alejandro.habitjourney.features.task.domain.usecase.CreateTaskUseCase
+import com.alejandro.habitjourney.features.task.domain.usecase.DeleteTaskUseCase
+import com.alejandro.habitjourney.features.task.domain.usecase.GetActiveTasksUseCase
 import com.alejandro.habitjourney.features.task.domain.usecase.GetAllTasksUseCase
+import com.alejandro.habitjourney.features.task.domain.usecase.GetArchivedTasksUseCase
+import com.alejandro.habitjourney.features.task.domain.usecase.GetCompletedTasksUseCase
+import com.alejandro.habitjourney.features.task.domain.usecase.GetOverdueTasksUseCase
+import com.alejandro.habitjourney.features.task.domain.usecase.GetTaskByIdUseCase
+import com.alejandro.habitjourney.features.task.domain.usecase.ToggleTaskCompletionUseCase
+import com.alejandro.habitjourney.features.task.domain.usecase.UpdateTaskUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -47,5 +57,56 @@ object TaskModule {
     ): TaskRepository {
         return TaskRepositoryImpl(taskDao)
     }
+
+
+    @Provides
+    fun provideGetPendingTasksUseCase(
+        taskRepository: TaskRepository
+    ): GetActiveTasksUseCase = GetActiveTasksUseCase(taskRepository)
+
+    @Provides
+    fun provideGetCompletedTasksUseCase(
+        taskRepository: TaskRepository
+    ): GetCompletedTasksUseCase = GetCompletedTasksUseCase(taskRepository)
+
+    @Provides
+    fun provideGetTaskByIdUseCase(
+        taskRepository: TaskRepository
+    ): GetTaskByIdUseCase = GetTaskByIdUseCase(taskRepository)
+
+    @Provides
+    fun provideCreateTaskUseCase(
+        taskRepository: TaskRepository
+    ): CreateTaskUseCase = CreateTaskUseCase(taskRepository)
+
+    @Provides
+    fun provideUpdateTaskUseCase(
+        taskRepository: TaskRepository
+    ): UpdateTaskUseCase = UpdateTaskUseCase(taskRepository)
+
+    @Provides
+    fun provideDeleteTaskUseCase(
+        taskRepository: TaskRepository
+    ): DeleteTaskUseCase = DeleteTaskUseCase(taskRepository)
+
+    @Provides
+    fun provideToggleTaskCompletionUseCase(
+        taskRepository: TaskRepository
+    ): ToggleTaskCompletionUseCase = ToggleTaskCompletionUseCase(taskRepository)
+
+    @Provides
+    fun provideGetTaskStatsUseCase(
+        taskRepository: TaskRepository
+    ): GetArchivedTasksUseCase = GetArchivedTasksUseCase(taskRepository)
+
+    @Provides
+    fun provideGetTodayTasksUseCase(
+        taskRepository: TaskRepository
+    ): ArchiveTaskUseCase = ArchiveTaskUseCase(taskRepository)
+
+    @Provides
+    fun provideGetOverdueTasksUseCase(
+        taskRepository: TaskRepository
+    ): GetOverdueTasksUseCase = GetOverdueTasksUseCase(taskRepository)
 
 }

@@ -1,9 +1,8 @@
 package com.alejandro.habitjourney.navigation
 
-
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.getValue
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel // Asegúrate que está usado o elimínalo si no
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.*
@@ -41,7 +40,7 @@ fun HabitJourneyApp() {
 
     // Decidir el destino inicial basándose en el estado de autenticación
     val startDestination = if (isLoadingAuth) {
-        Screen.Login.route
+        Screen.Login.route // O una pantalla de carga dedicada si prefieres
     } else if (isLoggedIn) {
         Screen.Dashboard.route
     } else {
@@ -83,10 +82,12 @@ private fun HabitJourneyBottomNavigation(
                 icon = {
                     Icon(
                         imageVector = item.icon,
+                        // Mantenemos el contentDescription para accesibilidad
                         contentDescription = stringResource(id = item.contentDescriptionResId)
                     )
                 },
-                label = { Text(stringResource(id = item.titleResId)) },
+                // Aquí está el cambio: label se establece a null para no mostrar texto
+                label = null,
                 selected = isSelected,
                 onClick = {
                     navController.navigate(item.route) {
@@ -108,7 +109,7 @@ private fun HabitJourneyBottomNavigation(
 private data class BottomNavItem(
     val route: String,
     val icon: androidx.compose.ui.graphics.vector.ImageVector,
-    val titleResId: Int,
+    val titleResId: Int, // Aunque ya no se use para el label visual, puede ser útil para otros propósitos o para el contentDescription si fueran diferentes.
     val contentDescriptionResId: Int
 )
 
@@ -120,7 +121,7 @@ private val bottomNavItems = listOf(
         route = Screen.Dashboard.route,
         icon = Icons.Default.Home,
         titleResId = R.string.nav_dashboard,
-        contentDescriptionResId = R.string.nav_dashboard
+        contentDescriptionResId = R.string.nav_dashboard // Usar el mismo string para el content description está bien si es descriptivo
     ),
     BottomNavItem(
         route = Screen.HabitList.route,
@@ -147,3 +148,7 @@ private val bottomNavItems = listOf(
         contentDescriptionResId = R.string.nav_progress
     )
 )
+
+// Nota: Asegúrate de que NavigationRoutes.bottomNavRoutes y Screen.* estén definidos correctamente en tu proyecto.
+// El import de hiltViewModel en HabitJourneyApp no se usa directamente en la función,
+// pero sí se usa para la inicialización de authViewModel, lo cual es correcto.

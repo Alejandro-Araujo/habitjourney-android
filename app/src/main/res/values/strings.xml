@@ -551,6 +551,33 @@
     <string name="note_type_label">Tipo de nota</string>
     <string name="discard">Descartar</string>
     <string name="keep_editing">Continuar editando</string>
+    <string name="error_updating_task">Error al actualizar la tarea</string>
+
+    <string name="dashboard_create_first_habit">Crear primer hábito</string>
+    <string name="dashboard_new_habit">Nuevo Hábito</string>
+    <string name="dashboard_new_task">Nueva Tarea</string>
+    <string name="dashboard_new_note">Nueva Nota</string>
+    <string name="dashboard_no_title">Sin título</string>
+    <string name="dashboard_words_count">%d palabras</string>
+    <string name="dashboard_streak_days">🔥 Racha de %d días</string>
+    <string name="dashboard_error_update_habit">Error al actualizar el hábito: %s</string>
+    <string name="dashboard_error_update_task">Error al actualizar la tarea: %s</string>
+    <string name="dashboard_error_loading">Error al cargar el dashboard</string>
+
+    <!-- Dashboard motivational messages -->
+    <string name="dashboard_msg_empty">¡Comienza tu viaje creando tus primeros hábitos y tareas!</string>
+    <string name="dashboard_msg_all_completed">¡Excelente día! Has completado todos tus hábitos%s.</string>
+    <string name="dashboard_msg_streak_addon"> y mantienes una racha de %d días</string>
+    <string name="dashboard_msg_good_progress">¡Muy buen progreso! Has completado el %d%% de tus hábitos.</string>
+    <string name="dashboard_msg_overdue_tasks">Tienes %d tarea%s vencida%s. ¡Es hora de ponerse al día!</string>
+    <string name="dashboard_msg_halfway">Buen avance del día. ¡Sigue así para completar todos tus hábitos!</string>
+    <string name="dashboard_msg_start_day">¡Aún queda mucho día por delante! Es momento de trabajar en tus hábitos.</string>
+
+    <!-- Dashboard quotes -->
+    <string name="dashboard_quote_unstoppable">¡Eres imparable! Tu constancia está dando frutos.</string>
+    <string name="dashboard_quote_excellent">¡Excelente trabajo! Cada día es un paso hacia tus metas.</string>
+    <string name="dashboard_quote_keep_going">¡Sigue adelante! El progreso es progreso, sin importar lo pequeño.</string>
+    <string name="dashboard_quote_new_opportunity">Cada nuevo día es una oportunidad para mejorar. ¡Tú puedes!</string>
 
 
 </resources>

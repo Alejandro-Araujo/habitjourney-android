@@ -76,4 +76,10 @@ class TaskRepositoryImpl @Inject constructor(
             taskDao.unarchiveTask(taskId)
         }
     }
+
+    override fun getCompletedTasksToday(userId: Long, date: LocalDate): Flow<List<Task>> {
+        return taskDao.getCompletedTasksByDate(userId, date).map { entities ->
+            entities.map { it.toDomain() }
+        }
+    }
 }
