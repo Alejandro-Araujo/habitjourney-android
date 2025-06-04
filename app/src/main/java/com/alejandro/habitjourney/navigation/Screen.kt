@@ -48,6 +48,9 @@ sealed class Screen(val route: String) {
 
     // Settings Routes
     data object Settings : Screen("settings")
+    data object EditProfile : Screen("edit_profile")
+    data object ChangePassword : Screen("change_password")
+    data object LanguageSelection : Screen("language_selection")
 
     // Progress Routes
     data object Progress : Screen("progress")
@@ -71,10 +74,11 @@ object NavigationRoutes {
         Screen.NoteList.route,
         Screen.CreateNote.route,
         Screen.EditNote.route,
-        Screen.Achievements.route,
         Screen.Settings.route,
-        Screen.Progress.route
-    )
+        Screen.EditProfile.route,
+        Screen.ChangePassword.route,
+        Screen.LanguageSelection.route
+        )
 
     // Rutas de autenticación
     val authRoutes = listOf(
@@ -88,6 +92,6 @@ object NavigationRoutes {
         Screen.HabitList.route,
         Screen.TaskList.route,
         Screen.NoteList.route,
-        Screen.Progress.route
+        Screen.Settings.route
     )
 }

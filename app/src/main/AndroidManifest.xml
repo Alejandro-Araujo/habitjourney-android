@@ -24,11 +24,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HabitJourney"
         android:usesCleartextTraffic="true"
-        tools:targetApi="31">
+        android:enableOnBackInvokedCallback="true"
+        tools:targetApi="tiramisu">
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.HabitJourney">
+            android:theme="@style/Theme.HabitJourney"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|smallestScreenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -580,4 +580,53 @@
     <string name="dashboard_quote_new_opportunity">Cada nuevo día es una oportunidad para mejorar. ¡Tú puedes!</string>
 
 
+    <!-- Settings -->
+    <string name="settings_title">Configuración</string>
+    <string name="settings_section_account">Cuenta</string>
+    <string name="settings_section_app">Aplicación</string>
+    <string name="settings_section_danger">Zona de peligro</string>
+    <string name="settings_edit_profile">Editar perfil</string>
+    <string name="settings_change_password">Cambiar contraseña</string>
+    <string name="settings_change_password_subtitle">Actualiza tu contraseña de acceso</string>
+    <string name="settings_theme">Tema</string>
+    <string name="settings_language">Idioma</string>
+    <string name="settings_logout">Cerrar sesión</string>
+    <string name="settings_logout_subtitle">Salir de tu cuenta actual</string>
+    <string name="settings_delete_account">Eliminar cuenta</string>
+    <string name="settings_delete_account_subtitle">Eliminar permanentemente tu cuenta y todos tus datos</string>
+
+    <!-- Theme -->
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Oscuro</string>
+    <string name="theme_system">Sistema</string>
+
+    <!-- Edit Profile -->
+    <string name="edit_profile_instructions">Actualiza tu información personal. Los cambios se guardarán inmediatamente.</string>
+    <string name="profile_updated_success">Perfil actualizado correctamente</string>
+    <string name="save_changes">Guardar cambios</string>
+
+    <!-- Change Password -->
+    <string name="change_password_instructions">Introduce tu contraseña actual y la nueva contraseña que deseas usar.</string>
+    <string name="label_current_password">Contraseña actual</string>
+    <string name="label_new_password">Nueva contraseña</string>
+    <string name="label_confirm_password">Confirmar contraseña</string>
+    <string name="change_password">Cambiar contraseña</string>
+    <string name="password_changed_success">Contraseña actualizada correctamente</string>
+    <string name="password_requirements_title">Requisitos de contraseña:</string>
+    <string name="password_requirement_length">Mínimo 6 caracteres</string>
+    <string name="password_requirement_letter">Al menos una letra</string>
+
+    <!-- Language -->
+    <string name="language_selection_instructions">Selecciona tu idioma preferido. La aplicación se actualizará automáticamente.</string>
+    <string name="language_changed_message">Idioma actualizado correctamente</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_logout_title">¿Cerrar sesión?</string>
+    <string name="dialog_logout_message">¿Estás seguro de que deseas cerrar sesión?</string>
+    <string name="dialog_logout_confirm">Cerrar sesión</string>
+    <string name="dialog_delete_account_title">¿Eliminar cuenta?</string>
+    <string name="dialog_delete_account_message">Esta acción es permanente. Se eliminarán todos tus hábitos, tareas y notas. No podrás recuperar tu cuenta.</string>
+    <string name="dialog_delete_account_confirm">Eliminar cuenta</string>
+    <string name="close">Cerrar</string>
+
 </resources>

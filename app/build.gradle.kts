@@ -11,13 +11,14 @@ android {
     namespace = "com.alejandro.habitjourney"
     compileSdk = 35
 
+
     defaultConfig {
         applicationId = "com.alejandro.habitjourney"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
-
+        resConfigs("es", "en", "de", "fr")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -101,6 +102,9 @@ dependencies {
     implementation(libs.androidx.media3.common.ktx)
     implementation(libs.identity.jvm)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    implementation(libs.material3)
     debugImplementation(libs.mockk)
     androidTestImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.runner)
