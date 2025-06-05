@@ -10,8 +10,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import java.util.Locale
 import javax.inject.Inject
+
 
 @HiltAndroidApp
 class HabitJourneyApplication : Application() {
@@ -25,19 +25,23 @@ class HabitJourneyApplication : Application() {
         super.onCreate()
 
         applicationScope.launch {
-            val appSettings = settingsRepository.getAppSettings().first()
+            try {
+                val appSettings = settingsRepository.getAppSettings().first()
 
-            // Aplicar Tema
-            val themeMode = when (appSettings.theme) {
-                "light" -> AppCompatDelegate.MODE_NIGHT_NO
-                "dark" -> AppCompatDelegate.MODE_NIGHT_YES
-                else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-            }
-            AppCompatDelegate.setDefaultNightMode(themeMode)
+                // Aplicar Tema
+                val themeMode = when (appSettings.theme) {
+                    "light" -> AppCompatDelegate.MODE_NIGHT_NO
+                    "dark" -> AppCompatDelegate.MODE_NIGHT_YES
+                    else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+                }
+                AppCompatDelegate.setDefaultNightMode(themeMode)
 
-            if (appSettings.language.isNotEmpty()) {
-                val localeList = LocaleListCompat.forLanguageTags(appSettings.language)
-                AppCompatDelegate.setApplicationLocales(localeList)
+                if (appSettings.language.isNotEmpty()) {
+                    val localeList = LocaleListCompat.forLanguageTags(appSettings.language)
+                    AppCompatDelegate.setApplicationLocales(localeList)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }

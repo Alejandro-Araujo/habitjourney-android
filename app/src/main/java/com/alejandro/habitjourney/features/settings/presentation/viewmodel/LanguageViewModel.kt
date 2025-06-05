@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @HiltViewModel
 class LanguageViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository
@@ -31,13 +30,10 @@ class LanguageViewModel @Inject constructor(
         loadCurrentLanguage()
     }
 
-    @OptIn(UnstableApi::class)
     private fun loadCurrentLanguage() {
         viewModelScope.launch {
-            Log.d("LanguageVM", "Cargando idioma...")
             settingsRepository.getAppSettings().collect { settings ->
                 val language = mapToLanguage(settings.language)
-                Log.d("LanguageVM", "Idioma actual: ${settings.language}")
                 _uiState.update {
                     it.copy(
                         currentLanguage = language,
@@ -52,11 +48,19 @@ class LanguageViewModel @Inject constructor(
         if (language.code == _uiState.value.currentLanguage.code) return
 
         viewModelScope.launch {
+            // Guardar en el repository
             settingsRepository.updateLanguage(language.code)
 
-            val localeList = LocaleListCompat.forLanguageTags(language.code)
-            _uiState.update { it.copy(currentLanguage = language) }
-            AppCompatDelegate.setApplicationLocales(localeList)
+            // Aplicar el cambio usando AppCompatDelegate
+            val appLocale = LocaleListCompat.forLanguageTags(language.code)
+            AppCompatDelegate.setApplicationLocales(appLocale)
+
+            _uiState.update {
+                it.copy(
+                    currentLanguage = language,
+                    languageChanged = true
+                )
+            }
         }
     }
 

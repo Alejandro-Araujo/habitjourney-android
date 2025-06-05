@@ -247,6 +247,7 @@
     <string name="error_marking_habit_skipped">Fehler beim Markieren als übersprungen</string>
     <string name="error_updating_habit_progress">Fehler beim Aktualisieren des Fortschritts</string>
     <string name="error_processing_missed_habits">Fehler beim Verarbeiten verpasster Gewohnheiten</string>
+    <string name="error_undoing_skip">Fehler beim Rückgängigmachen des Überspringens</string>
     <string name="habit_status_label">Status</string>
     <string name="habit_status_active">Aktiv</string>
     <string name="habit_status_archived">Archiviert</string>

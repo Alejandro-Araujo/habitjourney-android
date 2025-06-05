@@ -7,24 +7,23 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.alejandro.habitjourney.features.settings.data.repository.SettingsRepositoryImpl
-import com.alejandro.habitjourney.features.settings.presentation.screen.ThemeMode
-import com.alejandro.habitjourney.features.settings.presentation.viewmodel.SettingsViewModel
 
 @Composable
 fun HabitJourneyThemeWrapper(
-
-    settingsViewModel: SettingsViewModel = hiltViewModel(),
     content: @Composable () -> Unit
 ) {
+    val context = LocalContext.current
+    val settingsRepository = remember { SettingsRepositoryImpl(context) }
 
-    val uiState by settingsViewModel.uiState.collectAsState()
+    val appSettings by settingsRepository.getAppSettings().collectAsState(
+        initial = com.alejandro.habitjourney.features.settings.domain.model.AppSettings()
+    )
 
-    val useDarkTheme = when (uiState.currentTheme) {
-        ThemeMode.LIGHT -> false
-        ThemeMode.DARK -> true
-        ThemeMode.SYSTEM -> isSystemInDarkTheme()
+    val useDarkTheme = when (appSettings.theme) {
+        "light" -> false
+        "dark" -> true
+        else -> isSystemInDarkTheme()
     }
 
     HabitJourneyTheme(

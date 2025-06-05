@@ -247,6 +247,7 @@
     <string name="error_marking_habit_skipped">Error marking skipped</string>
     <string name="error_updating_habit_progress">Error updating progress</string>
     <string name="error_processing_missed_habits">Error processing missed habits</string>
+    <string name="error_undoing_skip">Error undoing skip</string>
     <string name="habit_status_label">Status</string>
     <string name="habit_status_active">Active</string>
     <string name="habit_status_archived">Archived</string>

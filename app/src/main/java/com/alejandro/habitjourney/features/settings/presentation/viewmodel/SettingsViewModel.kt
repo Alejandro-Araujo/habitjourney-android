@@ -96,7 +96,6 @@ class SettingsViewModel @Inject constructor(
                     }
                 }
                 is NetworkResponse.Loading -> {
-                    // No-op
                 }
             }
         }
@@ -127,6 +126,19 @@ class SettingsViewModel @Inject constructor(
                     // No-op
                 }
             }
+        }
+    }
+
+    fun updateLanguage(language: Language) {
+        viewModelScope.launch {
+            // Guardar en el repository
+            settingsRepository.updateLanguage(language.code)
+
+            // Aplicar el cambio de idioma
+            val appLocale = LocaleListCompat.forLanguageTags(language.code)
+            AppCompatDelegate.setApplicationLocales(appLocale)
+
+            _uiState.update { it.copy(currentLanguage = language) }
         }
     }
 
