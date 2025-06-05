@@ -16,6 +16,10 @@ import com.alejandro.habitjourney.features.habit.presentation.ui.HabitListScreen
 import com.alejandro.habitjourney.features.habit.presentation.viewmodel.CreateEditHabitViewModel
 import com.alejandro.habitjourney.features.habit.presentation.viewmodel.HabitDetailViewModel
 import com.alejandro.habitjourney.features.habit.presentation.viewmodel.HabitListViewModel
+import com.alejandro.habitjourney.features.settings.presentation.screen.ChangePasswordScreen
+import com.alejandro.habitjourney.features.settings.presentation.screen.EditProfileScreen
+import com.alejandro.habitjourney.features.settings.presentation.screen.LanguageSelectionScreen
+import com.alejandro.habitjourney.features.settings.presentation.screen.SettingsScreen
 
 
 /**
@@ -321,122 +325,44 @@ fun NavGraph(
                 viewModel = viewModel
             )
         }
-    }
 
-    // ==========================================
-    // PROGRESS GRAPH
-    // ==========================================
-    /*
-            composable(Screen.Progress.route) {
-                // TODO: Implementar ProgressScreen
-                PlaceholderScreen(
-                    title = "Progress",
-                    onNavigateBack = { navController.popBackStack() }
-                )
-            }
+        // ==========================================
+        // SETTINGS GRAPH
+        // ==========================================
 
-            // ==========================================
-            // ACHIEVEMENT GRAPH
-            // ==========================================
+        composable(Screen.Settings.route) {
+            SettingsScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToEditProfile = { navController.navigate(Screen.EditProfile.route) },
+                onNavigateToChangePassword = { navController.navigate(Screen.ChangePassword.route) },
+                onNavigateToLanguage = { navController.navigate(Screen.LanguageSelection.route) },
+                onNavigateToAuth = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            )
+        }
 
-            composable(Screen.Achievements.route) {
-                // TODO: Implementar AchievementScreen
-                PlaceholderScreen(
-                    title = "Achievements",
-                    onNavigateBack = { navController.popBackStack() }
-                )
-            }
+// Edit Profile Screen
+        composable(Screen.EditProfile.route) {
+            EditProfileScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
 
-            // ==========================================
-            // SETTINGS GRAPH
-            // ==========================================
+// Change Password Screen
+        composable(Screen.ChangePassword.route) {
+            ChangePasswordScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
 
-            composable(Screen.Settings.route) {
-                // TODO: Implementar SettingsScreen
-                PlaceholderScreen(
-                    title = "Settings",
-                    onNavigateBack = { navController.popBackStack() }
-                )
-            }
+// Language Selection Screen
+        composable(Screen.LanguageSelection.route) {
+            LanguageSelectionScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
         }
     }
-
-    *
-     * Pantalla placeholder temporal para mostrar mientras se implementan las pantallas reales
-
-    @Composable
-    private fun PlaceholderScreen(
-        title: String,
-        onNavigateBack: (() -> Unit)? = null,
-        onNavigateToHabits: (() -> Unit)? = null,
-        onNavigateToTasks: (() -> Unit)? = null,
-        onNavigateToNotes: (() -> Unit)? = null,
-        onLogout: (() -> Unit)? = null
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.headlineMedium
-            )
-
-            if (onNavigateBack != null) {
-                Spacer(modifier = Modifier.height(Dimensions.SpacingLarge))
-                HabitJourneyButton(
-                    text = "Volver",
-                    onClick = onNavigateBack,
-                    type = HabitJourneyButtonType.SECONDARY,
-                    modifier = Modifier.fillMaxWidth(0.6f)
-                )
-            }
-
-            if (onNavigateToHabits != null) {
-                HabitJourneyButton(
-                    text = "Hábitos",
-                    onClick = onNavigateToHabits,
-                    type = HabitJourneyButtonType.PRIMARY,
-                    leadingIcon = Icons.Default.CheckCircle,
-                    modifier = Modifier.fillMaxWidth(0.8f)
-                )
-                Spacer(modifier = Modifier.height(Dimensions.SpacingMedium))
-            }
-
-            if (onNavigateToTasks != null) {
-                HabitJourneyButton(
-                    text = "Tareas",
-                    onClick = onNavigateToTasks,
-                    type = HabitJourneyButtonType.PRIMARY,
-                    leadingIcon = Icons.Default.Task,
-                    modifier = Modifier.fillMaxWidth(0.8f)
-                )
-                Spacer(modifier = Modifier.height(Dimensions.SpacingMedium))
-            }
-
-            if (onNavigateToNotes != null) {
-                HabitJourneyButton(
-                    text = "Notas",
-                    onClick = onNavigateToNotes,
-                    type = HabitJourneyButtonType.PRIMARY,
-                    leadingIcon = Icons.AutoMirrored.Filled.StickyNote2,
-                    modifier = Modifier.fillMaxWidth(0.8f)
-                )
-                Spacer(modifier = Modifier.height(Dimensions.SpacingMedium))
-            }
-
-
-            if (onLogout != null) {
-                Spacer(modifier = Modifier.height(Dimensions.SpacingLarge))
-                HabitJourneyButton(
-                    text = "Cerrar Sesión",
-                    onClick = onLogout,
-                    type = HabitJourneyButtonType.TERTIARY,
-                    modifier = Modifier.fillMaxWidth(0.6f)
-                )
-            }
-        } */
 }

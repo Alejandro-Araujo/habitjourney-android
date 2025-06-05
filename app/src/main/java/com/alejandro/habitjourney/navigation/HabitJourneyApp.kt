@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel // Asegúrate que está usado o elimínalo si no
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Note
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -121,7 +122,7 @@ private val bottomNavItems = listOf(
         route = Screen.Dashboard.route,
         icon = Icons.Default.Home,
         titleResId = R.string.nav_dashboard,
-        contentDescriptionResId = R.string.nav_dashboard // Usar el mismo string para el content description está bien si es descriptivo
+        contentDescriptionResId = R.string.nav_dashboard
     ),
     BottomNavItem(
         route = Screen.HabitList.route,
@@ -137,18 +138,15 @@ private val bottomNavItems = listOf(
     ),
     BottomNavItem(
         route = Screen.NoteList.route,
-        icon = Icons.Default.Note,
+        icon = Icons.AutoMirrored.Filled.Note,
         titleResId = R.string.nav_notes,
         contentDescriptionResId = R.string.nav_notes
     ),
     BottomNavItem(
-        route = Screen.Progress.route,
-        icon = Icons.AutoMirrored.Filled.TrendingUp,
-        titleResId = R.string.nav_progress,
-        contentDescriptionResId = R.string.nav_progress
+        route = Screen.Settings.route,
+        icon =  Icons.Default.Settings,
+        titleResId = R.string.nav_settings,
+        contentDescriptionResId = R.string.nav_settings
     )
-)
 
-// Nota: Asegúrate de que NavigationRoutes.bottomNavRoutes y Screen.* estén definidos correctamente en tu proyecto.
-// El import de hiltViewModel en HabitJourneyApp no se usa directamente en la función,
-// pero sí se usa para la inicialización de authViewModel, lo cual es correcto.
+)
