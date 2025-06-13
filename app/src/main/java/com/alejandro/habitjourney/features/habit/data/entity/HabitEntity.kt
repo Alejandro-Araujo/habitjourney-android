@@ -20,9 +20,8 @@ import kotlinx.datetime.LocalDate
     )],
     indices = [
         Index("user_id"),
-        // Index("is_active"), // Ya puedes eliminar este índice si isActive no existe.
         Index("frequency"),
-        Index("is_archived") // ¡NUEVO ÍNDICE PARA `is_archived`!
+        Index("is_archived")
     ]
 )
 data class HabitEntity(
@@ -56,11 +55,8 @@ data class HabitEntity(
     @ColumnInfo(name = "end_date")
     val endDate: LocalDate? = null,
 
-    // @ColumnInfo(name = "is_active") // ¡ELIMINA ESTA LÍNEA!
-    // val isActive: Boolean = true, // ¡ELIMINA ESTA LÍNEA!
-
-    @ColumnInfo(name = "is_archived") // ¡CAMBIADO DE `is_deleted` A `is_archived`!
-    val isArchived: Boolean = false, // ¡CAMBIADO DE `isDeleted` A `isArchived`!
+    @ColumnInfo(name = "is_archived")
+    val isArchived: Boolean = false,
 
     @ColumnInfo(name = "created_at")
     val createdAt: Long = System.currentTimeMillis()

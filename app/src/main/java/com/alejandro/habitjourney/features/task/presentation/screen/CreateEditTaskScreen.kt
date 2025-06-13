@@ -69,7 +69,7 @@ fun CreateEditTaskScreen(
                             taskId != null -> stringResource(R.string.edit_task)
                             else -> stringResource(R.string.create_task)
                         },
-                        style = MaterialTheme.typography.headlineMedium
+                        style = Typography.headlineMedium
                     )
                 },
                 navigationIcon = {
@@ -94,18 +94,10 @@ fun CreateEditTaskScreen(
                                     strokeWidth = 2.dp,
                                     color = AcentoInformativo
                                 )
-                            } else {
-                                Text(
-                                    text = stringResource(R.string.save),
-                                    style = MaterialTheme.typography.bodyLarge.copy(
-                                        fontWeight = FontWeight.Medium
-                                    ),
-                                    color = AcentoInformativo
-                                )
                             }
                         }
                     }
-                }
+                },
             )
         }
     ) { paddingValues ->
@@ -177,7 +169,8 @@ fun CreateEditTaskScreen(
                             stringResource(R.string.save)
                         } else {
                             stringResource(R.string.create_task)
-                        }
+                        },
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
             }

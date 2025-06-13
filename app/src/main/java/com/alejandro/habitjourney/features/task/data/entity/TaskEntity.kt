@@ -17,7 +17,7 @@ import kotlinx.datetime.LocalDateTime
             entity = UserEntity::class,
             parentColumns = ["id"],
             childColumns = ["user_id"],
-            onDelete = ForeignKey.CASCADE
+            onDelete = ForeignKey.NO_ACTION
         )
     ],
     indices = [

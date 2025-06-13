@@ -1,5 +1,4 @@
-package com.alejandro.habitjourney.features.note.presentation.components
-
+package com.alejandro.habitjourney.features.habit.presentation.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -10,8 +9,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Archive
-import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Today
+import androidx.compose.material.icons.filled.PendingActions
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -28,18 +28,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import com.alejandro.habitjourney.R
-import com.alejandro.habitjourney.core.presentation.ui.theme.AcentoInformativo
-import com.alejandro.habitjourney.core.presentation.ui.theme.Dimensions
-import com.alejandro.habitjourney.features.note.presentation.state.NoteFilterType
-
+import com.alejandro.habitjourney.core.presentation.ui.theme.*
+import com.alejandro.habitjourney.features.habit.presentation.state.HabitFilterType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotesFilterDropdown(
-    currentFilter: NoteFilterType,
-    onFilterSelected: (NoteFilterType) -> Unit,
+fun HabitFilterDropdown(
+    currentFilter: HabitFilterType,
+    onFilterSelected: (HabitFilterType) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isExpanded by remember { mutableStateOf(false) }
@@ -56,7 +55,7 @@ fun NotesFilterDropdown(
                 modifier = Modifier
                     .fillMaxWidth()
                     .menuAnchor(),
-                label = { Text(stringResource(R.string.filter_notes_by)) },
+                label = { Text(stringResource(R.string.filter_by)) },
                 leadingIcon = {
                     Icon(
                         imageVector = getFilterIcon(currentFilter),
@@ -77,7 +76,7 @@ fun NotesFilterDropdown(
                 expanded = isExpanded,
                 onDismissRequest = { isExpanded = false }
             ) {
-                NoteFilterType.entries.forEach { filter ->
+                HabitFilterType.entries.forEach { filter ->
                     DropdownMenuItem(
                         text = {
                             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -114,21 +113,23 @@ fun NotesFilterDropdown(
 }
 
 @Composable
-private fun getFilterDisplayName(filter: NoteFilterType): String {
+private fun getFilterDisplayName(filter: HabitFilterType): String {
     return when (filter) {
-        NoteFilterType.ALL -> stringResource(R.string.filter_notes_all)
-        NoteFilterType.ACTIVE -> stringResource(R.string.filter_notes_active)
-        NoteFilterType.ARCHIVED -> stringResource(R.string.filter_notes_archived)
-        NoteFilterType.FAVORITES -> stringResource(R.string.filter_notes_favorites)
+        HabitFilterType.TODAY -> stringResource(R.string.filter_habits_today)
+        HabitFilterType.ALL -> stringResource(R.string.filter_habits_all)
+        HabitFilterType.ARCHIVED -> stringResource(R.string.filter_habits_archived)
+        HabitFilterType.COMPLETED -> stringResource(R.string.filter_habits_completed)
+        HabitFilterType.PENDING -> stringResource(R.string.filter_habits_pending)
     }
 }
 
 @Composable
-private fun getFilterIcon(filter: NoteFilterType): androidx.compose.ui.graphics.vector.ImageVector {
+private fun getFilterIcon(filter: HabitFilterType): ImageVector {
     return when (filter) {
-        NoteFilterType.ALL -> Icons.AutoMirrored.Filled.List
-        NoteFilterType.ACTIVE -> Icons.Default.Description
-        NoteFilterType.ARCHIVED -> Icons.Default.Archive
-        NoteFilterType.FAVORITES -> Icons.Default.Favorite
+        HabitFilterType.TODAY -> Icons.Default.Today
+        HabitFilterType.ALL -> Icons.AutoMirrored.Filled.List
+        HabitFilterType.ARCHIVED -> Icons.Default.Archive
+        HabitFilterType.COMPLETED -> Icons.Default.CheckCircle
+        HabitFilterType.PENDING -> Icons.Default.PendingActions
     }
 }

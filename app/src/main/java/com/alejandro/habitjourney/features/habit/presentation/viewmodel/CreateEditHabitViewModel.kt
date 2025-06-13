@@ -10,17 +10,17 @@ import com.alejandro.habitjourney.features.habit.domain.model.Habit
 import com.alejandro.habitjourney.features.habit.domain.usecase.CreateHabitUseCase
 import com.alejandro.habitjourney.features.habit.domain.usecase.GetHabitByIdUseCase
 import com.alejandro.habitjourney.features.habit.domain.usecase.UpdateHabitUseCase
+import com.alejandro.habitjourney.features.habit.presentation.state.CreateEditHabitUiState
 import com.alejandro.habitjourney.features.user.data.local.preferences.UserPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
 import javax.inject.Inject
 
 @HiltViewModel
@@ -89,34 +89,41 @@ class CreateEditHabitViewModel @Inject constructor(
         }
     }
 
-    fun saveHabit() {
+    fun saveHabit(onSuccess: () -> Unit) {
         viewModelScope.launch {
             try {
-                _uiState.value = _uiState.value.copy(isLoading = true, error = null)
+                _uiState.update { it.copy(isSaving = true, error = null) }
 
+                // Validación del nombre
                 if (_uiState.value.name.isBlank()) {
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        error = context.getString(R.string.error_habit_name_empty)
-                    )
+                    _uiState.update {
+                        it.copy(
+                            isSaving = false,
+                            error = context.getString(R.string.error_habit_name_empty)
+                        )
+                    }
                     return@launch
                 }
 
                 // DailyTarget es siempre obligatorio y debe ser > 0
                 if (_uiState.value.dailyTarget == null || _uiState.value.dailyTarget!! <= 0) {
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        error = context.getString(R.string.error_daily_target_required)
-                    )
+                    _uiState.update {
+                        it.copy(
+                            isSaving = false,
+                            error = context.getString(R.string.error_daily_target_required)
+                        )
+                    }
                     return@launch
                 }
 
                 // Validar días de frecuencia para weekly
                 if (_uiState.value.frequency == "weekly" && _uiState.value.frequencyDays.isEmpty()) {
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        error = context.getString(R.string.error_frequency_days_required)
-                    )
+                    _uiState.update {
+                        it.copy(
+                            isSaving = false,
+                            error = context.getString(R.string.error_frequency_days_required)
+                        )
+                    }
                     return@launch
                 }
 
@@ -144,15 +151,16 @@ class CreateEditHabitViewModel @Inject constructor(
                     createHabitUseCase(habit)
                 }
 
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    isSaved = true
-                )
+                _uiState.update { it.copy(isSaving = false, isSaved = true) }
+                onSuccess()
+
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    error = e.message ?: context.getString(R.string.error_saving_habit)
-                )
+                _uiState.update {
+                    it.copy(
+                        isSaving = false,
+                        error = e.message ?: context.getString(R.string.error_saving_habit)
+                    )
+                }
             }
         }
     }
@@ -181,29 +189,4 @@ class CreateEditHabitViewModel @Inject constructor(
     fun resetSaveState() {
         _uiState.value = _uiState.value.copy(isSaved = false)
     }
-}
-
-data class CreateEditHabitUiState(
-    val habitId: Long = 0L,
-    val name: String = "",
-    val description: String = "",
-    val type: HabitType = HabitType.DO,
-    val frequency: String = "daily",
-    val frequencyDays: List<Weekday> = emptyList(),
-    val dailyTarget: Int? = 1, // Ahora por defecto a 1 si no se especifica
-    val startDate: LocalDate? = null,
-    val endDate: LocalDate? = null,
-    val isEditing: Boolean = false,
-    val isLoading: Boolean = false,
-    val isSaved: Boolean = false,
-    val error: String? = null,
-    val isArchived: Boolean = false, // Corregido el typo de 'isAchived'
-    val createdAt: Long = 0L
-) {
-    val isValid: Boolean
-        get() = name.isNotBlank() &&
-                // DailyTarget es obligatorio y > 0
-                (dailyTarget != null && dailyTarget > 0) &&
-                // Si la frecuencia es 'weekly', los días deben estar presentes
-                (frequency != "weekly" || frequencyDays.isNotEmpty())
 }

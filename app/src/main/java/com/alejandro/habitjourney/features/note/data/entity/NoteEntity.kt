@@ -15,7 +15,7 @@ import com.alejandro.habitjourney.features.user.data.local.entity.UserEntity
             entity = UserEntity::class,
             parentColumns = ["id"],
             childColumns = ["user_id"],
-            onDelete = ForeignKey.CASCADE
+            onDelete = ForeignKey.NO_ACTION
         )
     ],
     indices = [

@@ -10,9 +10,8 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
-
 private val DarkColorScheme = darkColorScheme(
-    primary = Primary, //
+    primary = Primary,
     onPrimary = OnPrimary,
     secondary = Secondary,
     onSecondary = OnSecondary,
@@ -45,14 +44,19 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun HabitJourneyTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    // Dynamic color está activado por defecto en Android 12+
+    //dynamicColor: Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S,
     dynamicColor: Boolean = false,
+
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
+        // Dynamic color está disponible en Android 12+
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
+        // Fallback a tu paleta personalizada
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }

@@ -2,13 +2,13 @@ package com.alejandro.habitjourney.core.presentation.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -23,9 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import com.alejandro.habitjourney.R // Asegúrate de que esta importación sea correcta para tu proyecto
-import com.alejandro.habitjourney.core.presentation.ui.theme.AcentoInformativo
-import com.alejandro.habitjourney.core.presentation.ui.theme.Dimensions
+import com.alejandro.habitjourney.R
+import com.alejandro.habitjourney.core.presentation.ui.theme.*
 
 enum class HabitJourneyButtonType {
     PRIMARY, SECONDARY, TERTIARY
@@ -41,7 +40,8 @@ fun HabitJourneyButton(
     isLoading: Boolean = false,
     leadingIcon: ImageVector? = null,
     trailingIcon: ImageVector? = null,
-    iconContentDescription: String? = null
+    iconContentDescription: String? = null,
+    contentPadding: PaddingValues = ButtonDefaults.ContentPadding
 ) {
     val buttonContent: @Composable () -> Unit = {
         Row(
@@ -61,7 +61,7 @@ fun HabitJourneyButton(
             } else if (leadingIcon != null) {
                 Icon(
                     imageVector = leadingIcon,
-                    contentDescription = iconContentDescription ?: stringResource(R.string.content_description_leading_icon), // Usa el nuevo parámetro o el string por defecto
+                    contentDescription = iconContentDescription ?: stringResource(R.string.content_description_leading_icon),
                     modifier = Modifier.size(Dimensions.IconSizeButton)
                 )
                 Spacer(modifier = Modifier.width(Dimensions.SpacingSmall))
@@ -69,14 +69,14 @@ fun HabitJourneyButton(
 
             Text(
                 text = text,
-                style = MaterialTheme.typography.bodyLarge
+                style = Typography.bodyLarge
             )
 
             if (trailingIcon != null && !isLoading) {
                 Spacer(modifier = Modifier.width(Dimensions.SpacingSmall))
                 Icon(
                     imageVector = trailingIcon,
-                    contentDescription = iconContentDescription ?: stringResource(R.string.content_description_trailing_icon), // Usa el nuevo parámetro o el string por defecto
+                    contentDescription = iconContentDescription ?: stringResource(R.string.content_description_trailing_icon),
                     modifier = Modifier.size(Dimensions.IconSizeButton)
                 )
             }
@@ -91,13 +91,13 @@ fun HabitJourneyButton(
                     .fillMaxWidth()
                     .height(Dimensions.ButtonHeight),
                 enabled = enabled && !isLoading,
-                shape = RoundedCornerShape(Dimensions.CornerRadius),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = AcentoInformativo,
                     contentColor = Color.White,
                     disabledContainerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
                     disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
-                )
+                ),
+                contentPadding = contentPadding
             ) {
                 buttonContent()
             }
@@ -109,7 +109,6 @@ fun HabitJourneyButton(
                     .fillMaxWidth()
                     .height(Dimensions.ButtonHeight),
                 enabled = enabled && !isLoading,
-                shape = RoundedCornerShape(Dimensions.CornerRadius),
                 colors = ButtonDefaults.outlinedButtonColors(
                     contentColor = AcentoInformativo,
                     containerColor = Color.Transparent,
@@ -119,7 +118,8 @@ fun HabitJourneyButton(
                     width = Dimensions.BorderWidth,
                     color = if (enabled && !isLoading) AcentoInformativo
                     else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
-                )
+                ),
+                contentPadding = contentPadding
             ) {
                 buttonContent()
             }
@@ -132,7 +132,8 @@ fun HabitJourneyButton(
                 colors = ButtonDefaults.textButtonColors(
                     contentColor = AcentoInformativo,
                     disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
-                )
+                ),
+                contentPadding = contentPadding
             ) {
                 buttonContent()
             }

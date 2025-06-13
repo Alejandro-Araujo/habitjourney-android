@@ -45,6 +45,10 @@ kotlinxSerializationJson = "1.8.1"
 appcompat = "1.7.0"
 materialVersion = "1.14.0-alpha01"
 material3 = "1.4.0-alpha15"
+workRuntimeKtx = "2.10.1"
+hiltCommon = "1.2.0"
+hiltWork = "1.2.0"
+hiltAndroidX = "1.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -98,6 +102,10 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "materialVersion" }
 material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
+androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntimeKtx" }
+androidx-hilt-common = { group = "androidx.hilt", name = "hilt-common", version.ref = "hiltCommon" }
+androidx-hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltWork" }
+androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltAndroidX" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

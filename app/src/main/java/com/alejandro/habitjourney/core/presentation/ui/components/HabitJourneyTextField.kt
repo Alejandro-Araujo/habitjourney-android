@@ -86,7 +86,7 @@ fun HabitJourneyTextField(
                 disabledPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
                 errorPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
 
-                // Container (fondo)
+                // Container
                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                 disabledContainerColor = MaterialTheme.colorScheme.surface,
@@ -96,7 +96,7 @@ fun HabitJourneyTextField(
         )
 
         // Helper text
-        if (helperText != null && helperText.isNotBlank()) {
+        if (!helperText.isNullOrBlank()) {
             Text(
                 text = helperText,
                 color = if (isError) Error else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),

@@ -1,8 +1,13 @@
 package com.alejandro.habitjourney
 
 import android.app.Application
+import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
+import androidx.hilt.work.HiltWorkerFactory
+import androidx.media3.common.util.Log
+import androidx.media3.common.util.UnstableApi
+import androidx.work.Configuration
 import com.alejandro.habitjourney.features.settings.domain.repository.SettingsRepository
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
@@ -12,12 +17,14 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @HiltAndroidApp
-class HabitJourneyApplication : Application() {
+class HabitJourneyApplication : Application(), Configuration.Provider {
 
     @Inject
     lateinit var settingsRepository: SettingsRepository
+
+    @Inject
+    lateinit var workerFactory: HiltWorkerFactory
 
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
@@ -45,4 +52,17 @@ class HabitJourneyApplication : Application() {
             }
         }
     }
+
+    override val workManagerConfiguration: Configuration
+        @OptIn(UnstableApi::class)
+        get() {
+            Log.d(
+                "HabitJourneyApp",
+                "Creating WorkManager config with HiltWorkerFactory: $workerFactory"
+            )
+            return Configuration.Builder()
+                .setWorkerFactory(workerFactory)
+                .setMinimumLoggingLevel(android.util.Log.DEBUG)
+                .build()
+        }
 }

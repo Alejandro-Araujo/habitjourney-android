@@ -23,6 +23,7 @@ class TaskListViewModel @Inject constructor(
     private val getOverdueTasksUseCase: GetOverdueTasksUseCase,
     private val toggleTaskCompletionUseCase: ToggleTaskCompletionUseCase,
     private val archiveTaskUseCase: ArchiveTaskUseCase,
+    private val deleteTaskUseCase: DeleteTaskUseCase,
     private val userPreferences: UserPreferences
 ) : ViewModel() {
 
@@ -60,11 +61,9 @@ class TaskListViewModel @Inject constructor(
     val uiState: StateFlow<TaskListUiState> = combine(
         _baseUiState,
         _isSearchActive,
-        _isFilterDropdownExpanded
-    ) { baseState, searchActive, dropdownExpanded ->
+    ) { baseState, searchActive ->
         baseState.copy(
             isSearchActive = searchActive,
-            isFilterDropdownExpanded = dropdownExpanded
         )
     }.stateIn(
         scope = viewModelScope,
@@ -72,7 +71,6 @@ class TaskListViewModel @Inject constructor(
         initialValue = TaskListUiState()
     )
 
-    // Flow de tareas basado en filtros
     @OptIn(ExperimentalCoroutinesApi::class)
     val tasks: StateFlow<List<Task>> =
         combine(
@@ -116,7 +114,6 @@ class TaskListViewModel @Inject constructor(
 
     fun setFilter(filter: TaskFilterType) {
         _currentFilter.value = filter
-        _isFilterDropdownExpanded.value = false
     }
 
     fun setSearchQuery(query: String) {
@@ -130,9 +127,6 @@ class TaskListViewModel @Inject constructor(
         }
     }
 
-    fun setFilterDropdownExpanded(expanded: Boolean) {
-        _isFilterDropdownExpanded.value = expanded
-    }
 
     fun setPriorityFilter(priority: Priority?) {
         _selectedPriority.value = priority
@@ -152,6 +146,26 @@ class TaskListViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 archiveTaskUseCase(taskId, true)
+            } catch (e: Exception) {
+                _error.value = e.message
+            }
+        }
+    }
+
+    fun unarchiveTask(taskId: Long) {
+        viewModelScope.launch {
+            try {
+                archiveTaskUseCase(taskId, false)
+            } catch (e: Exception) {
+                _error.value = e.message
+            }
+        }
+    }
+
+    fun deleteTask(taskId: Long) {
+        viewModelScope.launch {
+            try {
+                deleteTaskUseCase(taskId)
             } catch (e: Exception) {
                 _error.value = e.message
             }

@@ -1,19 +1,10 @@
-package com.alejandro.habitjourney.features.habit.presentation.ui.components
+package com.alejandro.habitjourney.features.habit.presentation.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Remove
-import androidx.compose.material.icons.filled.Block
-import androidx.compose.material.icons.filled.EventBusy
-import androidx.compose.material.icons.filled.Archive
-import androidx.compose.material.icons.filled.Unarchive
-import androidx.compose.material.icons.filled.HourglassEmpty
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,12 +17,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.alejandro.habitjourney.R
-import com.alejandro.habitjourney.core.presentation.ui.theme.Dimensions
+import com.alejandro.habitjourney.core.presentation.ui.theme.*
 import com.alejandro.habitjourney.core.data.local.enums.LogStatus
+import com.alejandro.habitjourney.core.presentation.ui.components.ConfirmationDialog
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HabitCard(
+    modifier: Modifier = Modifier,
     habitName: String,
     habitDescription: String?,
     icon: ImageVector,
@@ -40,7 +32,7 @@ fun HabitCard(
     onClick: () -> Unit,
     accentColor: Color,
 
-    // --- PARÁMETROS DE ESTADO DEL UI MODEL ---
+    // Parámetros de estado del UI Model
     logStatus: LogStatus,
     isCompletedToday: Boolean,
     isSkippedToday: Boolean,
@@ -52,47 +44,47 @@ fun HabitCard(
     dailyTarget: Int?,
     currentCompletionCount: Int,
     showTodayActions: Boolean = false,
-    modifier: Modifier = Modifier,
 
-    // --- CALLBACKS DEL VIEWMODEL ---
+    // Callbacks del ViewModel
     onIncrementProgress: ((Float) -> Unit)? = null,
     onDecrementProgress: ((Float) -> Unit)? = null,
     onUndoSkipped: (() -> Unit)? = null,
     onMarkSkipped: (() -> Unit)? = null,
-
     onArchiveHabit: (() -> Unit)? = null,
     onUnarchiveHabit: (() -> Unit)? = null,
 
-    // --- PROPIEDADES PARA HABILITAR/DESHABILITAR BOTONES ---
+    // Propiedades para habilitar/deshabilitar botones
     canIncrementProgress: Boolean,
     canDecrementProgress: Boolean,
     canToggleSkipped: Boolean
 ) {
     var showMenu by remember { mutableStateOf(false) }
+    var showArchiveDialog by remember { mutableStateOf(false) }
+
 
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = { showMenu = true }
-            ),
+        modifier = modifier.combinedClickable(
+            onClick = onClick,
+            onLongClick = { showMenu = true }
+        ),
         colors = CardDefaults.cardColors(
-            containerColor = when {
-                isArchived -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-                isSkippedToday -> MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.3f)
-                isCompletedToday -> MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
-                isPartialToday -> MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.3f)
-                isMissedToday -> MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.3f)
-                else -> MaterialTheme.colorScheme.surface
+            containerColor = if (isArchived) {
+                InactivoDeshabilitado.copy(alpha = AlphaValues.DisabledAlpha)
+            } else {
+                MaterialTheme.colorScheme.surface
             }
         ),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = if (isCompletedToday || isSkippedToday || isArchived) 2.dp else 4.dp
-        )
+            defaultElevation = 2.dp,
+            pressedElevation = 4.dp,
+            hoveredElevation = 3.dp
+        ),
+        shape = RoundedCornerShape(Dimensions.CornerRadius)
     ) {
         Column(
-            modifier = Modifier.padding(Dimensions.SpacingMedium)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(Dimensions.SpacingMedium)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -104,7 +96,7 @@ fun HabitCard(
                     imageVector = icon,
                     contentDescription = iconContentDescription,
                     tint = accentColor,
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(Dimensions.IconSizeLarge)
                 )
 
                 // Información del hábito
@@ -113,7 +105,7 @@ fun HabitCard(
                 ) {
                     Text(
                         text = habitName,
-                        style = MaterialTheme.typography.titleMedium,
+                        style = Typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onSurface,
                         maxLines = 1,
@@ -123,32 +115,47 @@ fun HabitCard(
                     if (!habitDescription.isNullOrBlank()) {
                         Text(
                             text = habitDescription,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                            style = Typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = AlphaValues.HighAlpha),
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis
                         )
                     }
 
-                    // CORREGIDO: Mostrar progreso numérico con mejor lógica
+                    // Mostrar progreso numérico
                     when {
                         dailyTarget != null && dailyTarget > 1 -> {
-                            Text(
-                                text = stringResource(
+                            val (stringId, textColor) = when {
+                                currentCompletionCount < 1 -> Pair(
+                                    R.string.habit_pending_today,
+                                    MaterialTheme.colorScheme.onSurface.copy(alpha = AlphaValues.MediumAlpha)
+                                )
+                                currentCompletionCount == dailyTarget -> Pair(
+                                    R.string.habit_completed_today,
+                                    accentColor
+                                )
+                                else -> Pair(
                                     R.string.habit_progress_text,
-                                    currentCompletionCount,
-                                    dailyTarget
-                                ),
-                                style = MaterialTheme.typography.labelMedium,
-                                color = accentColor,
+                                    MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+
+                            Text(
+                                text = stringResource(stringId, currentCompletionCount, dailyTarget),
+                                style = Typography.labelMedium,
+                                color = textColor,
                                 fontWeight = FontWeight.Medium
                             )
                         }
                         dailyTarget == 1 -> {
                             Text(
-                                text = if (currentCompletionCount >= 1) "✓ Completado" else "⏸ Pendiente",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = if (currentCompletionCount >= 1) accentColor else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                                text = if (currentCompletionCount >= 1) {
+                                    stringResource(R.string.habit_completed_today)
+                                } else {
+                                    stringResource(R.string.habit_pending_today)
+                                },
+                                style = Typography.labelMedium,
+                                color = if (currentCompletionCount >= 1) accentColor else MaterialTheme.colorScheme.onSurface.copy(alpha = AlphaValues.MediumAlpha),
                                 fontWeight = FontWeight.Medium
                             )
                         }
@@ -160,42 +167,107 @@ fun HabitCard(
                     LogStatus.COMPLETED -> Icon(
                         imageVector = Icons.Default.CheckCircle,
                         contentDescription = stringResource(R.string.content_description_completed),
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(24.dp)
+                        tint = AcentoPositivo,
+                        modifier = Modifier.size(Dimensions.IconSizeNormal)
                     )
                     LogStatus.SKIPPED -> Icon(
                         imageVector = Icons.Default.Block,
                         contentDescription = stringResource(R.string.content_description_skipped),
-                        tint = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.size(24.dp)
+                        tint = AcentoUrgente,
+                        modifier = Modifier.size(Dimensions.IconSizeNormal)
                     )
                     LogStatus.MISSED -> Icon(
                         imageVector = Icons.Default.HourglassEmpty,
                         contentDescription = stringResource(R.string.content_description_missed),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(24.dp)
+                        tint = InactivoDeshabilitado,
+                        modifier = Modifier.size(Dimensions.IconSizeNormal)
                     )
                     LogStatus.PARTIAL -> Icon(
                         imageVector = Icons.Default.HourglassEmpty,
-                        contentDescription = "Parcial",
-                        tint = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier.size(24.dp)
+                        contentDescription = stringResource(R.string.content_description_partial),
+                        tint = AcentoInformativo,
+                        modifier = Modifier.size(Dimensions.IconSizeNormal)
                     )
                     else -> Unit
                 }
+
+                // Menú de acciones
+                Box {
+                    IconButton(
+                        onClick = { showMenu = true }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = stringResource(R.string.more_options),
+                            modifier = Modifier.size(Dimensions.IconSizeSmall)
+                        )
+                    }
+
+                    HabitContextMenu(
+                        expanded = showMenu,
+                        onDismiss = { showMenu = false },
+                        isArchived = isArchived,
+                        isSkippedToday = isSkippedToday,
+                        isCompletedToday = isCompletedToday,
+                        canToggleSkipped = canToggleSkipped,
+                        onArchiveHabit = {
+                            showArchiveDialog = true
+                            showMenu = false
+                        },
+                        onUnarchiveHabit = {
+                            showArchiveDialog = true
+                            showMenu = false
+                        },
+                        onMarkSkipped = {
+                            onMarkSkipped?.invoke()
+                            showMenu = false
+                        },
+                        onUndoSkipped = {
+                            onUndoSkipped?.invoke()
+                            showMenu = false
+                        }
+                    )
+                }
             }
 
-            // CORREGIDO: Barra de progreso con mejor lógica de visualización
+            // Barra de progreso (solo si no está saltado y hay progreso)
             if (!isSkippedToday && completionProgressPercentage > 0f) {
                 Spacer(modifier = Modifier.height(Dimensions.SpacingSmall))
                 LinearProgressIndicator(
                     progress = { (completionProgressPercentage / 100f).coerceIn(0f, 1f) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(6.dp)
-                        .clip(RoundedCornerShape(3.dp)),
+                        .height(Dimensions.ProgressBarHeightLarge)
+                        .clip(RoundedCornerShape(Dimensions.CornerRadiusSmall / 2)),
                     color = accentColor,
-                    trackColor = MaterialTheme.colorScheme.surfaceVariant
+                    trackColor = InactivoDeshabilitado.copy(alpha = AlphaValues.DisabledAlpha)
+                )
+            }
+
+            if (showArchiveDialog) {
+                ConfirmationDialog(
+                    onDismissRequest = { showArchiveDialog = false },
+                    title = if (!isArchived) {
+                        stringResource(R.string.title_archive_habit)
+                    } else {
+                        stringResource(R.string.title_unarchive_habit)
+                    },
+                    message = if (!isArchived) {
+                        stringResource(R.string.action_archive_habit)
+                    } else {
+                        stringResource(R.string.action_unarchive_habit)
+                    },
+                    onConfirm = {
+                        if (isArchived) onUnarchiveHabit?.invoke() else onArchiveHabit?.invoke()
+                        showArchiveDialog = false
+                    },
+                    confirmText = if (!isArchived) {
+                        stringResource(R.string.archive)
+                    } else {
+                        stringResource(R.string.unarchive)
+                    },
+                    cancelText = stringResource(R.string.cancel),
+                    icon = Icons.Default.Archive
                 )
             }
 
@@ -217,24 +289,27 @@ fun HabitCard(
                             Icon(
                                 imageVector = Icons.Default.Remove,
                                 contentDescription = stringResource(R.string.action_decrease),
-                                tint = if (canDecrementProgress) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
+                                tint = if (canDecrementProgress)
+                                    MaterialTheme.colorScheme.primary
+                                else
+                                    MaterialTheme.colorScheme.onSurface.copy(alpha = AlphaValues.DisabledContentAlpha)
                             )
                         }
 
                         // Contador
                         Surface(
-                            color = MaterialTheme.colorScheme.surfaceVariant,
-                            shape = RoundedCornerShape(8.dp),
+                            color = InactivoDeshabilitado.copy(alpha = AlphaValues.DisabledAlpha),
+                            shape = RoundedCornerShape(Dimensions.CornerRadius),
                             modifier = Modifier.padding(horizontal = Dimensions.SpacingSmall)
                         ) {
                             Text(
                                 text = "$currentCompletionCount/$dailyTarget",
-                                style = MaterialTheme.typography.labelMedium,
+                                style = Typography.labelMedium,
                                 modifier = Modifier.padding(
                                     horizontal = Dimensions.SpacingSmall,
-                                    vertical = 4.dp
+                                    vertical = Dimensions.SpacingExtraSmall
                                 ),
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
 
@@ -246,15 +321,18 @@ fun HabitCard(
                             Icon(
                                 imageVector = Icons.Default.Add,
                                 contentDescription = stringResource(R.string.action_increase),
-                                tint = if (canIncrementProgress) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
+                                tint = if (canIncrementProgress)
+                                    MaterialTheme.colorScheme.primary
+                                else
+                                    MaterialTheme.colorScheme.onSurface.copy(alpha = AlphaValues.DisabledContentAlpha)
                             )
                         }
                     } else {
-                        // Para hábitos simples (dailyTarget = null o 1), mostrar checkbox
+                        // Para hábitos simples (dailyTarget = null o 1)
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
                                 text = stringResource(R.string.habit_card_complete),
-                                style = MaterialTheme.typography.bodyLarge,
+                                style = Typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Spacer(modifier = Modifier.width(Dimensions.SpacingSmall))
@@ -267,57 +345,15 @@ fun HabitCard(
                                         onDecrementProgress?.invoke(1f)
                                     }
                                 },
-                                enabled = !isArchived && !isSkippedToday
+                                enabled = !isArchived && !isSkippedToday,
+                                colors = CheckboxDefaults.colors(
+                                    checkedColor = AcentoPositivo,
+                                    uncheckedColor = InactivoDeshabilitado
+                                )
                             )
                         }
                     }
                 }
-            }
-        }
-
-        // Menú Contextual
-        DropdownMenu(
-            expanded = showMenu,
-            onDismissRequest = { showMenu = false }
-        ) {
-            if (!isArchived) {
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.action_archive_habit)) },
-                    onClick = {
-                        onArchiveHabit?.invoke()
-                        showMenu = false
-                    },
-                    leadingIcon = { Icon(Icons.Default.Archive, contentDescription = null) }
-                )
-            } else {
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.action_unarchive_habit)) },
-                    onClick = {
-                        onUnarchiveHabit?.invoke()
-                        showMenu = false
-                    },
-                    leadingIcon = { Icon(Icons.Default.Unarchive, contentDescription = null) }
-                )
-            }
-
-            if (!isCompletedToday && !isSkippedToday && canToggleSkipped) {
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.action_skip)) },
-                    onClick = {
-                        onMarkSkipped?.invoke()
-                        showMenu = false
-                    },
-                    leadingIcon = { Icon(Icons.Default.EventBusy, contentDescription = null) }
-                )
-            } else if (isSkippedToday) {
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.action_undo_skip)) },
-                    onClick = {
-                        onUndoSkipped?.invoke()
-                        showMenu = false
-                    },
-                    leadingIcon = { Icon(Icons.Default.Remove, contentDescription = null) }
-                )
             }
         }
     }

@@ -22,9 +22,25 @@ val InactivoDeshabilitado = Color(0xFFA0AEC0) // Gris medio para elementos inact
 val Error = Color(0xFFF56565)     // Rojo para mensajes de error
 val Exito = Color(0xFF48BB78)     // Verde para mensajes de éxito (igual que AcentoPositivo, lo cual es coherente)
 
+// Valores de Alpha estándar para Material Design
+object AlphaValues {
+    const val DisabledAlpha = 0.12f          // Para backgrounds deshabilitados
+    const val DisabledContentAlpha = 0.38f   // Para contenido/texto deshabilitado
+    const val MediumAlpha = 0.6f             // Para énfasis medio
+    const val HighAlpha = 0.8f               // Para énfasis alto
+    const val DividerAlpha = 0.12f          // Para divisores
+    const val HoverAlpha = 0.04f            // Para estados hover
+    const val FocusAlpha = 0.12f            // Para estados focus
+    const val PressedAlpha = 0.12f          // Para estados pressed
+    const val DragAlpha = 0.16f             // Para estados drag
+    const val SelectedAlpha = 0.08f         // Para estados selected
+
+    // Alphas específicos para containers de cards según estado
+    const val CardArchivedAlpha = 0.5f
+    const val CardStateAlpha = 0.3f         // Para completed, skipped, partial, missed
+}
+
 // Mapeo a la paleta de Material Design 3 (M3) para facilitar el uso
-// Puedes ajustar cuál de tus colores funcionales se mapea a 'Primary' según la identidad de tu marca principal.
-// He elegido AcentoInformativo porque es un azul común para botones y elementos principales.
 val Primary = AcentoInformativo
 val OnPrimary = Color.White // Texto sobre el color primario (blanco para contraste)
 
@@ -47,5 +63,16 @@ val OnError = Color.White // Texto sobre el color de error
 val Gold = Logro
 val Purple = Premium
 
-val ListCompletedItem = AcentoPositivo.copy(alpha = 0.6f)
+val ListCompletedItem = AcentoPositivo.copy(alpha = AlphaValues.MediumAlpha)
 val NoteTypeIndicator = AcentoInformativo
+
+// Colores para HabitJourneyCard con estados
+object CardStateColors {
+    val Archived = Color(0xFF9E9E9E).copy(alpha = AlphaValues.CardArchivedAlpha)
+    val Completed = AcentoPositivo.copy(alpha = AlphaValues.CardStateAlpha)
+    val Skipped = AcentoUrgente.copy(alpha = AlphaValues.CardStateAlpha)
+    val Partial = AcentoInformativo.copy(alpha = AlphaValues.CardStateAlpha)
+    val Missed = Error.copy(alpha = AlphaValues.CardStateAlpha)
+    val NotCompleted = AcentoInformativo.copy(alpha = AlphaValues.MediumAlpha)
+    val FilledBackground = BaseClara.copy(alpha = 0.95f)
+}

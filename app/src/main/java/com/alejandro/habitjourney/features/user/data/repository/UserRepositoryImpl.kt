@@ -25,7 +25,7 @@ import javax.inject.Singleton
 
 @Singleton
 class UserRepositoryImpl @Inject constructor(
-    @ApplicationContext private val context: Context, // Inyectamos el Context
+    @ApplicationContext private val context: Context,
     private val authApi: AuthApi,
     private val userDao: UserDao,
     private val userPreferences: UserPreferences,
@@ -100,7 +100,7 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun updateUser(name: String, email: String): NetworkResponse<User> {
         val apiResponse = safeApiCall(context, errorHandler) {
-            val userDtoForUpdate = UserDTO(id = 0, name = name, email = email) // ID puede ser ignorado por el backend en /me
+            val userDtoForUpdate = UserDTO(id = 0, name = name, email = email)
             authApi.updateUser(userDtoForUpdate)
         }
 
@@ -153,7 +153,6 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun logout(): NetworkResponse<Unit> {
         userPreferences.clear()
-        userDao.deleteAllUsers()
         return NetworkResponse.Success(Unit)
     }
 

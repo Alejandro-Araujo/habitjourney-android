@@ -34,7 +34,7 @@ class UserPreferences @Inject constructor(
         return authTokenFlow.first()
     }
 
-    // Método no-suspend para casos donde necesites acceso inmediato (interceptors, etc.)
+    // Método no-suspend para casos donde se necesite acceso inmediato (interceptors, etc.)
     fun getAuthTokenSync(): String? {
         return context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
             .getString("auth_token", null)

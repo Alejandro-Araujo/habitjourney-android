@@ -51,7 +51,6 @@ interface HabitDao {
     """)
     fun getActiveHabitsForUser(userId: Long): Flow<List<HabitEntity>>
 
-    // CORREGIDO: Query para hábitos del día con lógica mejorada para frequency_days
     @Query("""
         SELECT * FROM habits
         WHERE user_id = :userId
@@ -88,11 +87,9 @@ interface HabitDao {
     @Query("""
         SELECT * FROM habits
         WHERE id = :habitId
-        AND is_archived = 0
     """)
     fun getHabitWithLogs(habitId: Long): Flow<HabitWithLogs>
 
-    // CORREGIDO: Query principal con lógica mejorada y verificación de fechas
     @Query("""
         SELECT h.*,
                COALESCE(SUM(CASE 

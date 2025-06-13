@@ -26,7 +26,6 @@ import com.alejandro.habitjourney.core.presentation.ui.theme.Typography
 
 @Composable
 fun NoteInfoCard(
-    wordCount: Int,
     hasUnsavedChanges: Boolean,
     isAutoSaved: Boolean,
     modifier: Modifier = Modifier
@@ -41,22 +40,6 @@ fun NoteInfoCard(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Contador de palabras
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(Dimensions.SpacingSmall)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Description,
-                    contentDescription = null,
-                    modifier = Modifier.size(Dimensions.IconSizeSmall),
-                    tint = AcentoInformativo
-                )
-                Text(
-                    text = stringResource(R.string.note_word_count, wordCount),
-                    style = Typography.bodyMedium
-                )
-            }
 
             // Estado de guardado
             Row(

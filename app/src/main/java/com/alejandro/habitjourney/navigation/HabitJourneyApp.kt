@@ -8,6 +8,7 @@ import androidx.compose.material.icons.automirrored.filled.Note
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.material3.NavigationBarDefaults.containerColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -17,6 +18,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.alejandro.habitjourney.R
+import com.alejandro.habitjourney.core.presentation.ui.theme.AcentoInformativo
 import com.alejandro.habitjourney.features.user.presentation.viewmodel.AuthViewModel
 
 /**
@@ -74,20 +76,21 @@ private fun HabitJourneyBottomNavigation(
     navController: androidx.navigation.NavHostController,
     currentDestination: androidx.navigation.NavDestination?
 ) {
-    NavigationBar {
+    NavigationBar(
+        containerColor = AcentoInformativo
+    ) {
         bottomNavItems.forEach { item ->
             val isSelected = currentDestination?.hierarchy?.any {
                 it.route == item.route
             } == true
+
             NavigationBarItem(
                 icon = {
                     Icon(
                         imageVector = item.icon,
-                        // Mantenemos el contentDescription para accesibilidad
                         contentDescription = stringResource(id = item.contentDescriptionResId)
                     )
                 },
-                // Aquí está el cambio: label se establece a null para no mostrar texto
                 label = null,
                 selected = isSelected,
                 onClick = {
@@ -98,7 +101,12 @@ private fun HabitJourneyBottomNavigation(
                         launchSingleTop = true
                         restoreState = true
                     }
-                }
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = MaterialTheme.colorScheme.onPrimary,
+                    unselectedIconColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f),
+                    indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                )
             )
         }
     }

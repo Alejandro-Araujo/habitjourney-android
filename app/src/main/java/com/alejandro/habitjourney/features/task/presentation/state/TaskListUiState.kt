@@ -12,5 +12,4 @@ data class TaskListUiState(
     val searchQuery: String = "",
     val selectedPriority: Priority? = null,
     val isSearchActive: Boolean = false,
-    val isFilterDropdownExpanded: Boolean = false
 )

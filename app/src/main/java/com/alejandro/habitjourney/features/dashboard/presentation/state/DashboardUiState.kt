@@ -35,13 +35,16 @@ data class DashboardUiState(
     val productiveDaysThisMonth: Int = 0,
 
     // Additional computed properties
-    val isEmpty: Boolean = totalHabitsToday == 0 && totalActiveTasks == 0 && totalNotes == 0
+    val isEmpty: Boolean = false, // Lo calcula el ViewModel
+
+    // --- SECCIÓN DE MENSAJES ---
+    // Ahora son simples strings que recibe del ViewModel
+    val summaryMessage: String = "",
+    val motivationalQuote: String = ""
 ) {
-    // Computed properties for UI
+    // Estas propiedades se quedan porque son cálculos puros sobre los datos del propio state
     val habitCompletionPercentage: Float
-        get() = if (totalHabitsToday > 0) {
-            completedHabitsToday.toFloat() / totalHabitsToday
-        } else 0f
+        get() = if (totalHabitsToday > 0) completedHabitsToday.toFloat() / totalHabitsToday else 0f
 
     val hasOverdueTasks: Boolean
         get() = overdueTasks > 0
@@ -66,28 +69,5 @@ data class DashboardUiState(
             }
 
             return ((habitScore * 0.6 + taskScore * 0.4).toInt() + streakBonus).coerceIn(0, 100)
-        }
-
-    val summaryMessage: String
-        get() = when {
-            isEmpty -> "¡Comienza tu viaje creando tus primeros hábitos y tareas!"
-            completedHabitsToday == totalHabitsToday && !hasOverdueTasks ->
-                "¡Excelente día! Has completado todos tus hábitos${if (currentStreak > 1) " y mantienes una racha de $currentStreak días" else ""}."
-            habitCompletionPercentage >= 0.8f && !hasOverdueTasks ->
-                "¡Muy buen progreso! Has completado el ${(habitCompletionPercentage * 100).toInt()}% de tus hábitos."
-            hasOverdueTasks ->
-                "Tienes $overdueTasks tarea${if (overdueTasks > 1) "s" else ""} vencida${if (overdueTasks > 1) "s" else ""}. ¡Es hora de ponerse al día!"
-            habitCompletionPercentage >= 0.5f ->
-                "Buen avance del día. ¡Sigue así para completar todos tus hábitos!"
-            else ->
-                "¡Aún queda mucho día por delante! Es momento de trabajar en tus hábitos."
-        }
-
-    val motivationalQuote: String
-        get() = when (productivityScore) {
-            in 90..100 -> "¡Eres imparable! Tu constancia está dando frutos."
-            in 70..89 -> "¡Excelente trabajo! Cada día es un paso hacia tus metas."
-            in 50..69 -> "¡Sigue adelante! El progreso es progreso, sin importar lo pequeño."
-            else -> "Cada nuevo día es una oportunidad para mejorar. ¡Tú puedes!"
         }
 }

@@ -13,7 +13,6 @@ data class CreateEditNoteUiState(
     val isSaving: Boolean = false,
     val error: String? = null,
     val isReadOnly: Boolean = false,
-    val wordCount: Int = 0,
     val hasUnsavedChanges: Boolean = false,
     val noteType: NoteType = NoteType.TEXT,
     val listItems: List<NoteListItem> = emptyList(),

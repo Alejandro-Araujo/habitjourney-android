@@ -2,6 +2,7 @@ package com.alejandro.habitjourney.core.presentation.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -135,18 +136,22 @@ fun HabitJourneyDialog(
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = if (dismissButtonText != null) {
-                        Arrangement.spacedBy(Dimensions.SpacingSmall + Dimensions.SpacingSmall / 2)
+                        Arrangement.spacedBy(Dimensions.SpacingSmall)
                     } else {
                         Arrangement.Center
                     }
                 ) {
-                    // Botón de cancelar/dismissal (si existe)
+                    // Botón de cancelar
                     if (dismissButtonText != null) {
                         HabitJourneyButton(
                             text = dismissButtonText,
                             onClick = onDismiss ?: onDismissRequest,
                             type = HabitJourneyButtonType.SECONDARY,
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
+                            contentPadding = PaddingValues(
+                                horizontal = Dimensions.SpacingSmall,
+                                vertical = Dimensions.ButtonVerticalPadding
+                            )
                         )
                     }
 
@@ -163,7 +168,11 @@ fun HabitJourneyDialog(
                             Modifier.weight(1f)
                         } else {
                             Modifier.fillMaxWidth()
-                        }
+                        },
+                        contentPadding = PaddingValues(
+                            horizontal = Dimensions.SpacingSmall,
+                            vertical = Dimensions.ButtonVerticalPadding
+                        )
                     )
                 }
             }

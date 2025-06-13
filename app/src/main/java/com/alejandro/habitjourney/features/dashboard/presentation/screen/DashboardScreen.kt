@@ -7,7 +7,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -41,7 +40,7 @@ import com.alejandro.habitjourney.core.presentation.ui.components.*
 import com.alejandro.habitjourney.core.presentation.ui.theme.*
 import com.alejandro.habitjourney.features.dashboard.presentation.viewmodel.DashboardViewModel
 import com.alejandro.habitjourney.features.habit.domain.model.HabitWithLogs
-import com.alejandro.habitjourney.features.habit.presentation.ui.HabitIconMapper
+import com.alejandro.habitjourney.features.habit.presentation.screen.HabitIconMapper
 import com.alejandro.habitjourney.features.task.domain.model.Task
 import com.alejandro.habitjourney.features.note.domain.model.Note
 import com.alejandro.habitjourney.features.task.presentation.components.TaskDateUtils
@@ -50,6 +49,13 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
+import androidx.compose.ui.res.stringResource
+import com.alejandro.habitjourney.R
+import com.alejandro.habitjourney.features.dashboard.presentation.components.CalculationInfoDialog
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.Locale
+
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
@@ -74,34 +80,13 @@ fun DashboardScreen(
         onRefresh = { viewModel.refreshDashboard() }
     )
 
+    var showStatsInfo by remember { mutableStateOf(false) }
+
     // FAB expanded state
     var isFabExpanded by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(Dimensions.SpacingSmall)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Home,
-                            contentDescription = null,
-                            tint = AcentoInformativo
-                        )
-                        Text(
-                            text = "Dashboard",
-                            style = MaterialTheme.typography.headlineMedium
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
-            )
-        },
         floatingActionButton = {
             ExpandableFAB(
                 isExpanded = isFabExpanded,
@@ -140,28 +125,24 @@ fun DashboardScreen(
                     )
                 }
                 else -> {
-                    LazyColumn(
+                    Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(paddingValues),
-                        contentPadding = PaddingValues(
-                            start = Dimensions.SpacingMedium,
-                            end = Dimensions.SpacingMedium,
-                            top = Dimensions.SpacingMedium,
-                            bottom = Dimensions.FabBottomPadding
-                        ),
-                        verticalArrangement = Arrangement.spacedBy(Dimensions.SpacingMedium)
+                            .padding(paddingValues)
                     ) {
-                        // Welcome Header
-                        item {
+                        Column(
+                            modifier = Modifier.padding(
+                                vertical = Dimensions.SpacingMedium
+                            ),
+                            verticalArrangement = Arrangement.spacedBy(Dimensions.SpacingMedium)
+                        ) {
+                            // Welcome Header
                             WelcomeHeader(
                                 userName = uiState.user?.name ?: "",
                                 greeting = viewModel.greetingMessage
                             )
-                        }
 
-                        // Quick Stats
-                        item {
+                            // Quick Stats
                             QuickStatsCard(
                                 completedHabits = uiState.completedHabitsToday,
                                 totalHabits = uiState.totalHabitsToday,
@@ -169,78 +150,91 @@ fun DashboardScreen(
                                 overdueTasks = uiState.overdueTasks,
                                 currentStreak = uiState.currentStreak,
                                 productivityScore = uiState.productivityScore,
-                                summaryMessage = uiState.summaryMessage
+                                summaryMessage = uiState.summaryMessage,
+                                onShowStatsInfo = { showStatsInfo = true }
+
                             )
                         }
 
-                        // Today's Habits
-                        if (uiState.todayHabits.isNotEmpty()) {
-                            item {
-                                SectionHeader(
-                                    title = "Hábitos de Hoy",
-                                    actionText = "Ver todos",
-                                    onActionClick = onNavigateToHabits
-                                )
+                        // CONTENIDO SCROLLEABLE
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(
+                                start = Dimensions.SpacingMedium,
+                                end = Dimensions.SpacingMedium,
+                                bottom = Dimensions.FabBottomPadding
+                            ),
+                            verticalArrangement = Arrangement.spacedBy(Dimensions.SpacingMedium)
+                        ) {
+                            // Today's Habits
+                            if (uiState.todayHabits.isNotEmpty()) {
+                                item {
+                                    SectionHeader(
+                                        title = stringResource(R.string.dashboard_todays_habits),
+                                        actionText = stringResource(R.string.dashboard_view_all),
+                                        onActionClick = onNavigateToHabits
+                                    )
+                                }
+
+                                item {
+                                    TodayHabitsRow(
+                                        habits = uiState.todayHabits,
+                                        onHabitClick = onNavigateToHabitDetail,
+                                        onToggleCompletion = { habitId, habitWithLogs ->
+                                            viewModel.toggleHabitCompletion(habitId, habitWithLogs)
+                                        }
+                                    )
+                                }
                             }
 
-                            item {
-                                TodayHabitsRow(
-                                    habits = uiState.todayHabits,
-                                    onHabitClick = onNavigateToHabitDetail,
-                                    onToggleCompletion = { habitId, habitWithLogs ->
-                                        viewModel.toggleHabitCompletion(habitId, habitWithLogs)
-                                    }
-                                )
-                            }
-                        }
+                            // Priority Tasks
+                            if (uiState.activeTasks.isNotEmpty()) {
+                                item {
+                                    SectionHeader(
+                                        title = stringResource(R.string.dashboard_pending_tasks),
+                                        actionText = stringResource(R.string.dashboard_view_all),
+                                        onActionClick = onNavigateToTasks
+                                    )
+                                }
 
-                        // Priority Tasks
-                        if (uiState.activeTasks.isNotEmpty()) {
-                            item {
-                                SectionHeader(
-                                    title = "Tareas Pendientes",
-                                    actionText = "Ver todas",
-                                    onActionClick = onNavigateToTasks
-                                )
-                            }
-
-                            items(uiState.activeTasks.take(3)) { task ->
-                                TaskQuickCard(
-                                    task = task,
-                                    onTaskClick = { onNavigateToTaskDetail(task.id) },
-                                    onToggleCompletion = {
-                                        viewModel.toggleTaskCompletion(task.id, task.isCompleted)
-                                    }
-                                )
-                            }
-                        }
-
-                        // Recent Notes
-                        if (uiState.recentNotes.isNotEmpty()) {
-                            item {
-                                SectionHeader(
-                                    title = "Notas Recientes",
-                                    actionText = "Ver todas",
-                                    onActionClick = onNavigateToNotes
-                                )
+                                items(uiState.activeTasks.take(3)) { task ->
+                                    TaskQuickCard(
+                                        task = task,
+                                        onTaskClick = { onNavigateToTaskDetail(task.id) },
+                                        onToggleCompletion = {
+                                            viewModel.toggleTaskCompletion(task.id, task.isCompleted)
+                                        }
+                                    )
+                                }
                             }
 
-                            items(uiState.recentNotes) { note ->
-                                NoteQuickCard(
-                                    note = note,
-                                    onNoteClick = { onNavigateToNoteDetail(note.id) }
-                                )
-                            }
-                        }
+                            // Recent Notes
+                            if (uiState.recentNotes.isNotEmpty()) {
+                                item {
+                                    SectionHeader(
+                                        title = stringResource(R.string.dashboard_recent_notes),
+                                        actionText = stringResource(R.string.dashboard_view_all),
+                                        onActionClick = onNavigateToNotes
+                                    )
+                                }
 
-                        // Motivational Card
-                        if (uiState.productivityScore >= 80 || uiState.currentStreak >= 7) {
-                            item {
-                                MotivationalCard(
-                                    score = uiState.productivityScore,
-                                    message = uiState.motivationalQuote,
-                                    streak = uiState.currentStreak
-                                )
+                                items(uiState.recentNotes) { note ->
+                                    NoteQuickCard(
+                                        note = note,
+                                        onNoteClick = { onNavigateToNoteDetail(note.id) }
+                                    )
+                                }
+                            }
+
+                            // Motivational Card
+                            if (uiState.productivityScore >= 80 || uiState.currentStreak >= 7) {
+                                item {
+                                    MotivationalCard(
+                                        score = uiState.productivityScore,
+                                        message = uiState.motivationalQuote,
+                                        streak = uiState.currentStreak
+                                    )
+                                }
                             }
                         }
                     }
@@ -256,7 +250,14 @@ fun DashboardScreen(
                 contentColor = AcentoInformativo
             )
         }
+
+        if (showStatsInfo) {
+            CalculationInfoDialog(
+                onDismiss = { showStatsInfo = false }
+            )
+        }
     }
+
 
     // Error handling
     uiState.error?.let { errorMsg ->
@@ -271,29 +272,56 @@ fun DashboardScreen(
 }
 
 // Componentes auxiliares
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun WelcomeHeader(
     userName: String,
     greeting: String,
     modifier: Modifier = Modifier
 ) {
-    HabitJourneyCard(modifier = modifier) {
-        Column {
-            Text(
-                text = "$greeting, $userName!",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold
+    HabitJourneyCard(
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(Dimensions.SpacingMedium)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Home,
+                contentDescription = null,
+                tint = AcentoInformativo,
+                modifier = Modifier.size(Dimensions.IconSizeLarge)
             )
 
-            Spacer(modifier = Modifier.height(Dimensions.SpacingSmall))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = if (userName.isNotBlank()) {
+                        "$greeting, $userName"
+                    } else {
+                        greeting
+                    },
+                    style = Typography.headlineMediumEmphasized,
+                    fontWeight = FontWeight.Bold
+                )
 
-            Text(
-                text = "${Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).let {
-                    "${it.dayOfMonth} de ${it.month.name.lowercase().replaceFirstChar { char -> char.uppercase() }} de ${it.year}"
-                }}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+                Spacer(modifier = Modifier.height(Dimensions.SpacingSmall))
+
+                Text(
+                    text = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).let { dateTime ->
+                        val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)
+                            .withLocale(Locale.getDefault())
+                        val javaLocalDate = java.time.LocalDate.of(
+                            dateTime.year,
+                            dateTime.monthNumber,
+                            dateTime.dayOfMonth
+                        )
+                        javaLocalDate.format(formatter)
+                    },
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
     }
 }
@@ -307,18 +335,38 @@ private fun QuickStatsCard(
     currentStreak: Int,
     productivityScore: Int,
     summaryMessage: String,
+    onShowStatsInfo: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    HabitJourneyCard(modifier = modifier) {
+    HabitJourneyCard(
+        modifier = modifier.fillMaxWidth()
+    ) {
         Column(
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(Dimensions.SpacingMedium)
         ) {
-            // Title
-            Text(
-                text = "Resumen del Día",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Medium
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.dashboard_daily_summary),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Medium
+                )
+
+                IconButton(
+                    onClick = onShowStatsInfo,
+                    modifier = Modifier.size(Dimensions.IconSizeNormal)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = stringResource(R.string.stats_info_button_description),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
 
             // Stats Grid
             Row(
@@ -328,8 +376,8 @@ private fun QuickStatsCard(
                 // Habits
                 StatItem(
                     icon = Icons.Default.CheckCircle,
-                    value = "$completedHabits/$totalHabits",
-                    label = "Hábitos",
+                    value = stringResource(R.string.dashboard_habits_fraction, completedHabits, totalHabits),
+                    label = stringResource(R.string.dashboard_habits_label),
                     color = AcentoPositivo
                 )
 
@@ -337,7 +385,7 @@ private fun QuickStatsCard(
                 StatItem(
                     icon = Icons.Default.Task,
                     value = activeTasks.toString(),
-                    label = "Tareas",
+                    label = stringResource(R.string.dashboard_tasks_label),
                     color = AcentoInformativo
                 )
 
@@ -345,15 +393,15 @@ private fun QuickStatsCard(
                 StatItem(
                     icon = Icons.Default.LocalFireDepartment,
                     value = currentStreak.toString(),
-                    label = "Racha",
+                    label = stringResource(R.string.dashboard_streak_label),
                     color = Logro
                 )
 
                 // Score
                 StatItem(
                     icon = Icons.AutoMirrored.Filled.TrendingUp,
-                    value = "$productivityScore%",
-                    label = "Score",
+                    value = stringResource(R.string.dashboard_score_percentage, productivityScore),
+                    label = stringResource(R.string.dashboard_score_label),
                     color = when {
                         productivityScore >= 80 -> AcentoPositivo
                         productivityScore >= 60 -> Logro
@@ -412,9 +460,9 @@ private fun StatItem(
 
 @Composable
 private fun SectionHeader(
+    modifier: Modifier = Modifier,
     title: String,
     actionText: String? = null,
-    modifier: Modifier = Modifier,
     onActionClick: (() -> Unit)? = null
 ) {
     Row(
@@ -486,6 +534,10 @@ private fun HabitQuickCard(
                 MaterialTheme.colorScheme.surface
             }
         ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = if (isCompleted) {0.dp} else 2.dp,
+            pressedElevation =if (isCompleted) {0.dp} else 4.dp,
+        ),
         border = if (isCompleted) {
             BorderStroke(1.dp, AcentoPositivo)
         } else null
@@ -528,7 +580,11 @@ private fun HabitQuickCard(
                         progressColor = if (isCompleted) AcentoPositivo else AcentoInformativo
                     )
                     Text(
-                        text = "${habitWithLogs.todayProgress}/${habit.dailyTarget}",
+                        text = stringResource(
+                            R.string.dashboard_habit_progress,
+                            habitWithLogs.todayProgress,
+                            habit.dailyTarget
+                        ),
                         style = MaterialTheme.typography.labelSmall,
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
@@ -671,7 +727,7 @@ private fun NoteQuickCard(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = note.title.ifBlank { "Sin título" },
+                    text = note.title.ifBlank { stringResource(R.string.note_untitled) },
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Medium,
                     maxLines = 1,
@@ -700,7 +756,7 @@ private fun NoteQuickCard(
                     )
                 }
                 Text(
-                    text = "${note.wordCount} palabras",
+                    text = stringResource(R.string.dashboard_note_word_count, note.wordCount),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -737,7 +793,7 @@ private fun MotivationalCard(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = "¡Excelente progreso!",
+                    text = stringResource(R.string.dashboard_excellent_progress),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = AcentoPositivo
@@ -749,7 +805,7 @@ private fun MotivationalCard(
                 )
                 if (streak >= 7) {
                     Text(
-                        text = "🔥 Racha de $streak días",
+                        text = stringResource(R.string.dashboard_streak_days, streak),
                         style = MaterialTheme.typography.bodySmall,
                         color = Logro,
                         fontWeight = FontWeight.Medium
@@ -758,7 +814,7 @@ private fun MotivationalCard(
             }
 
             Text(
-                text = "$score%",
+                text = stringResource(R.string.dashboard_score_percentage, score),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = AcentoPositivo
@@ -787,7 +843,7 @@ private fun EmptyDashboardState(
         Spacer(modifier = Modifier.height(Dimensions.SpacingLarge))
 
         Text(
-            text = "¡Bienvenido a HabitJourney!",
+            text = stringResource(R.string.dashboard_welcome_title),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
@@ -796,7 +852,7 @@ private fun EmptyDashboardState(
         Spacer(modifier = Modifier.height(Dimensions.SpacingSmall))
 
         Text(
-            text = "Comienza tu viaje creando tu primer hábito",
+            text = stringResource(R.string.dashboard_welcome_subtitle),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
@@ -805,7 +861,7 @@ private fun EmptyDashboardState(
         Spacer(modifier = Modifier.height(Dimensions.SpacingLarge))
 
         HabitJourneyButton(
-            text = "Crear primer hábito",
+            text = stringResource(R.string.dashboard_create_first_habit),
             onClick = onCreateHabit,
             type = HabitJourneyButtonType.PRIMARY,
             leadingIcon = Icons.Default.Add,
@@ -829,7 +885,7 @@ private fun ExpandableFAB(
         verticalArrangement = Arrangement.spacedBy(Dimensions.SpacingSmall)
     ) {
         // Mini FABs (visible when expanded)
-        androidx.compose.animation.AnimatedVisibility(
+        AnimatedVisibility(
             visible = isExpanded,
             enter = fadeIn() + slideInVertically(),
             exit = fadeOut() + slideOutVertically()
@@ -849,7 +905,7 @@ private fun ExpandableFAB(
                         shadowElevation = 4.dp
                     ) {
                         Text(
-                            text = "Nueva Nota",
+                            text = stringResource(R.string.dashboard_fab_new_note),
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
                             style = MaterialTheme.typography.bodyMedium
                         )
@@ -873,7 +929,7 @@ private fun ExpandableFAB(
                         shadowElevation = 4.dp
                     ) {
                         Text(
-                            text = "Nueva Tarea",
+                            text = stringResource(R.string.dashboard_fab_new_task),
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
                             style = MaterialTheme.typography.bodyMedium
                         )
@@ -897,7 +953,7 @@ private fun ExpandableFAB(
                         shadowElevation = 4.dp
                     ) {
                         Text(
-                            text = "Nuevo Hábito",
+                            text = stringResource(R.string.dashboard_fab_new_habit),
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
                             style = MaterialTheme.typography.bodyMedium
                         )
@@ -923,7 +979,11 @@ private fun ExpandableFAB(
             ) { expanded ->
                 Icon(
                     imageVector = if (expanded) Icons.Default.Close else Icons.Default.Add,
-                    contentDescription = if (expanded) "Cerrar" else "Crear nuevo",
+                    contentDescription = if (expanded) {
+                        stringResource(R.string.dashboard_fab_close)
+                    } else {
+                        stringResource(R.string.dashboard_fab_create_new)
+                    },
                     modifier = Modifier.graphicsLayer {
                         rotationZ = if (expanded) 45f else 0f
                     }

@@ -2,17 +2,20 @@ package com.alejandro.habitjourney.features.dashboard.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.alejandro.habitjourney.R // Asegúrate de tener este import
+import com.alejandro.habitjourney.core.utils.resources.ResourceProvider
 import com.alejandro.habitjourney.core.data.local.result.Result
-
-import com.alejandro.habitjourney.features.dashboard.domain.repository.DashboardRepository
+import com.alejandro.habitjourney.features.dashboard.domain.model.DashboardData
 import com.alejandro.habitjourney.features.dashboard.domain.usecase.GetDashboardDataUseCase
 import com.alejandro.habitjourney.features.dashboard.presentation.state.DashboardUiState
 import com.alejandro.habitjourney.features.habit.domain.model.HabitWithLogs
 import com.alejandro.habitjourney.features.habit.domain.usecase.LogHabitCompletionUseCase
 import com.alejandro.habitjourney.features.task.domain.usecase.ToggleTaskCompletionUseCase
-import com.alejandro.habitjourney.features.user.domain.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
@@ -21,6 +24,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
+    // CAMBIO 1: Inyectamos tu ResourceProvider en lugar de Application
+    private val resourceProvider: ResourceProvider,
     private val getDashboardDataUseCase: GetDashboardDataUseCase,
     private val logHabitCompletionUseCase: LogHabitCompletionUseCase,
     private val toggleTaskCompletionUseCase: ToggleTaskCompletionUseCase
@@ -41,23 +46,25 @@ class DashboardViewModel @Inject constructor(
             getDashboardDataUseCase().collect { result ->
                 _uiState.update { currentState ->
                     when (result) {
-                        is Result.Loading -> { // No es necesario el path completo si importaste Result
+                        is Result.Loading -> {
                             currentState.copy(isLoading = true, error = null)
                         }
                         is Result.Success -> {
-                            val dashboardData = result.data // dashboardData ahora tiene .user en lugar de .userName
+                            val dashboardData = result.data
 
-                            // Determinar si está vacío basado en los datos recibidos
-                            // Ahora usamos dashboardData.user en lugar de dashboardData.userName
+                            // CAMBIO 2: Generamos los mensajes dinámicos aquí
+                            val (summary, quote) = generateUiMessages(dashboardData)
+
                             val isEmpty = dashboardData.todayHabits.isEmpty() &&
                                     dashboardData.pendingTasks.isEmpty() &&
                                     dashboardData.recentNotes.isEmpty() &&
-                                    (dashboardData.user == null || dashboardData.user.name == "Usuario" || dashboardData.user.name.isEmpty())
+                                    (dashboardData.user == null || dashboardData.user.name.equals("Usuario", ignoreCase = true) || dashboardData.user.name.isEmpty())
 
+                            // CAMBIO 3: Pasamos los mensajes al copy() del state
                             currentState.copy(
                                 isLoading = false,
                                 error = null,
-                                user = dashboardData.user, // <--- CAMBIO PRINCIPAL AQUÍ: Asignación directa
+                                user = dashboardData.user,
                                 todayHabits = dashboardData.todayHabits,
                                 totalHabitsToday = dashboardData.dashboardStats.totalHabitsToday,
                                 completedHabitsToday = dashboardData.dashboardStats.completedHabitsToday,
@@ -71,14 +78,15 @@ class DashboardViewModel @Inject constructor(
                                 totalWords = dashboardData.dashboardStats.totalWords,
                                 weeklyCompletionRate = dashboardData.dashboardStats.weeklyHabitCompletionRate,
                                 productiveDaysThisMonth = dashboardData.dashboardStats.productiveDaysThisMonth,
-                                isEmpty = isEmpty
+                                isEmpty = isEmpty,
+                                summaryMessage = summary,      // <-- NUEVO
+                                motivationalQuote = quote        // <-- NUEVO
                             )
                         }
-                        is Result.Error -> { // No es necesario el path completo si importaste Result
+                        is Result.Error -> {
                             currentState.copy(
                                 isLoading = false,
-                                error = result.exception.message ?: result.message ?: "Error desconocido al cargar el dashboard",
-                                isEmpty = currentState.user == null && currentState.todayHabits.isEmpty() && currentState.activeTasks.isEmpty() && currentState.recentNotes.isEmpty()
+                                error = result.exception.message ?: result.message ?: "Error desconocido al cargar el dashboard"
                             )
                         }
                     }
@@ -88,17 +96,67 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
+    // CAMBIO 4: Nueva función privada para generar los mensajes
+    private fun generateUiMessages(data: DashboardData): Pair<String, String> {
+        val stats = data.dashboardStats
+        val stateForCalc = DashboardUiState( // Creamos un estado temporal para usar los getters de cálculo
+            isEmpty = data.todayHabits.isEmpty() && data.pendingTasks.isEmpty() && data.recentNotes.isEmpty(),
+            completedHabitsToday = stats.completedHabitsToday,
+            totalHabitsToday = stats.totalHabitsToday,
+            overdueTasks = stats.overdueTasks,
+            currentStreak = stats.currentStreak
+        )
+
+        val summary = when {
+            stateForCalc.isEmpty -> resourceProvider.getString(R.string.dashboard_summary_start)
+            stateForCalc.completedHabitsToday == stateForCalc.totalHabitsToday && !stateForCalc.hasOverdueTasks -> {
+                if (stateForCalc.currentStreak > 1) {
+                    resourceProvider.getString(R.string.dashboard_summary_all_habits_completed_with_streak, stateForCalc.currentStreak)
+                } else {
+                    resourceProvider.getString(R.string.dashboard_summary_all_habits_completed_no_streak)
+                }
+            }
+            stateForCalc.habitCompletionPercentage >= 0.8f && !stateForCalc.hasOverdueTasks -> {
+                val percentage = (stateForCalc.habitCompletionPercentage * 100).toInt()
+                resourceProvider.getString(R.string.dashboard_summary_good_progress, percentage)
+            }
+            stateForCalc.hasOverdueTasks -> {
+                resourceProvider.getQuantityString(R.plurals.dashboard_summary_overdue_tasks, stateForCalc.overdueTasks, stateForCalc.overdueTasks)
+            }
+            stateForCalc.habitCompletionPercentage >= 0.5f -> resourceProvider.getString(R.string.dashboard_summary_decent_progress)
+            else -> resourceProvider.getString(R.string.dashboard_summary_keep_going)
+        }
+
+        val quote = when (stateForCalc.productivityScore) {
+            in 90..100 -> resourceProvider.getString(R.string.dashboard_quote_excellent)
+            in 70..89 -> resourceProvider.getString(R.string.dashboard_quote_great)
+            in 50..69 -> resourceProvider.getString(R.string.dashboard_quote_good)
+            else -> resourceProvider.getString(R.string.dashboard_quote_default)
+        }
+
+        return Pair(summary, quote)
+    }
+
+    val greetingMessage: String
+        get() {
+            val hour = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).hour
+            val greetingResId = when (hour) {
+                in 5..11 -> R.string.greeting_morning
+                in 12..17 -> R.string.greeting_afternoon
+                else -> R.string.greeting_evening
+            }
+            return resourceProvider.getString(greetingResId)
+        }
+
     fun toggleHabitCompletion(habitId: Long, habitWithLogs: HabitWithLogs) {
         viewModelScope.launch {
             try {
                 val today = Clock.System.now()
                     .toLocalDateTime(TimeZone.currentSystemDefault())
                     .date
-
                 val todayLog = habitWithLogs.logs.find { it.date == today }
                 val currentValue = todayLog?.value ?: 0f
                 val newValue = currentValue + 1f
-
                 logHabitCompletionUseCase(
                     habitId = habitId,
                     date = today,
@@ -140,17 +198,4 @@ class DashboardViewModel @Inject constructor(
             currentState.copy(error = null)
         }
     }
-
-    // Computed properties para la UI
-    val greetingMessage: String
-        get() {
-            val hour = Clock.System.now()
-                .toLocalDateTime(TimeZone.currentSystemDefault())
-                .hour
-            return when (hour) {
-                in 5..11 -> "¡Buenos días"
-                in 12..17 -> "¡Buenas tardes"
-                else -> "¡Buenas noches"
-            }
-        }
 }

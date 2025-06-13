@@ -28,7 +28,7 @@ fun TaskDateSelector(
     Column(modifier = modifier) {
         Text(
             text = label,
-            style = MaterialTheme.typography.headlineSmall, // Usando tu tipografía H3
+            style = Typography.headlineSmall,
             color = MaterialTheme.colorScheme.onSurface
         )
 

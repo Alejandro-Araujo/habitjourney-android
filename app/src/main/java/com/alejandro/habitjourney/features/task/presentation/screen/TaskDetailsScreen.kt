@@ -119,7 +119,7 @@ fun TaskDetailsScreen(
                                             text = { Text(stringResource(R.string.unarchive_task)) },
                                             onClick = {
                                                 viewModel.archiveTask(onNavigateBack)
-                                                showMenuDropdown = false
+                                                showMenuDropdown = true
                                             },
                                             leadingIcon = {
                                                 Icon(

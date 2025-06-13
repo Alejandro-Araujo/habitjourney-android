@@ -16,7 +16,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -277,11 +276,11 @@ private fun ProfileSection(
 
             // Edit button
             HabitJourneyButton(
+                modifier = Modifier.fillMaxWidth(),
                 text = stringResource(R.string.settings_edit_profile),
                 onClick = onEditProfile,
                 type = HabitJourneyButtonType.SECONDARY,
                 leadingIcon = Icons.Default.Edit,
-                modifier = Modifier.fillMaxWidth()
             )
         }
     }
@@ -289,9 +288,9 @@ private fun ProfileSection(
 
 @Composable
 private fun SettingsSection(
+    modifier: Modifier = Modifier,
     title: String,
     titleColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurface,
-    modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column(modifier = modifier) {
@@ -318,12 +317,12 @@ private fun SettingsSection(
 
 @Composable
 private fun SettingsItem(
+    modifier: Modifier = Modifier,
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     title: String,
     subtitle: String? = null,
     titleColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurface,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
@@ -388,7 +387,7 @@ private fun ThemeSelectionDialog(
         },
         text = {
             Column {
-                ThemeMode.values().forEach { theme ->
+                ThemeMode.entries.forEach { theme ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()

@@ -267,7 +267,6 @@
     <string name="habit_list_all_habits_title">All Active Habits</string>
     <string name="habit_list_no_all_habits">No active habits found. Create one!</string>
     <string name="habit_list_no_habits_today">You have no habits scheduled for today! Take a break or create a new one.</string>
-    <string name="habit_completed_today">Completed today</string>
     <string name="habit_list_show_today_only">Show today\'s habits only</string>
     <string name="habit_list_today_habits_title">Today\'s Habits</string>
     <string name="habit_detail_title">Habit Details</string>
@@ -537,5 +536,148 @@
     <string name="dialog_delete_account_title">Delete account?</string>
     <string name="dialog_delete_account_message">This action is permanent. All your habits, tasks, and notes will be deleted. You will not be able to recover your account.</string>
     <string name="dialog_delete_account_confirm">Delete account</string>
+
+    <string name="search_habits">Search habits</string>
+
+
+    <string name="habit_list_archived_habits_title">Archived Habits</string>
+    <string name="habit_list_completed_habits_title">Habits Completed Today</string>
+    <string name="habit_list_pending_habits_title">Habits Pending Today</string>
+
+    <string name="no_habits_found_search">No habits found</string>
+    <string name="no_habits_found_search_message">No habits match "%s"</string>
+    <string name="no_habits_today_title">No habits for today</string>
+    <string name="no_habits_today_message">You have no habits scheduled for today</string>
+    <string name="no_habits_all_title">No habits created</string>
+    <string name="no_habits_all_message">Create your first habit to start your journey</string>
+    <string name="no_habits_archived_title">No archived habits</string>
+    <string name="no_habits_archived_message">Archived habits will appear here</string>
+    <string name="no_habits_completed_title">No habits completed</string>
+    <string name="no_habits_completed_message">Complete your habits to see them here</string>
+    <string name="no_habits_pending_title">No pending habits</string>
+    <string name="no_habits_pending_message">Great! You\'ve completed all your habits for today</string>
+    <string name="create_first_habit">Create my first habit</string>
+
+    <string name="select_date_placeholder">Select date</string>
+    <string name="filter_habits_today">For today</string>
+    <string name="filter_habits_all">All</string>
+    <string name="filter_habits_archived">Archived</string>
+    <string name="filter_habits_completed">Completed</string>
+    <string name="filter_habits_pending">Pending</string>
+    <string name="search_habits_hint">Search habits</string>
+    <string name="add_habit_content_description">Add content</string>
+
+    <string name="search_placeholder">Search…</string>
+    <string name="search">Search</string>
+    <string name="filter">Filter</string>
+
+    <string name="no_notes_found_search">No notes found</string>
+    <string name="no_notes_found_search_message">No notes match "%s"</string>
+    <string name="no_notes_all_title">No notes</string>
+    <string name="no_notes_all_message">Create your first note to get started</string>
+    <string name="no_notes_active_title">No active notes</string>
+    <string name="no_notes_active_message">Active notes will appear here</string>
+    <string name="no_notes_archived_title">No archived notes</string>
+    <string name="no_notes_archived_message">Archived notes will appear here</string>
+    <string name="no_notes_favorites_title">No favorite notes</string>
+    <string name="no_notes_favorites_message">Star your notes to see them here</string>
+
+    <string name="habit_completed_today">✓ Completed</string>
+    <string name="habit_pending_today">⏸ Pending</string>
+    <string name="content_description_partial">Partial</string>
+    <string name="content">Content</string>
+    <string name="list_items">List items</string>
+    <string name="updated_date">Updated date</string>
+    <string name="note_status">Status</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <string name="dashboard_current_date">%1$d of %2$s, %3$d</string>
+
+    <string name="dashboard_daily_summary">Daily Summary</string>
+    <string name="dashboard_todays_habits">Today\'s Habits</string>
+    <string name="dashboard_pending_tasks">Pending Tasks</string>
+    <string name="dashboard_recent_notes">Recent Notes</string>
+    <string name="dashboard_view_all">View all</string>
+
+    <string name="dashboard_habits_fraction">%1$d/%2$d</string>
+    <string name="dashboard_habits_label">Habits</string>
+    <string name="dashboard_tasks_label">Tasks</string>
+    <string name="dashboard_streak_label">Streak</string>
+    <string name="dashboard_score_label">Score</string>
+    <string name="dashboard_score_percentage">%1$d%%</string>
+
+    <string name="dashboard_habit_progress">%1$d/%2$d</string>
+    <string name="dashboard_note_word_count">%1$d words</string>
+    <string name="dashboard_excellent_progress">Excellent progress!</string>
+
+    <string name="dashboard_welcome_title">Welcome to HabitJourney!</string>
+    <string name="dashboard_welcome_subtitle">Start your journey by creating your first habit</string>
+
+    <string name="dashboard_fab_new_note">New Note</string>
+    <string name="dashboard_fab_new_task">New Task</string>
+    <string name="dashboard_fab_new_habit">New Habit</string>
+    <string name="dashboard_fab_close">Close</string>
+    <string name="dashboard_fab_create_new">Create new</string>
+
+    <string name="dashboard_summary_start">Start your journey by creating your first habits and tasks!</string>
+    <string name="dashboard_summary_all_habits_completed_no_streak">Excellent day! You\'ve completed all your habits.</string>
+    <string name="dashboard_summary_all_habits_completed_with_streak">Excellent day! You\'ve completed all your habits and are on a %d day streak.</string>
+    <string name="dashboard_summary_good_progress">Great progress! You\'ve completed %d%% of your habits.</string>
+    <string name="dashboard_summary_decent_progress">Good progress for the day. Keep going to complete all your habits!</string>
+    <string name="dashboard_summary_keep_going">There\'s still plenty of day left! Time to work on your habits.</string>
+
+    <plurals name="dashboard_summary_overdue_tasks">
+        <item quantity="one">You have 1 overdue task. It\'s time to catch up!</item>
+        <item quantity="other">You have %d overdue tasks. It\'s time to catch up!</item>
+    </plurals>
+
+    <string name="dashboard_quote_great">Excellent work! Every day is a step towards your goals.</string>
+    <string name="dashboard_quote_good">Keep going! Progress is progress, no matter how small.</string>
+    <string name="dashboard_quote_default">Every new day is an opportunity to improve. You can do it!</string>
+
+    <string name="greeting_morning">Good morning</string>
+    <string name="greeting_afternoon">Good afternoon</string>
+    <string name="greeting_evening">Good evening</string>
+    <string name="title_archive_habit">Do you want to archive the habit?</string>
+    <string name="title_unarchive_habit">Unarchive habit</string>
+
+    <string name="reminder_label">Reminder</string>
+    <string name="reminder_description">We\'ll notify you when it\'s time</string>
+    <string name="in_1_hour">In 1 hour</string>
+    <string name="tomorrow_9am">Tomorrow 9 am</string>
+    <string name="next_week">Next week</string>
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="in_x_minutes">In %d minutes</string>
+    <string name="in_x_hours">In %d hours</string>
+    <string name="in_x_days">In %d days</string>
+    <string name="in_x_weeks">In %d weeks</string>
+
+    <string name="snooze_5_min">5 min</string>
+    <string name="snooze_15_min">15 min</string>
+    <string name="snooze_30_min">30 min</string>
+    <string name="snooze_default">Snooze</string>
+    <string name="reminder_snoozed">Reminder snoozed %d minutes</string>
+
+    <string name="stats_info_title">How are your stats calculated?</string>
+    <string name="stats_info_button_description">Information about statistics</string>
+
+    <string name="stats_info_streak_title">Streak</string>
+    <string name="stats_info_streak_description">Your streak increases every day you complete the required minimum:</string>
+    <string name="stats_info_streak_rule_1">Complete 100%</string>
+    <string name="stats_info_streak_rule_2">Complete at least 50% (1 of 2)</string>
+    <string name="stats_info_streak_rule_3">Complete at least 66% (2 of 3 or more)</string>
+
+    <string name="stats_info_score_title">Productivity Score</string>
+    <string name="stats_info_score_description">Your score is calculated by combining:</string>
+    <string name="stats_info_score_habits">Completed habits</string>
+    <string name="stats_info_score_tasks">Managed tasks</string>
+    <string name="stats_info_score_streak_bonus">Streak bonus</string>
+    <string name="action_understood">Understood</string>
+    <string name="stats_info_description">Here we explain how the main metrics of your progress work.</string>
+    <string name="stats_info_streak_desc_simple">Your streak increases every day you complete 100% of scheduled habits. If you miss a day, the streak resets to zero. Tasks don\'t affect the streak!</string>
+    <string name="stats_info_score_desc_main">This is an indicator of your overall daily performance, from 0 to 100.</string>
+    <string name="stats_info_score_desc_breakdown">It\'s calculated by combining the percentage of habits completed (60% weight) and the status of your tasks (40% weight), with a small bonus for maintaining an active streak.</string>
 
 </resources>

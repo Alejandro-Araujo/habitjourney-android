@@ -117,8 +117,8 @@ private fun LinearProgressContent(
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = stringResource(R.string.progress_percentage_format, (progress * 100).roundToInt()), // Usa stringResource con placeholder
-                    style = MaterialTheme.typography.labelMedium, // Usando Fira Code para números
+                    text = stringResource(R.string.progress_percentage_format, (progress * 100).roundToInt()),
+                    style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
                 )
             }

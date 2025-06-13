@@ -24,6 +24,7 @@ fun NoteContextMenu(
     onDismiss: () -> Unit,
     note: Note,
     onArchiveNote: () -> Unit,
+    onUnarchiveNote: () -> Unit,
     onToggleFavorite: () -> Unit,
     onDeleteNote: () -> Unit
 ) {
@@ -59,21 +60,20 @@ fun NoteContextMenu(
         DropdownMenuItem(
             text = {
                 Text(
-                    if (note.isArchived) {
-                        stringResource(R.string.unarchive_note)
-                    } else {
-                        stringResource(R.string.archive_note)
-                    }
+                    if (note.isArchived) stringResource(R.string.unarchive_note)
+                    else stringResource(R.string.archive_note)
                 )
             },
-            onClick = onArchiveNote,
+            onClick = {
+                if (note.isArchived) {
+                    onUnarchiveNote()
+                } else {
+                    onArchiveNote()
+                }
+            },
             leadingIcon = {
                 Icon(
-                    imageVector = if (note.isArchived) {
-                        Icons.Default.Unarchive
-                    } else {
-                        Icons.Default.Archive
-                    },
+                    imageVector = if (note.isArchived) Icons.Default.Unarchive else Icons.Default.Archive,
                     contentDescription = null
                 )
             }

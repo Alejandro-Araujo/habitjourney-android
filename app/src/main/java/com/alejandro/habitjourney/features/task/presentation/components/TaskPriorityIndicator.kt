@@ -6,7 +6,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.unit.dp
 import com.alejandro.habitjourney.core.data.local.enums.Priority
 import com.alejandro.habitjourney.core.presentation.ui.theme.*
 
@@ -17,7 +16,7 @@ fun TaskPriorityIndicator(
 ) {
     Box(
         modifier = modifier
-            .size(12.dp)
+            .size(Dimensions.IconSizeSmall)
             .clip(CircleShape)
             .background(
                 when (priority) {

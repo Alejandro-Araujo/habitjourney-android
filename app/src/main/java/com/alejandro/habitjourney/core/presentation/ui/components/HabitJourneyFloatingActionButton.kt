@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import com.alejandro.habitjourney.R
 import com.alejandro.habitjourney.core.presentation.ui.theme.AcentoInformativo
 import com.alejandro.habitjourney.core.presentation.ui.theme.AcentoPositivo
+import com.alejandro.habitjourney.core.presentation.ui.theme.AcentoUrgente
 import com.alejandro.habitjourney.core.presentation.ui.theme.Dimensions
 import com.alejandro.habitjourney.core.presentation.ui.theme.HabitJourneyTheme
 
@@ -87,7 +88,7 @@ fun HabitJourneyFloatingActionButton(
                 elevation = FloatingActionButtonDefaults.elevation(
                     defaultElevation = elevation
                 ),
-                shape = RoundedCornerShape(size / 2)
+               // shape = RoundedCornerShape(size / 2)
             ) {
                 Icon(
                     imageVector = icon,

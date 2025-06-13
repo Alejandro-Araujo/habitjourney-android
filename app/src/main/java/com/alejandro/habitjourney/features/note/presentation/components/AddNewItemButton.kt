@@ -19,7 +19,7 @@ fun AddNewItemButton(
     HabitJourneyButton(
         text = stringResource(R.string.add_list_item),
         onClick = onClick,
-        type = HabitJourneyButtonType.SECONDARY,
+        type = HabitJourneyButtonType.TERTIARY,
         leadingIcon = Icons.Default.Add,
         modifier = modifier
     )

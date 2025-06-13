@@ -10,6 +10,4 @@ data class NoteListUiState(
     val currentFilter: NoteFilterType = NoteFilterType.ACTIVE,
     val searchQuery: String = "",
     val isSearchActive: Boolean = false,
-    val totalNotesCount: Int = 0,
-    val totalWordCount: Int = 0
 )

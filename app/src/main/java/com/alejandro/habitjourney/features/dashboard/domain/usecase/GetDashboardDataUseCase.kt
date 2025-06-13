@@ -4,6 +4,7 @@ import com.alejandro.habitjourney.core.data.local.enums.Weekday
 import com.alejandro.habitjourney.core.data.local.result.Result
 import com.alejandro.habitjourney.features.dashboard.domain.model.DashboardData
 import com.alejandro.habitjourney.features.dashboard.domain.model.DashboardStats
+import com.alejandro.habitjourney.features.habit.domain.model.Habit
 import com.alejandro.habitjourney.features.habit.domain.model.HabitWithLogs
 import com.alejandro.habitjourney.features.habit.domain.repository.HabitRepository
 import com.alejandro.habitjourney.features.note.domain.repository.NoteRepository
@@ -43,22 +44,20 @@ class GetDashboardDataUseCase @Inject constructor(
 
                 val notesAndStatsFlow = combine(
                     noteRepository.getActiveNotes(currentUserId),
-                    flow { emit(calculateStreaks(currentUserId, currentDate)) },
+                    flow { emit(calculateStreak(currentUserId, currentDate)) },
                     flow { emit(calculateProductiveDays(currentUserId, currentDate)) }
-                ) { activeNotes, streaks, productiveDays ->
-                    NotesAndStats(activeNotes, streaks, productiveDays)
+                ) { activeNotes, streak, productiveDays ->
+                    NotesAndStats(activeNotes, streak, productiveDays)
                 }
 
-                // Este es el flujo principal que construye DashboardData
-                val dashboardDataFlow: Flow<DashboardData> = combine(basicDataFlow, notesAndStatsFlow) { basicData, notesAndStats ->
-
+                combine(basicDataFlow, notesAndStatsFlow) { basicData, notesAndStats ->
                     val user = basicData.user
                     val todayHabitsWithCount = basicData.todayHabitsWithCount
                     val activeTasks = basicData.activeTasks
                     val completedTasksToday = basicData.completedTasksToday
                     val overdueTasks = basicData.overdueTasks
                     val activeNotes = notesAndStats.activeNotes
-                    val streaks = notesAndStats.streaks
+                    val streak = notesAndStats.streak
                     val productiveDays = notesAndStats.productiveDays
 
                     val todayHabitsWithLogs = todayHabitsWithCount.map { (habit, count) ->
@@ -80,7 +79,6 @@ class GetDashboardDataUseCase @Inject constructor(
                         }
                     }
 
-                    // Estas funciones de cálculo son suspend y usan .first() internamente
                     val weeklyCompletionRate = calculateWeeklyHabitCompletionRate(currentUserId, currentDate)
 
                     val notesThisWeekCount = activeNotes.count { note ->
@@ -94,8 +92,8 @@ class GetDashboardDataUseCase @Inject constructor(
                     val dashboardStats = DashboardStats(
                         totalHabitsToday = todayHabitsWithCount.size,
                         completedHabitsToday = completedHabitsTodayCount,
-                        currentStreak = streaks.first,
-                        longestStreak = streaks.second,
+                        currentStreak = streak,
+                        longestStreak = 0, // Simplificado, ya no se calcula
                         weeklyHabitCompletionRate = weeklyCompletionRate,
                         totalActiveTasks = activeTasks.size,
                         completedTasksToday = completedTasksToday.size,
@@ -107,87 +105,68 @@ class GetDashboardDataUseCase @Inject constructor(
                     )
 
                     DashboardData(user, todayHabitsWithLogs, pendingTasks, recentNotes, dashboardStats)
-                    // --- FIN DE LA LÓGICA DE TRANSFORMACIÓN ---
                 }
-
-                // Envuelve el dashboardDataFlow con los estados de Result
-                dashboardDataFlow
-                    .map<DashboardData, Result<DashboardData>> { data -> Result.Success(data) } // Transforma el éxito
-                    .onStart { emit(Result.Loading) } // Emitir Loading al principio de este flujo
-                    .catch { e -> emit(Result.Error(e as? Exception ?: Exception(e))) } // Capturar excepciones del dashboardDataFlow
+                    .map<DashboardData, Result<DashboardData>> { data -> Result.Success(data) }
+                    .onStart { emit(Result.Loading) }
+                    .catch { e -> emit(Result.Error(e as? Exception ?: Exception(e))) }
             }
         }
     }
 
-    private suspend fun calculateStreaks(userId: Long, currentDate: LocalDate): Pair<Int, Int> {
-        // Obtener todos los hábitos activos del usuario
-        val habits = habitRepository.getActiveHabitsForUser(userId).first()
-
-        if (habits.isEmpty()) return Pair(0, 0)
-
+    private suspend fun calculateStreak(userId: Long, currentDate: LocalDate): Int {
         var currentStreak = 0
-        var longestStreak = 0
-        var tempStreak = 0
         var checkDate = currentDate
 
-        // Calcular racha actual (hacia atrás desde hoy)
         while (true) {
-            val dayCompleted = checkIfDayCompleted(userId, checkDate, habits)
+            val dayCompleted = checkIfDayCompleted(userId, checkDate)
 
+            // Si se completó el día, aumentamos la racha y retrocedemos un día.
             if (dayCompleted) {
                 currentStreak++
                 checkDate = checkDate.minus(1, DateTimeUnit.DAY)
             } else {
+                // Si el día que estamos comprobando es hoy y no está completo, la racha es 0.
+                if (checkDate == currentDate) {
+                    return 0
+                }
+                // Si ya teníamos una racha y el día anterior a esa racha no se cumplió, paramos.
                 break
             }
-
-            // Límite de seguridad
-            if (currentStreak > 365) break
         }
-
-        // Calcular racha más larga (últimos 90 días)
-        val startDate = currentDate.minus(90, DateTimeUnit.DAY)
-        checkDate = startDate
-
-        while (checkDate <= currentDate) {
-            val dayCompleted = checkIfDayCompleted(userId, checkDate, habits)
-
-            if (dayCompleted) {
-                tempStreak++
-                longestStreak = maxOf(longestStreak, tempStreak)
-            } else {
-                tempStreak = 0
-            }
-
-            checkDate = checkDate.plus(1, DateTimeUnit.DAY)
-        }
-
-        return Pair(currentStreak, longestStreak)
+        return currentStreak
     }
 
-    private suspend fun checkIfDayCompleted(userId: Long, date: LocalDate, habits: List<com.alejandro.habitjourney.features.habit.domain.model.Habit>): Boolean {
+    private suspend fun checkIfDayCompleted(userId: Long, date: LocalDate): Boolean {
         val weekdayIndex = date.dayOfWeek.ordinal
 
-        // Obtener hábitos que deberían completarse ese día
-        val habitsForDay = habits.filter { habit ->
+        val habitsForDay = habitRepository.getActiveHabitsForUser(userId).first().filter { habit ->
             when (habit.frequency) {
                 "DAILY" -> true
-                "WEEKLY" -> habit.frequencyDays?.contains(
-                    Weekday.entries[weekdayIndex]
-                ) ?: false
+                "WEEKLY" -> habit.frequencyDays?.contains(Weekday.entries[weekdayIndex]) ?: false
                 else -> false
             }
         }
 
-        if (habitsForDay.isEmpty()) return true // Si no hay hábitos ese día, cuenta como completado
+        if (habitsForDay.isEmpty()) {
+            // Si no hay hábitos programados, no rompe la racha, pero tampoco la continúa.
+            // Para el cálculo que cuenta hacia atrás, esto significa que la racha se detiene aquí.
+            return false
+        }
 
-        // Verificar si todos los hábitos del día fueron completados
         val completions = habitRepository.getHabitsDueTodayWithCompletionCount(userId, date, weekdayIndex).first()
 
-        return completions.all { (habit, count) ->
-            when {
-                habit.dailyTarget == null -> count > 0
-                else -> count >= habit.dailyTarget
+        // Verificamos si TODOS los hábitos programados para hoy están completados.
+        return habitsForDay.all { habitToCheck ->
+            val completionData = completions.find { (habit, _) -> habit.id == habitToCheck.id }
+
+            if (completionData != null) {
+                val (habit, count) = completionData
+                when {
+                    habit.dailyTarget == null -> count > 0
+                    else -> count >= habit.dailyTarget
+                }
+            } else {
+                false // Si el hábito no está en la lista de completados, no se cumplió.
             }
         }
     }
@@ -211,7 +190,6 @@ class GetDashboardDataUseCase @Inject constructor(
                     else -> count >= habit.dailyTarget
                 }
             }
-
             checkDate = checkDate.plus(1, DateTimeUnit.DAY)
         }
 
@@ -225,8 +203,8 @@ class GetDashboardDataUseCase @Inject constructor(
     private suspend fun calculateProductiveDays(userId: Long, currentDate: LocalDate): Int {
         val monthStart = LocalDate(currentDate.year, currentDate.month, 1)
         var productiveDays = 0
-
         var checkDate = monthStart
+
         while (checkDate <= currentDate) {
             val weekdayIndex = checkDate.dayOfWeek.ordinal
             val habitsWithCount = habitRepository.getHabitsDueTodayWithCompletionCount(userId, checkDate, weekdayIndex).first()
@@ -239,15 +217,28 @@ class GetDashboardDataUseCase @Inject constructor(
                     }
                 }.toFloat() / habitsWithCount.size
 
-                // Considerar un día productivo si se completó al menos el 70% de los hábitos
                 if (completionRate >= 0.7f) {
                     productiveDays++
                 }
             }
-
             checkDate = checkDate.plus(1, DateTimeUnit.DAY)
         }
-
         return productiveDays
     }
 }
+
+// Data classes de ayuda que viven en este mismo fichero
+
+data class BasicDashboardData(
+    val user: com.alejandro.habitjourney.features.user.domain.model.User?,
+    val todayHabitsWithCount: List<Pair<Habit, Int>>,
+    val activeTasks: List<com.alejandro.habitjourney.features.task.domain.model.Task>,
+    val completedTasksToday: List<com.alejandro.habitjourney.features.task.domain.model.Task>,
+    val overdueTasks: List<com.alejandro.habitjourney.features.task.domain.model.Task>
+)
+
+data class NotesAndStats(
+    val activeNotes: List<com.alejandro.habitjourney.features.note.domain.model.Note>,
+    val streak: Int, // <-- Modificado
+    val productiveDays: Int
+)

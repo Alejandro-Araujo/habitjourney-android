@@ -15,49 +15,147 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
-import com.alejandro.habitjourney.core.presentation.ui.theme.Dimensions
-import com.alejandro.habitjourney.core.presentation.ui.theme.HabitJourneyTheme // Para el Preview
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.*
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import com.alejandro.habitjourney.core.presentation.ui.theme.*
+
+enum class HabitJourneyCardType {
+    ELEVATED,    // Con elevación (default)
+    OUTLINED,    // Con borde
+    FILLED,      // Con color de fondo diferente
+    TRANSPARENT  // Sin fondo ni elevación
+}
 
 @Composable
 fun HabitJourneyCard(
     modifier: Modifier = Modifier,
-    onClick: (() -> Unit)? = null, // Hacerlo opcional, no todas las tarjetas serán clickeables
-    containerColor: Color = MaterialTheme.colorScheme.surface, // Por defecto, color de superficie del tema
-    content: @Composable ColumnScope.() -> Unit // Contenido de la tarjeta
+    onClick: (() -> Unit)? = null,
+    containerColor: Color = MaterialTheme.colorScheme.surface,
+    contentColor: Color = MaterialTheme.colorScheme.onSurface,
+    cardType: HabitJourneyCardType = HabitJourneyCardType.ELEVATED,
+    borderColor: Color = InactivoDeshabilitado.copy(alpha = AlphaValues.CardStateAlpha),
+    elevation: Dp = when (cardType) {
+        HabitJourneyCardType.ELEVATED -> Dimensions.ElevationLevel1
+        else -> 0.dp
+    },
+    content: @Composable ColumnScope.() -> Unit
 ) {
+    val actualContainerColor = when (cardType) {
+        HabitJourneyCardType.FILLED -> MaterialTheme.colorScheme.surface.copy(alpha = 0.2f)
+        HabitJourneyCardType.TRANSPARENT -> Color.Transparent
+        else -> containerColor
+    }
+
+    val border = when (cardType) {
+        HabitJourneyCardType.OUTLINED -> BorderStroke(
+            width = Dimensions.BorderWidth,
+            color = borderColor
+        )
+
+        else -> null
+    }
+
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier), // Aplicar clickable solo si se proporciona onClick
+            .clip(RoundedCornerShape(Dimensions.CornerRadius))
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
         shape = RoundedCornerShape(Dimensions.CornerRadius),
         colors = CardDefaults.cardColors(
-            containerColor = containerColor
+            containerColor = actualContainerColor,
+            contentColor = contentColor
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = Dimensions.ElevationLevel1)
+        elevation = CardDefaults.cardElevation(defaultElevation = elevation),
+        border = border
     ) {
         Column(
-            modifier = Modifier.padding(Dimensions.SpacingMedium) // Padding interno por defecto
+            modifier = Modifier.padding(Dimensions.SpacingMedium)
         ) {
             content()
         }
     }
 }
 
-@Preview(showBackground = true)
+// Variantes especializadas para casos comunes
+
 @Composable
-fun PreviewHabitJourneyCard() {
-    HabitJourneyTheme {
-        Column(modifier = Modifier.padding(Dimensions.SpacingMedium)) {
-            HabitJourneyCard {
-                Text(text = "Esto es una tarjeta genérica.", style = MaterialTheme.typography.bodyLarge)
-                Text(text = "Puede contener cualquier contenido.", style = MaterialTheme.typography.bodySmall)
-            }
-            Spacer(modifier = Modifier.height(Dimensions.SpacingMedium))
-            HabitJourneyCard(onClick = { /* clicked */ }) {
-                Text(text = "Tarjeta Clickeable", style = MaterialTheme.typography.bodyLarge)
-                Text(text = "Haz clic para ver la acción.", style = MaterialTheme.typography.bodySmall)
-            }
+fun HabitJourneyCompactCard(
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
+    containerColor: Color = MaterialTheme.colorScheme.surface,
+    contentColor: Color = MaterialTheme.colorScheme.onSurface,
+    cardType: HabitJourneyCardType = HabitJourneyCardType.ELEVATED,
+    content: @Composable RowScope.() -> Unit
+) {
+    val actualContainerColor = when (cardType) {
+        HabitJourneyCardType.FILLED -> CardStateColors.FilledBackground
+        HabitJourneyCardType.TRANSPARENT -> Color.Transparent
+        else -> containerColor
+    }
+
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(Dimensions.CornerRadius))
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
+        shape = RoundedCornerShape(Dimensions.CornerRadius),
+        colors = CardDefaults.cardColors(
+            containerColor = actualContainerColor,
+            contentColor = contentColor
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = if (cardType == HabitJourneyCardType.ELEVATED) Dimensions.ElevationLevel1 else 0.dp
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(Dimensions.SpacingMedium)
+        ) {
+            content()
+        }
+    }
+}
+
+// Card para mostrar estadísticas
+@Composable
+fun HabitJourneyStatsCard(
+    title: String,
+    value: String,
+    modifier: Modifier = Modifier,
+    subtitle: String? = null,
+    accentColor: Color = AcentoInformativo,
+    onClick: (() -> Unit)? = null
+) {
+    HabitJourneyCard(
+        modifier = modifier,
+        onClick = onClick,
+        cardType = HabitJourneyCardType.FILLED
+    ) {
+        Text(
+            text = title,
+            style = Typography.labelMedium,
+            color = InactivoDeshabilitado
+        )
+
+        Spacer(modifier = Modifier.height(Dimensions.SpacingExtraSmall))
+
+        Text(
+            text = value,
+            style = Typography.headlineMedium,
+            color = accentColor
+        )
+
+        subtitle?.let {
+            Spacer(modifier = Modifier.height(Dimensions.SpacingExtraSmall / 2))
+            Text(
+                text = it,
+                style = Typography.bodySmall,
+                color = InactivoDeshabilitado
+            )
         }
     }
 }

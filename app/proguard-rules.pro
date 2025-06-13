@@ -19,3 +19,11 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# WorkManager con Hilt
+-keep class androidx.hilt.work.** { *; }
+-keep class * extends androidx.work.Worker
+-keep class * extends androidx.work.ListenableWorker {
+    public <init>(android.content.Context,androidx.work.WorkerParameters);
+}
+-keep class com.alejandro.habitjourney.features.task.data.worker.** { *; }

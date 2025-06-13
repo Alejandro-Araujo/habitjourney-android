@@ -7,20 +7,28 @@ import com.alejandro.habitjourney.R
 import com.alejandro.habitjourney.core.data.local.enums.LogStatus
 import com.alejandro.habitjourney.features.habit.domain.model.HabitWithLogs
 import com.alejandro.habitjourney.features.habit.domain.usecase.GetHabitWithLogsUseCase
+import com.alejandro.habitjourney.features.habit.domain.usecase.MarkHabitAsNotCompletedUseCase
+import com.alejandro.habitjourney.features.habit.domain.usecase.MarkHabitAsSkippedUseCase
+import com.alejandro.habitjourney.features.habit.domain.usecase.ToggleHabitArchivedUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import javax.inject.Inject
 
+
 @HiltViewModel
 class HabitDetailViewModel @Inject constructor(
     private val getHabitWithLogsUseCase: GetHabitWithLogsUseCase,
+    private val toggleHabitArchivedUseCase: ToggleHabitArchivedUseCase,
+    private val markHabitAsSkippedUseCase: MarkHabitAsSkippedUseCase,
+    private val markHabitAsNotCompletedUseCase: MarkHabitAsNotCompletedUseCase,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -29,10 +37,14 @@ class HabitDetailViewModel @Inject constructor(
 
     fun loadHabitDetail(habitId: Long) {
         viewModelScope.launch {
-            try {
-                _uiState.value = _uiState.value.copy(isLoading = true, error = null)
-
-                getHabitWithLogsUseCase(habitId).collect { habitWithLogs ->
+            getHabitWithLogsUseCase(habitId)
+                .catch { e ->
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = e.message ?: context.getString(R.string.error_loading_habit_details)
+                    )
+                }
+                .collect { habitWithLogs ->
                     val todayProgress = calculateTodayProgress(habitWithLogs)
                     val overallProgress = calculateOverallProgress(habitWithLogs)
 
@@ -43,12 +55,6 @@ class HabitDetailViewModel @Inject constructor(
                         isLoading = false
                     )
                 }
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    error = e.message ?: context.getString(R.string.error_loading_habit_details)
-                )
-            }
         }
     }
 
@@ -77,6 +83,93 @@ class HabitDetailViewModel @Inject constructor(
         return if (totalLogs > 0) completedLogs.toFloat() / totalLogs else 0f
     }
 
+    // Obtener información del estado de hoy
+    private fun getTodayLogInfo(habitWithLogs: HabitWithLogs): Pair<Boolean, Boolean> {
+        val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+        val todayLog = habitWithLogs.logs.find { it.date == today }
+
+        val isCompletedToday = todayLog?.status == LogStatus.COMPLETED
+        val isSkippedToday = todayLog?.status == LogStatus.SKIPPED
+
+        return Pair(isCompletedToday, isSkippedToday)
+    }
+
+    fun archiveHabit() {
+        val currentHabit = _uiState.value.habitWithLogs?.habit ?: return
+
+        viewModelScope.launch {
+            try {
+                _uiState.value = _uiState.value.copy(isProcessing = true)
+                toggleHabitArchivedUseCase(currentHabit.id, !currentHabit.isArchived)
+                loadHabitDetail(currentHabit.id)
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    error = e.message ?: context.getString(R.string.error_archiving_habit),
+                    isProcessing = false
+                )
+            } finally {
+                _uiState.value = _uiState.value.copy(isProcessing = false)
+            }
+        }
+    }
+
+    fun markSkipped() {
+        val currentHabit = _uiState.value.habitWithLogs?.habit ?: return
+
+        viewModelScope.launch {
+            try {
+                _uiState.value = _uiState.value.copy(isProcessing = true)
+                markHabitAsSkippedUseCase(currentHabit.id)
+                loadHabitDetail(currentHabit.id)
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    error = e.message ?: context.getString(R.string.error_marking_habit_skipped),
+                    isProcessing = false
+                )
+            } finally {
+                _uiState.value = _uiState.value.copy(isProcessing = false)
+            }
+        }
+    }
+
+    fun undoSkipped() {
+        val currentHabit = _uiState.value.habitWithLogs?.habit ?: return
+
+        viewModelScope.launch {
+            try {
+                _uiState.value = _uiState.value.copy(isProcessing = true)
+                markHabitAsNotCompletedUseCase(currentHabit.id)
+                loadHabitDetail(currentHabit.id)
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    error = e.message ?: context.getString(R.string.error_undoing_skip),
+                    isProcessing = false
+                )
+            } finally {
+                _uiState.value = _uiState.value.copy(isProcessing = false)
+            }
+        }
+    }
+
+    // Funciones para obtener el estado actual
+    fun isCompletedToday(): Boolean {
+        val habitWithLogs = _uiState.value.habitWithLogs ?: return false
+        return getTodayLogInfo(habitWithLogs).first
+    }
+
+    fun isSkippedToday(): Boolean {
+        val habitWithLogs = _uiState.value.habitWithLogs ?: return false
+        return getTodayLogInfo(habitWithLogs).second
+    }
+
+    fun canToggleSkipped(): Boolean {
+        val habitWithLogs = _uiState.value.habitWithLogs ?: return false
+        val habit = habitWithLogs.habit
+
+        // Solo se puede saltar si el hábito no está archivado
+        return !habit.isArchived
+    }
+
     fun clearError() {
         _uiState.value = _uiState.value.copy(error = null)
     }
@@ -87,5 +180,6 @@ data class HabitDetailUiState(
     val todayProgress: Float = 0f,
     val overallProgress: Float = 0f,
     val isLoading: Boolean = false,
+    val isProcessing: Boolean = false,
     val error: String? = null
 )

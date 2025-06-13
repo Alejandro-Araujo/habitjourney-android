@@ -1,4 +1,4 @@
-package com.alejandro.habitjourney.features.habit.presentation.ui.components
+package com.alejandro.habitjourney.features.habit.presentation.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

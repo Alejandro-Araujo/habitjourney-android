@@ -8,8 +8,8 @@ object Dimensions {
     val SpacingSmall = 8.dp
     val SpacingMedium = 16.dp
     val SpacingLarge = 24.dp
-    val SpacingExtraSmall= 4.dp
-
+    val SpacingExtraSmall = 4.dp
+    val SpacingExtraLarge = 32.dp
 
     // Alturas de componentes
     val ButtonHeight = 48.dp
@@ -19,12 +19,15 @@ object Dimensions {
     val FabSize = 56.dp
     val FabSizeLarge = 72.dp
     val ButtonHeightTertiary = 40.dp
+    val ButtonVerticalPadding = 8.dp
+
 
     // Bordes y radio
     val CornerRadius = 8.dp
     val BorderWidth = 1.dp
     val ProgressIndicatorStrokeWidth = 2.dp
-    val CornerRadiusLarge =16.dp
+    val CornerRadiusLarge = 16.dp
+    val CornerRadiusSmall = 4.dp
 
     // Elevaciones
     val ElevationLevel1 = 2.dp
@@ -37,23 +40,33 @@ object Dimensions {
     val IconSizeLarge = 32.dp
     val IconSizeButton = 18.dp
     val IconSizeCardList = 40.dp
+    val IconSizeExtraLarge = 64.dp
 
+    // Bottom Sheet
+    val BottomSheetDragHandleWidth = 32.dp
+    val BottomSheetDragHandleHeight = 4.dp
+
+    // Paddings específicos
     val FabBottomPadding = 80.dp
 
+    // Cards y listas
     val NoteCardMinHeight = 120.dp
     val NoteCardMaxHeight = 200.dp
     val ListItemIndentSize = 16.dp
     val ListItemMinHeight = 48.dp
     val NoteEditorMinHeight = 200.dp
     val ProgressBarHeight = 4.dp
+    val ProgressBarHeightLarge = 6.dp
 
+    // Constantes numéricas
     const val ListPreviewMaxItems = 3
-    const val NotePreviewMaxLines= 3
+    const val NotePreviewMaxLines = 3
     const val StateFlowTimeout = 5000L
     const val WordCountDebounceMs = 300L
     const val MaxIndentLevel = 3
     const val AutoSaveDelayMs = 2000L
 
+    // Efectos de arrastre
     val ListItemDragElevation = 8.dp
     val ListItemDragCornerRadius = 12.dp
 }

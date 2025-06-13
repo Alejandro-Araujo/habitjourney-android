@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">HabitJourney</string>
 
     <string name="no_internet_connection">Pas de connexion internet.</string>
@@ -267,7 +267,6 @@
     <string name="habit_list_all_habits_title">Toutes les habitudes actives</string>
     <string name="habit_list_no_all_habits">Aucune habitude active trouvée. Créez-en une !</string>
     <string name="habit_list_no_habits_today">Vous n\'avez pas d\'habitudes programmées pour aujourd\'hui ! Faites une pause ou créez-en une nouvelle.</string>
-    <string name="habit_completed_today">Terminé aujourd\'hui</string>
     <string name="habit_list_show_today_only">Afficher uniquement les habitudes d\'aujourd\'hui</string>
     <string name="habit_list_today_habits_title">Habitudes d\'aujourd\'hui</string>
     <string name="habit_detail_title">Détails de l\'habitude</string>
@@ -538,4 +537,145 @@
     <string name="dialog_delete_account_message">Cette action est permanente. Toutes vos habitudes, tâches et notes seront supprimées. Vous ne pourrez pas récupérer votre compte.</string>
     <string name="dialog_delete_account_confirm">Supprimer le compte</string>
 
+    <string name="search_habits">Rechercher des habitudes</string>
+
+    <string name="habit_list_archived_habits_title">Habitudes archivées</string>
+    <string name="habit_list_completed_habits_title">Habitudes terminées aujourd\'hui</string>
+    <string name="habit_list_pending_habits_title">Habitudes en attente aujourd\'hui</string>
+
+    <string name="no_habits_found_search">Aucune habitude trouvée</string>
+    <string name="no_habits_found_search_message">Aucune habitude ne correspond à « %s »</string>
+    <string name="no_habits_today_title">Pas d\'habitudes pour aujourd\'hui</string>
+    <string name="no_habits_today_message">Vous n\'avez pas d\'habitudes prévues pour aujourd\'hui</string>
+    <string name="no_habits_all_title">Aucune habitude créée</string>
+    <string name="no_habits_all_message">Créez votre première habitude pour commencer votre voyage</string>
+    <string name="no_habits_archived_title">Pas d\'habitudes archivées</string>
+    <string name="no_habits_archived_message">Les habitudes archivées apparaîtront ici</string>
+    <string name="no_habits_completed_title">Pas d\'habitudes terminées</string>
+    <string name="no_habits_completed_message">Terminez vos habitudes pour les voir ici</string>
+    <string name="no_habits_pending_title">Pas d\'habitudes en attente</string>
+    <string name="no_habits_pending_message">Super ! Vous avez terminé toutes vos habitudes pour aujourd\'hui</string>
+    <string name="create_first_habit">Créer ma première habitude</string>
+
+    <string name="select_date_placeholder">Sélectionner la date</string>
+    <string name="filter_habits_today">Pour aujourd\'hui</string>
+    <string name="filter_habits_all">Tous</string>
+    <string name="filter_habits_archived">Archivés</string>
+    <string name="filter_habits_completed">Terminés</string>
+    <string name="filter_habits_pending">En attente</string>
+    <string name="search_habits_hint">Rechercher des habitudes</string>
+    <string name="add_habit_content_description">Ajouter du contenu</string>
+
+    <string name="search_placeholder">Rechercher…</string>
+    <string name="search">Rechercher</string>
+    <string name="filter">Filtrer</string>
+
+    <string name="no_notes_found_search">Aucune note trouvée</string>
+    <string name="no_notes_found_search_message">Aucune note ne correspond à « %s »</string>
+    <string name="no_notes_all_title">Aucune note</string>
+    <string name="no_notes_all_message">Créez votre première note pour commencer</string>
+    <string name="no_notes_active_title">Aucune note active</string>
+    <string name="no_notes_active_message">Les notes actives apparaîtront ici</string>
+    <string name="no_notes_archived_title">Aucune note archivée</string>
+    <string name="no_notes_archived_message">Les notes archivées apparaîtront ici</string>
+    <string name="no_notes_favorites_title">Aucune note favorite</string>
+    <string name="no_notes_favorites_message">Marquez vos notes comme favorites pour les voir ici</string>
+
+    <string name="habit_completed_today">✓ Terminé</string>
+    <string name="habit_pending_today">⏸ En attente</string>
+    <string name="content_description_partial">Partiel</string>
+    <string name="content">Contenu</string>
+    <string name="list_items">Éléments de liste</string>
+    <string name="updated_date">Date de mise à jour</string>
+    <string name="note_status">Statut</string>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+
+    <string name="dashboard_current_date">%1$d %2$s %3$d</string>
+
+    <string name="dashboard_daily_summary">Résumé du jour</string>
+    <string name="dashboard_todays_habits">Habitudes d\'aujourd\'hui</string>
+    <string name="dashboard_pending_tasks">Tâches en attente</string>
+    <string name="dashboard_recent_notes">Notes récentes</string>
+    <string name="dashboard_view_all">Voir tout</string>
+
+    <string name="dashboard_habits_fraction">%1$d/%2$d</string>
+    <string name="dashboard_habits_label">Habitudes</string>
+    <string name="dashboard_tasks_label">Tâches</string>
+    <string name="dashboard_streak_label">Série</string>
+    <string name="dashboard_score_label">Score</string>
+    <string name="dashboard_score_percentage">%1$d%%</string>
+
+    <string name="dashboard_habit_progress">%1$d/%2$d</string>
+    <string name="dashboard_note_word_count">%1$d mots</string>
+    <string name="dashboard_excellent_progress">Excellent progrès !</string>
+
+    <string name="dashboard_welcome_title">Bienvenue sur HabitJourney !</string>
+    <string name="dashboard_welcome_subtitle">Commencez votre voyage en créant votre première habitude</string>
+
+    <string name="dashboard_fab_new_note">Nouvelle Note</string>
+    <string name="dashboard_fab_new_task">Nouvelle Tâche</string>
+    <string name="dashboard_fab_new_habit">Nouveau Hábito</string>
+    <string name="dashboard_fab_close">Fermer</string>
+    <string name="dashboard_fab_create_new">Créer nouveau</string>
+
+    <string name="dashboard_summary_start">Commencez votre voyage en créant vos premières habitudes et tâches !</string>
+    <string name="dashboard_summary_all_habits_completed_no_streak">Excellente journée ! Vous avez terminé toutes vos habitudes.</string>
+    <string name="dashboard_summary_all_habits_completed_with_streak">Excellente journée ! Vous avez terminé toutes vos habitudes et maintenez une série de %d jours.</string>
+    <string name="dashboard_summary_good_progress">Très bon progrès ! Vous avez terminé %d%% de vos habitudes.</string>
+    <string name="dashboard_summary_decent_progress">Bon avancement pour la journée. Continuez ainsi pour terminer toutes vos habitudes !</string>
+    <string name="dashboard_summary_keep_going">Il reste encore beaucoup de temps aujourd\'hui ! Il est temps de travailler sur vos habitudes.</string>
+
+    <plurals name="dashboard_summary_overdue_tasks" tools:ignore="MissingQuantity">
+        <item quantity="one" tools:ignore="ImpliedQuantity,MissingQuantity">Vous avez 1 tâche en retard. Il est temps de rattraper votre retard !</item>
+        <item quantity="other">Vous avez %d tâches en retard. Il est temps de rattraper votre retard !</item>
+    </plurals>
+
+    <string name="dashboard_quote_great">Excellent travail ! Chaque jour est un pas vers vos objectifs.</string>
+    <string name="dashboard_quote_good">Continuez ! Le progrès est un progrès, aussi petit soit-il.</string>
+    <string name="dashboard_quote_default">Chaque nouveau jour est une opportunité de s\'améliorer. Vous pouvez le faire !</string>
+
+    <string name="greeting_morning">Bonjour</string>
+    <string name="greeting_afternoon">Bon après-midi</string>
+    <string name="greeting_evening">Bonsoir</string>
+    <string name="title_archive_habit">Voulez-vous archiver l\'habitude ?</string>
+    <string name="title_unarchive_habit">Désarchiver l\'habitude</string>
+
+    <string name="reminder_label">Rappel</string>
+    <string name="reminder_description">Nous vous notifierons quand il sera temps</string>
+    <string name="in_1_hour">Dans 1 heure</string>
+    <string name="tomorrow_9am">Demain 9h</string>
+    <string name="next_week">La semaine prochaine</string>
+    <string name="today">Aujourd\'hui</string>
+    <string name="tomorrow">Demain</string>
+    <string name="in_x_minutes">Dans %d minutes</string>
+    <string name="in_x_hours">Dans %d heures</string>
+    <string name="in_x_days">Dans %d jours</string>
+    <string name="in_x_weeks">Dans %d semaines</string>
+
+    <string name="snooze_5_min">5 min</string>
+    <string name="snooze_15_min">15 min</string>
+    <string name="snooze_30_min">30 min</string>
+    <string name="snooze_default">Répéter</string>
+    <string name="reminder_snoozed">Rappel répété de %d minutes</string>
+
+    <string name="stats_info_title">Comment sont calculées vos statistiques ?</string>
+    <string name="stats_info_button_description">Informations sur les statistiques</string>
+
+    <string name="stats_info_streak_title">Série</string>
+    <string name="stats_info_streak_description">Votre série augmente chaque jour où vous complétez le minimum requis :</string>
+    <string name="stats_info_streak_rule_1">Compléter 100%</string>
+    <string name="stats_info_streak_rule_2">Compléter au moins 50% (1 sur 2)</string>
+    <string name="stats_info_streak_rule_3">Compléter au moins 66% (2 sur 3 ou plus)</string>
+
+    <string name="stats_info_score_title">Score de productivité</string>
+    <string name="stats_info_score_description">Votre score est calculé en combinant :</string>
+    <string name="stats_info_score_habits">Habitudes complétées</string>
+    <string name="stats_info_score_tasks">Tâches gérées</string>
+    <string name="stats_info_score_streak_bonus">Bonus de série</string>
+    <string name="action_understood">Compris</string>
+    <string name="stats_info_description">Voici comment fonctionnent les principales métriques de votre progression.</string>
+    <string name="stats_info_streak_desc_simple">Votre série augmente chaque jour où vous complétez 100% des habitudes programmées. Si vous manquez un jour, la série est réinitialisée à zéro. Les tâches n\'affectent pas la série !</string>
+    <string name="stats_info_score_desc_main">C\'est un indicateur de votre performance globale du jour, de 0 à 100.</string>
+    <string name="stats_info_score_desc_breakdown">Il est calculé en combinant le pourcentage d\'habitudes complétées (60% du poids) et l\'état de vos tâches (40% du poids), avec un petit bonus pour le maintien d\'une série active.</string>
 </resources>

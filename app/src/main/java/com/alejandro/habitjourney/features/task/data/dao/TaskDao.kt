@@ -86,7 +86,7 @@ interface TaskDao {
     @Query("UPDATE tasks SET is_archived = 0 WHERE id = :taskId")
     suspend fun unarchiveTask(taskId: Long)
 
-    // Búsqueda por título (útil para filtros)
+    // Búsqueda por título
     @Query("""
         SELECT * FROM tasks
         WHERE user_id = :userId

@@ -267,7 +267,6 @@
     <string name="habit_list_all_habits_title">Alle aktiven Gewohnheiten</string>
     <string name="habit_list_no_all_habits">Keine aktiven Gewohnheiten gefunden. Erstellen Sie eine!</string>
     <string name="habit_list_no_habits_today">Sie haben heute keine Gewohnheiten geplant! Machen Sie eine Pause oder erstellen Sie eine neue.</string>
-    <string name="habit_completed_today">Heute abgeschlossen</string>
     <string name="habit_list_show_today_only">Nur heutige Gewohnheiten anzeigen</string>
     <string name="habit_list_today_habits_title">Heutige Gewohnheiten</string>
     <string name="habit_detail_title">Gewohnheitsdetails</string>
@@ -537,5 +536,146 @@
     <string name="dialog_delete_account_title">Konto löschen?</string>
     <string name="dialog_delete_account_message">Diese Aktion ist dauerhaft. Alle Ihre Gewohnheiten, Aufgaben und Notizen werden gelöscht. Sie können Ihr Konto nicht wiederherstellen.</string>
     <string name="dialog_delete_account_confirm">Konto löschen</string>
+
+    <string name="search_habits">Gewohnheiten suchen</string>
+
+    <string name="habit_list_archived_habits_title">Archivierte Gewohnheiten</string>
+    <string name="habit_list_completed_habits_title">Heute abgeschlossene Gewohnheiten</string>
+    <string name="habit_list_pending_habits_title">Heute ausstehende Gewohnheiten</string>
+
+    <string name="no_habits_found_search">Keine Gewohnheiten gefunden</string>
+    <string name="no_habits_found_search_message">Keine Gewohnheiten stimmen mit „%s“ überein</string>
+    <string name="no_habits_today_title">Keine Gewohnheiten für heute</string>
+    <string name="no_habits_today_message">Du hast heute keine Gewohnheiten geplant</string>
+    <string name="no_habits_all_title">Keine Gewohnheiten erstellt</string>
+    <string name="no_habits_all_message">Erstelle deine erste Gewohnheit, um deine Reise zu beginnen</string>
+    <string name="no_habits_archived_title">Keine archivierten Gewohnheiten</string>
+    <string name="no_habits_archived_message">Archivierte Gewohnheiten werden hier angezeigt</string>
+    <string name="no_habits_completed_title">Keine Gewohnheiten abgeschlossen</string>
+    <string name="no_habits_completed_message">Schließe deine Gewohnheiten ab, um sie hier zu sehen</string>
+    <string name="no_habits_pending_title">Keine ausstehenden Gewohnheiten</string>
+    <string name="no_habits_pending_message">Super! Du hast heute alle deine Gewohnheiten abgeschlossen</string>
+    <string name="create_first_habit">Meine erste Gewohnheit erstellen</string>
+
+    <string name="select_date_placeholder">Datum auswählen</string>
+    <string name="filter_habits_today">Für heute</string>
+    <string name="filter_habits_all">Alle</string>
+    <string name="filter_habits_archived">Archiviert</string>
+    <string name="filter_habits_completed">Abgeschlossen</string>
+    <string name="filter_habits_pending">Ausstehend</string>
+    <string name="search_habits_hint">Gewohnheiten suchen</string>
+    <string name="add_habit_content_description">Inhalt hinzufügen</string>
+    <string name="search_placeholder">Suchen…</string>
+    <string name="search">Suchen</string>
+    <string name="filter">Filtern</string>
+
+    <string name="no_notes_found_search">Keine Notizen gefunden</string>
+    <string name="no_notes_found_search_message">Keine Notizen stimmen mit „%s“ überein</string>
+    <string name="no_notes_all_title">Keine Notizen</string>
+    <string name="no_notes_all_message">Erstelle deine erste Notiz, um zu beginnen</string>
+    <string name="no_notes_active_title">Keine aktiven Notizen</string>
+    <string name="no_notes_active_message">Aktive Notizen werden hier angezeigt</string>
+    <string name="no_notes_archived_title">Keine archivierten Notizen</string>
+    <string name="no_notes_archived_message">Archivierte Notizen werden hier angezeigt</string>
+    <string name="no_notes_favorites_title">Keine Lieblingsnotizen</string>
+    <string name="no_notes_favorites_message">Markiere deine Notizen mit einem Stern, um sie hier zu sehen</string>
+
+    <string name="habit_completed_today">✓ Abgeschlossen</string>
+    <string name="habit_pending_today">⏸ Ausstehend</string>
+    <string name="content_description_partial">Teilweise</string>
+    <string name="content">Inhalt</string>
+    <string name="list_items">Listenelemente</string>
+    <string name="updated_date">Datum der Aktualisierung</string>
+    <string name="note_status">Status</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
+
+    <string name="dashboard_current_date">%1$d. %2$s %3$d</string>
+
+    <string name="dashboard_daily_summary">Tägliche Zusammenfassung</string>
+    <string name="dashboard_todays_habits">Heutige Gewohnheiten</string>
+    <string name="dashboard_pending_tasks">Ausstehende Aufgaben</string>
+    <string name="dashboard_recent_notes">Neueste Notizen</string>
+    <string name="dashboard_view_all">Alle anzeigen</string>
+
+    <string name="dashboard_habits_fraction">%1$d/%2$d</string>
+    <string name="dashboard_habits_label">Gewohnheiten</string>
+    <string name="dashboard_tasks_label">Aufgaben</string>
+    <string name="dashboard_streak_label">Serie</string>
+    <string name="dashboard_score_label">Ergebnis</string>
+    <string name="dashboard_score_percentage">%1$d%%</string>
+
+    <string name="dashboard_habit_progress">%1$d/%2$d</string>
+    <string name="dashboard_note_word_count">%1$d Wörter</string>
+    <string name="dashboard_excellent_progress">Ausgezeichneter Fortschritt!</string>
+
+    <string name="dashboard_welcome_title">Willkommen bei HabitJourney!</string>
+    <string name="dashboard_welcome_subtitle">Beginne deine Reise, indem du deine erste Gewohnheit erstellst</string>
+
+    <string name="dashboard_fab_new_note">Neue Notiz</string>
+    <string name="dashboard_fab_new_task">Neue Aufgabe</string>
+    <string name="dashboard_fab_new_habit">Neue Gewohnheit</string>
+    <string name="dashboard_fab_close">Schließen</string>
+    <string name="dashboard_fab_create_new">Neu erstellen</string>
+
+    <string name="dashboard_summary_start">Beginne deine Reise, indem du deine ersten Gewohnheiten und Aufgaben erstellst!</string>
+    <string name="dashboard_summary_all_habits_completed_no_streak">Ausgezeichneter Tag! Du hast alle deine Gewohnheiten abgeschlossen.</string>
+    <string name="dashboard_summary_all_habits_completed_with_streak">Ausgezeichneter Tag! Du hast alle deine Gewohnheiten abgeschlossen und bist seit %d Tagen am Ball.</string>
+    <string name="dashboard_summary_good_progress">Großartiger Fortschritt! Du hast %d%% deiner Gewohnheiten abgeschlossen.</string>
+    <string name="dashboard_summary_decent_progress">Guter Fortschritt für den Tag. Mach weiter, um alle deine Gewohnheiten abzuschließen!</string>
+    <string name="dashboard_summary_keep_going">Es bleibt noch viel vom Tag übrig! Zeit, an deinen Gewohnheiten zu arbeiten.</string>
+
+    <plurals name="dashboard_summary_overdue_tasks">
+        <item quantity="one">Du hast 1 überfällige Aufgabe. Es ist Zeit, aufzuholen!</item>
+        <item quantity="other">Du hast %d überfällige Aufgaben. Es ist Zeit, aufzuholen!</item>
+    </plurals>
+
+    <string name="dashboard_quote_great">Ausgezeichnete Arbeit! Jeder Tag ist ein Schritt zu deinen Zielen.</string>
+    <string name="dashboard_quote_good">Mach weiter! Fortschritt ist Fortschritt, egal wie klein.</string>
+    <string name="dashboard_quote_default">Jeder neue Tag ist eine Gelegenheit, sich zu verbessern. Du schaffst das!</string>
+
+    <string name="greeting_morning">Guten Morgen</string>
+    <string name="greeting_afternoon">Guten Tag</string>
+    <string name="greeting_evening">Guten Abend</string>
+    <string name="title_archive_habit">" Möchten Sie die Gewohnheit archivieren?"</string>
+    <string name="title_unarchive_habit">Gewohnheit dearchivieren</string>
+
+    <string name="reminder_label">Erinnerung</string>
+    <string name="reminder_description">Wir benachrichtigen Sie, wenn es Zeit ist</string>
+    <string name="in_1_hour">In 1 Stunde</string>
+    <string name="tomorrow_9am">Morgen 9 Uhr</string>
+    <string name="next_week">Nächste Woche</string>
+    <string name="today">Heute</string>
+    <string name="tomorrow">Morgen</string>
+    <string name="in_x_minutes">In %d Minuten</string>
+    <string name="in_x_hours">In %d Stunden</string>
+    <string name="in_x_days">In %d Tagen</string>
+    <string name="in_x_weeks">In %d Wochen</string>
+
+    <string name="snooze_5_min">5 Min.</string>
+    <string name="snooze_15_min">15 Min.</string>
+    <string name="snooze_30_min">30 Min.</string>
+    <string name="snooze_default">Schlummern</string>
+    <string name="reminder_snoozed">Erinnerung um %d Minuten geschlummert</string>
+
+    <string name="stats_info_title">Wie werden deine Statistiken berechnet?</string>
+    <string name="stats_info_button_description">Informationen zu Statistiken</string>
+
+    <string name="stats_info_streak_title">Serie</string>
+    <string name="stats_info_streak_description">Deine Serie erhöht sich an jedem Tag, an dem du das erforderliche Minimum erfüllst:</string>
+    <string name="stats_info_streak_rule_1">100% abschließen</string>
+    <string name="stats_info_streak_rule_2">Mindestens 50% abschließen (1 von 2)</string>
+    <string name="stats_info_streak_rule_3">Mindestens 66% abschließen (2 von 3 oder mehr)</string>
+
+    <string name="stats_info_score_title">Produktivitätspunkte</string>
+    <string name="stats_info_score_description">Deine Punkte werden durch die Kombination von Folgendem berechnet:</string>
+    <string name="stats_info_score_habits">Abgeschlossene Gewohnheiten</string>
+    <string name="stats_info_score_tasks">Verwaltete Aufgaben</string>
+    <string name="stats_info_score_streak_bonus">Serienbonus</string>
+    <string name="action_understood">Verstanden</string>
+    <string name="stats_info_description">Hier erklären wir dir, wie die Hauptmetriken deines Fortschritts funktionieren.</string>
+    <string name="stats_info_streak_desc_simple">Deine Serie erhöht sich an jedem Tag, an dem du 100% der geplanten Gewohnheiten erfüllst. Wenn du einen Tag verpasst, wird die Serie auf Null zurückgesetzt. Aufgaben wirken sich nicht auf die Serie aus!</string>
+    <string name="stats_info_score_desc_main">Dies ist ein Indikator für deine Gesamtleistung des Tages, von 0 bis 100.</string>
+    <string name="stats_info_score_desc_breakdown">Er wird berechnet, indem der Prozentsatz der abgeschlossenen Gewohnheiten (60% des Gewichts) und der Status deiner Aufgaben (40% des Gewichts) kombiniert werden, mit einem kleinen Bonus für das Beibehalten einer aktiven Serie.</string>
 
 </resources>

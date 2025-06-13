@@ -1,9 +1,13 @@
 package com.alejandro.habitjourney.features.note.presentation.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -50,41 +54,53 @@ fun NoteListEditor(
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
-        // Lista scrolleable de items
-        LazyColumn(
-            state = listState,
+        Surface(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
-            verticalArrangement = Arrangement.spacedBy(Dimensions.SpacingSmall),
-            contentPadding = PaddingValues(vertical = Dimensions.SpacingSmall)
+            shape = RoundedCornerShape(Dimensions.CornerRadiusSmall),
+            border = BorderStroke(
+                width = Dimensions.BorderWidth,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = AlphaValues.MediumAlpha)
+            ),
+            color = MaterialTheme.colorScheme.surface
         ) {
-            itemsIndexed(
-                items = items,
-                key = { _, item -> item.id }
-            ) { index, item ->
-                NoteListItemEditor(
-                    item = item,
-                    onItemChanged = { updatedItem ->
-                        val newItems = items.toMutableList()
-                        newItems[index] = updatedItem
-                        onItemsChanged(newItems)
-                    },
-                    onToggleCompletion = { onToggleItem(index) },
-                    onDeleteItem = { onDeleteItem(index) },
-                    onIndentChanged = { newIndent ->
-                        onIndentChange(index, newIndent)
-                    },
-                    isReadOnly = isReadOnly,
-                    focusRequester = if (index == items.size - 1) lastItemFocusRequester else null,
-                    onNext = {
-                        // Crear nuevo item al presionar Next en el último
-                        if (index == items.size - 1) {
-                            onAddItem()
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                )
+            // Lista scrolleable de items
+            LazyColumn(
+                state = listState,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                verticalArrangement = Arrangement.spacedBy(Dimensions.SpacingSmall),
+                contentPadding = PaddingValues(vertical = Dimensions.SpacingSmall)
+            ) {
+                itemsIndexed(
+                    items = items,
+                    key = { _, item -> item.id }
+                ) { index, item ->
+                    NoteListItemEditor(
+                        item = item,
+                        onItemChanged = { updatedItem ->
+                            val newItems = items.toMutableList()
+                            newItems[index] = updatedItem
+                            onItemsChanged(newItems)
+                        },
+                        onToggleCompletion = { onToggleItem(index) },
+                        onDeleteItem = { onDeleteItem(index) },
+                        onIndentChanged = { newIndent ->
+                            onIndentChange(index, newIndent)
+                        },
+                        isReadOnly = isReadOnly,
+                        focusRequester = if (index == items.size - 1) lastItemFocusRequester else null,
+                        onNext = {
+                            // Crear nuevo item al presionar Next en el último
+                            if (index == items.size - 1) {
+                                onAddItem()
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
         }
 

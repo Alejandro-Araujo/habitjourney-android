@@ -4,7 +4,6 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.datetime.LocalDateTime
@@ -15,7 +14,8 @@ import javax.inject.Singleton
 
 @Singleton
 class ReminderManager @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val alarmPermissionHelper: AlarmPermissionHelper // Usar el helper
 ) {
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     private val prefs = context.getSharedPreferences("task_reminders", Context.MODE_PRIVATE)
@@ -36,12 +36,10 @@ class ReminderManager @Inject constructor(
                 return
             }
 
-            // Verificar permisos para Android 12+
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                if (!alarmManager.canScheduleExactAlarms()) {
-                    Log.w(TAG, "No se pueden programar alarmas exactas. Usuario debe habilitar permisos.")
-                    throw SecurityException("Se necesita permiso para programar alarmas exactas. Ve a Configuración > Aplicaciones > HabitJourney > Permisos especiales > Programar alarmas exactas")
-                }
+            // Verificar permisos usando el helper
+            if (!alarmPermissionHelper.canScheduleExactAlarms()) {
+                Log.w(TAG, "No se pueden programar alarmas exactas. Usuario debe habilitar permisos.")
+                throw SecurityException("Se necesita permiso para programar alarmas exactas")
             }
 
             val intent = createReminderIntent(taskId, title)
@@ -54,24 +52,13 @@ class ReminderManager @Inject constructor(
 
             // Programar alarma con manejo de excepciones
             try {
-                when {
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
-                        alarmManager.setExactAndAllowWhileIdle(
-                            AlarmManager.RTC_WAKEUP,
-                            triggerTime,
-                            pendingIntent
-                        )
-                    }
-                    else -> {
-                        alarmManager.setExact(
-                            AlarmManager.RTC_WAKEUP,
-                            triggerTime,
-                            pendingIntent
-                        )
-                    }
-                }
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    triggerTime,
+                    pendingIntent
+                )
 
-                // Guardar información del recordatorio solo si se programó exitosamente
+                // Guardar información del recordatorio
                 saveReminderInfo(taskId, triggerTime, title)
                 Log.d(TAG, "Recordatorio programado para tarea $taskId a las $dateTime")
 
@@ -88,26 +75,11 @@ class ReminderManager @Inject constructor(
 
     private fun scheduleInexactAlarm(taskId: Long, triggerTime: Long, pendingIntent: PendingIntent, title: String) {
         try {
-            // Usar alarma inexacta como fallback
             alarmManager.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
             saveReminderInfo(taskId, triggerTime, title)
             Log.d(TAG, "Recordatorio inexacto programado para tarea $taskId (fallback)")
         } catch (e: Exception) {
             Log.e(TAG, "Error programando recordatorio inexacto para tarea $taskId", e)
-        }
-    }
-
-    private fun requestExactAlarmPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            try {
-                val intent = Intent().apply {
-                    action = android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                }
-                context.startActivity(intent)
-            } catch (e: Exception) {
-                Log.e(TAG, "Error abriendo configuración de alarmas exactas", e)
-            }
         }
     }
 
@@ -133,21 +105,12 @@ class ReminderManager @Inject constructor(
     }
 
     fun updateReminder(taskId: Long, newDateTime: LocalDateTime, title: String) {
-        // Cancelar recordatorio anterior y programar uno nuevo
         cancelReminder(taskId)
         scheduleReminder(taskId, newDateTime, title)
     }
 
     fun isReminderScheduled(taskId: Long): Boolean {
         return prefs.contains("reminder_$taskId")
-    }
-
-    fun canScheduleExactAlarms(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            alarmManager.canScheduleExactAlarms()
-        } else {
-            true
-        }
     }
 
     private fun createReminderIntent(taskId: Long, title: String): Intent {

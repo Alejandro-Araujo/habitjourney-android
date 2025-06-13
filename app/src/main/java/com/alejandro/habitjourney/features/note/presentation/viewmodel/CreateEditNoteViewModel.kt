@@ -2,7 +2,6 @@ package com.alejandro.habitjourney.features.note.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import com.alejandro.habitjourney.R
 import com.alejandro.habitjourney.core.data.local.enums.NoteType
@@ -14,11 +13,9 @@ import com.alejandro.habitjourney.features.note.domain.usecase.*
 import com.alejandro.habitjourney.features.note.presentation.state.CreateEditNoteUiState
 import com.alejandro.habitjourney.features.user.data.local.preferences.UserPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
-import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,26 +32,6 @@ class CreateEditNoteViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(CreateEditNoteUiState())
     val uiState: StateFlow<CreateEditNoteUiState> = _uiState.asStateFlow()
-
-    // Debounced word count calculation
-    @OptIn(FlowPreview::class)
-    private val wordCountFlow = combine(
-        _uiState.map { it.title },
-        _uiState.map { it.content },
-        _uiState.map { it.listItems },
-        _uiState.map { it.noteType }
-    ) { title, content, listItems, noteType ->
-        calculateWordCount(title, content, listItems, noteType)
-    }.debounce(Dimensions.WordCountDebounceMs)
-
-    init {
-        // Update word count reactively
-        viewModelScope.launch {
-            wordCountFlow.collect { wordCount ->
-                _uiState.value = _uiState.value.copy(wordCount = wordCount)
-            }
-        }
-    }
 
     fun initializeNote(noteId: Long?, isReadOnly: Boolean = false) {
         _uiState.value = _uiState.value.copy(
@@ -116,20 +93,15 @@ class CreateEditNoteViewModel @Inject constructor(
     fun updateNoteType(noteType: NoteType) {
         val currentState = _uiState.value
 
-        Log.d("CreateEditNoteVM", "Changing note type from ${currentState.noteType} to $noteType")
-
         try {
             val newListItems = when (noteType) {
                 NoteType.TEXT -> {
-                    Log.d("CreateEditNoteVM", "Switching to TEXT, clearing list items")
-                    emptyList()
+                    currentState.listItems
                 }
                 NoteType.LIST -> {
                     if (currentState.noteType == NoteType.TEXT && currentState.listItems.isEmpty()) {
-                        Log.d("CreateEditNoteVM", "Switching to LIST, creating first empty item")
                         listOf(createNewListItem(0))
                     } else {
-                        Log.d("CreateEditNoteVM", "Keeping existing list items")
                         currentState.listItems
                     }
                 }
@@ -141,10 +113,7 @@ class CreateEditNoteViewModel @Inject constructor(
                 hasUnsavedChanges = true
             )
 
-            Log.d("CreateEditNoteVM", "Note type changed successfully")
-
         } catch (e: Exception) {
-            Log.e("CreateEditNoteVM", "Error changing note type", e)
             _uiState.value = currentState.copy(
                 error = resourceProvider.getString(R.string.error_updating_note)
             )
@@ -269,8 +238,7 @@ class CreateEditNoteViewModel @Inject constructor(
                         isFavorite = state.isFavorite,
                         isArchived = false,
                         createdAt = 0L,
-                        updatedAt = now,
-                        wordCount = state.wordCount
+                        updatedAt = now
                     )
                 } else {
                     // Crear nueva nota
@@ -284,8 +252,7 @@ class CreateEditNoteViewModel @Inject constructor(
                         isFavorite = state.isFavorite,
                         isArchived = false,
                         createdAt = now,
-                        updatedAt = now,
-                        wordCount = state.wordCount
+                        updatedAt = now
                     )
                 }
 
@@ -311,41 +278,6 @@ class CreateEditNoteViewModel @Inject constructor(
         }
     }
 
-    // Auto-save para lista de items
-    fun autoSaveIfNeeded() {
-        val state = _uiState.value
-        if (state.hasUnsavedChanges &&
-            !state.isEmpty &&
-            !state.isSaving &&
-            state.noteId != null) {
-
-            viewModelScope.launch {
-                try {
-                    val userId = userPreferences.getCurrentUserId().first()
-                    if (userId != null) {
-                        val note = Note(
-                            id = state.noteId,
-                            userId = userId,
-                            title = state.title.trim(),
-                            content = state.content,
-                            noteType = state.noteType,
-                            listItems = state.listItems,
-                            isFavorite = state.isFavorite,
-                            isArchived = false,
-                            createdAt = 0L,
-                            updatedAt = Clock.System.now().toEpochMilliseconds(),
-                            wordCount = state.wordCount
-                        )
-                        updateNoteUseCase(note)
-                        _uiState.value = state.copy(hasUnsavedChanges = false)
-                    }
-                } catch (e: Exception) {
-                    // Silenciar errores de auto-guardado
-                }
-            }
-        }
-    }
-
     private fun createNewListItem(order: Int): NoteListItem {
         return NoteListItem(
             id = "item_${System.currentTimeMillis()}_$order",
@@ -354,28 +286,6 @@ class CreateEditNoteViewModel @Inject constructor(
             indentLevel = 0,
             order = order
         )
-    }
-
-    private fun calculateWordCount(
-        title: String,
-        content: String,
-        listItems: List<NoteListItem>,
-        noteType: NoteType
-    ): Int {
-        return when (noteType) {
-            NoteType.TEXT -> {
-                val titleWords = if (title.isBlank()) 0 else title.split("\\s+".toRegex()).size
-                val contentWords = if (content.isBlank()) 0 else content.split("\\s+".toRegex()).size
-                titleWords + contentWords
-            }
-            NoteType.LIST -> {
-                val titleWords = if (title.isBlank()) 0 else title.split("\\s+".toRegex()).size
-                val listWords = listItems.sumOf { item ->
-                    if (item.text.isBlank()) 0 else item.text.split("\\s+".toRegex()).size
-                }
-                titleWords + listWords
-            }
-        }
     }
 
     fun clearError() {

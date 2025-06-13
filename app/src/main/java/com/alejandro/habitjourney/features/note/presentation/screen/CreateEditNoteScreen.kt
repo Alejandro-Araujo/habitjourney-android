@@ -21,6 +21,7 @@ import com.alejandro.habitjourney.core.presentation.ui.theme.*
 import com.alejandro.habitjourney.features.note.presentation.components.*
 import com.alejandro.habitjourney.features.note.presentation.viewmodel.CreateEditNoteViewModel
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateEditNoteScreen(
@@ -32,24 +33,9 @@ fun CreateEditNoteScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    var showUnsavedChangesDialog by remember { mutableStateOf(false) }
-
     // Inicializar nota
     LaunchedEffect(noteId, isReadOnly) {
         viewModel.initializeNote(noteId, isReadOnly)
-    }
-
-    // Auto-save periódico
-    LaunchedEffect(uiState.hasUnsavedChanges) {
-        if (uiState.hasUnsavedChanges && noteId != null) {
-            kotlinx.coroutines.delay(Dimensions.AutoSaveDelayMs)
-            viewModel.autoSaveIfNeeded()
-        }
-    }
-
-    // Manejar botón back con cambios sin guardar
-    BackHandler(enabled = uiState.hasUnsavedChanges && !uiState.isReadOnly) {
-        showUnsavedChangesDialog = true
     }
 
     Scaffold(
@@ -66,15 +52,7 @@ fun CreateEditNoteScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            if (uiState.hasUnsavedChanges && !uiState.isReadOnly) {
-                                showUnsavedChangesDialog = true
-                            } else {
-                                onNavigateBack()
-                            }
-                        }
-                    ) {
+                    IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.navigate_back)
@@ -165,15 +143,8 @@ fun CreateEditNoteScreen(
                     }
                 }
 
-                // Información de la nota
-                NoteInfoCard(
-                    wordCount = uiState.wordCount,
-                    hasUnsavedChanges = uiState.hasUnsavedChanges,
-                    isAutoSaved = noteId != null && !uiState.hasUnsavedChanges
-                )
-
                 // BOTÓN DE GUARDAR
-                if (!uiState.isReadOnly && uiState.canSave) {
+                if (!uiState.isReadOnly) {
                     HabitJourneyButton(
                         text = if (noteId == null) {
                             stringResource(R.string.create_note)
@@ -187,7 +158,7 @@ fun CreateEditNoteScreen(
                             }
                         },
                         type = HabitJourneyButtonType.PRIMARY,
-                        enabled = uiState.canSave,
+                        enabled = uiState.canSave && !uiState.isSaving,
                         isLoading = uiState.isSaving,
                         leadingIcon = Icons.Default.Save,
                         iconContentDescription = stringResource(R.string.save_note),
@@ -204,45 +175,6 @@ fun CreateEditNoteScreen(
                 HabitJourneyLoadingOverlay()
             }
         }
-    }
-
-    if (showUnsavedChangesDialog) {
-        AlertDialog(
-            onDismissRequest = { showUnsavedChangesDialog = false },
-            title = {
-                Text(
-                    text = stringResource(R.string.unsaved_changes),
-                    style = MaterialTheme.typography.headlineSmall
-                )
-            },
-            text = {
-                Text(
-                    text = stringResource(R.string.unsaved_changes_dialog_message),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        showUnsavedChangesDialog = false
-                        onNavigateBack()
-                    },
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = Error
-                    )
-                ) {
-                    Text(stringResource(R.string.discard))
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { showUnsavedChangesDialog = false }
-                ) {
-                    Text(stringResource(R.string.keep_editing))
-                }
-            },
-            modifier = Modifier.fillMaxWidth(0.9f)
-        )
     }
 
     // Mostrar errores

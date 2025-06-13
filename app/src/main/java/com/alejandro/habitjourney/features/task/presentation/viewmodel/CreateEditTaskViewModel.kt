@@ -9,6 +9,7 @@ import com.alejandro.habitjourney.core.data.local.enums.Priority
 import com.alejandro.habitjourney.core.utils.resources.ResourceProvider
 import com.alejandro.habitjourney.features.task.data.local.AlarmPermissionHelper
 import com.alejandro.habitjourney.features.task.data.local.PermissionType
+import com.alejandro.habitjourney.features.task.data.local.ReminderManager
 import com.alejandro.habitjourney.features.task.domain.model.Task
 import com.alejandro.habitjourney.features.task.domain.usecase.*
 import com.alejandro.habitjourney.features.task.presentation.state.CreateEditTaskUiState
@@ -29,6 +30,7 @@ class CreateEditTaskViewModel @Inject constructor(
     private val updateReminderUseCase: UpdateReminderUseCase,
     private val userPreferences: UserPreferences,
     private val alarmPermissionHelper: AlarmPermissionHelper,
+    private val reminderManager: ReminderManager,
     private val resourceProvider: ResourceProvider
 ) : ViewModel() {
 

@@ -59,7 +59,7 @@ val Typography = Typography(
         fontSize = 12.sp
     ),
     // Datos Numéricos - Fira Code
-    labelLarge = TextStyle( // Para estadísticas (ej. en botones o etiquetas grandes)
+    labelLarge = TextStyle( // Para estadísticas
         fontFamily = FiraCode,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp
@@ -69,7 +69,4 @@ val Typography = Typography(
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp
     )
-    /* Otros estilos de Material Design (como titleLarge, titleMedium, etc.)
-       pueden ser definidos aquí.
-    */
 )

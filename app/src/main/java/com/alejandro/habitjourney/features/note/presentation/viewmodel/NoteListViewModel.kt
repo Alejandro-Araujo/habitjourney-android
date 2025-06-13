@@ -39,8 +39,7 @@ class NoteListViewModel @Inject constructor(
     private val _isSearchActive = MutableStateFlow(false)
     private val _stats = MutableStateFlow(NoteStats(0, 0))
 
-    // Estado combinado de la UI
-    private val _baseUiState = combine(
+    val uiState: StateFlow<NoteListUiState> = combine(
         _currentFilter,
         _searchQuery,
         _isLoading,
@@ -53,16 +52,6 @@ class NoteListViewModel @Inject constructor(
             isLoading = loading,
             error = error,
             isSearchActive = searchActive
-        )
-    }
-
-    val uiState: StateFlow<NoteListUiState> = combine(
-        _baseUiState,
-        _stats
-    ) { baseState, stats ->
-        baseState.copy(
-            totalNotesCount = stats.activeNotesCount,
-            totalWordCount = stats.totalWordCount
         )
     }.stateIn(
         scope = viewModelScope,

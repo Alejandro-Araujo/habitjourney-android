@@ -18,9 +18,7 @@ import com.alejandro.habitjourney.core.presentation.ui.theme.HabitJourneyTheme
 @Composable
 fun HabitJourneyLoadingOverlay(
     modifier: Modifier = Modifier,
-    // Puedes ajustar el color de fondo si lo deseas
     backgroundColor: Color = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
-    // Puedes ajustar el color del indicador
     indicatorColor: Color = MaterialTheme.colorScheme.primary
 ) {
     Box(
@@ -30,7 +28,7 @@ fun HabitJourneyLoadingOverlay(
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(
-            modifier = Modifier.size(56.dp), // Tamaño estándar para un indicador grande
+            modifier = Modifier.size(56.dp),
             color = indicatorColor,
             strokeWidth = 4.dp
         )
