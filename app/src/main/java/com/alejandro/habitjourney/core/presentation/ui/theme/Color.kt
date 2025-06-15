@@ -1,6 +1,5 @@
 package com.alejandro.habitjourney.core.presentation.ui.theme
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.Color
 
 // Colores Primarios (de tu guía de estilo)
@@ -20,11 +19,20 @@ val Premium = Color(0xFF9F7AEA)   // Morado para elementos premium o avanzados
 // Colores de Estado
 val InactivoDeshabilitado = Color(0xFFA0AEC0) // Gris medio para elementos inactivos
 val Error = Color(0xFFF56565)     // Rojo para mensajes de error
-val Exito = Color(0xFF48BB78)     // Verde para mensajes de éxito (igual que AcentoPositivo, lo cual es coherente)
+val Exito = Color(0xFF48BB78)     // Verde para mensajes de éxito
+
+// Valores de Alpha estándar para Material Design
+object AlphaValues {
+    const val DisabledAlpha = 0.12f          // Para backgrounds deshabilitados
+    const val DisabledContentAlpha = 0.38f   // Para contenido/texto deshabilitado
+    const val MediumAlpha = 0.6f             // Para énfasis medio
+    const val HighAlpha = 0.8f               // Para énfasis alto
+
+    // Alphas específicos para containers de cards según estado
+    const val CardStateAlpha = 0.3f         // Para completed, skipped, partial, missed
+}
 
 // Mapeo a la paleta de Material Design 3 (M3) para facilitar el uso
-// Puedes ajustar cuál de tus colores funcionales se mapea a 'Primary' según la identidad de tu marca principal.
-// He elegido AcentoInformativo porque es un azul común para botones y elementos principales.
 val Primary = AcentoInformativo
 val OnPrimary = Color.White // Texto sobre el color primario (blanco para contraste)
 
@@ -47,5 +55,5 @@ val OnError = Color.White // Texto sobre el color de error
 val Gold = Logro
 val Purple = Premium
 
-val ListCompletedItem = AcentoPositivo.copy(alpha = 0.6f)
+val ListCompletedItem = AcentoPositivo.copy(alpha = AlphaValues.MediumAlpha)
 val NoteTypeIndicator = AcentoInformativo

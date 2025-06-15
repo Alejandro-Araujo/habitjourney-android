@@ -1,4 +1,3 @@
-// CreateEditTaskViewModel.kt - Versión con debug y corregida
 package com.alejandro.habitjourney.features.task.presentation.viewmodel
 
 import android.util.Log
@@ -6,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alejandro.habitjourney.R
 import com.alejandro.habitjourney.core.data.local.enums.Priority
+import com.alejandro.habitjourney.core.utils.logging.AppLogger
 import com.alejandro.habitjourney.core.utils.resources.ResourceProvider
 import com.alejandro.habitjourney.features.task.data.local.AlarmPermissionHelper
 import com.alejandro.habitjourney.features.task.data.local.PermissionType
@@ -19,6 +19,24 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.*
 import javax.inject.Inject
 
+
+/**
+ * ViewModel para la pantalla de creación y edición de tareas.
+ *
+ * Se encarga de gestionar el estado de la UI ([CreateEditTaskUiState]), interactuar
+ * con los casos de uso para operaciones de tareas (crear, actualizar, obtener)
+ * y manejar la lógica relacionada con los recordatorios y permisos de alarma.
+ *
+ * @property createTaskUseCase Caso de uso para crear una nueva tarea.
+ * @property updateTaskUseCase Caso de uso para actualizar una tarea existente.
+ * @property getTaskByIdUseCase Caso de uso para obtener una tarea por su ID.
+ * @property scheduleReminderUseCase Caso de uso para programar un recordatorio.
+ * @property cancelReminderUseCase Caso de uso para cancelar un recordatorio.
+ * @property updateReminderUseCase Caso de uso para actualizar un recordatorio.
+ * @property userPreferences Preferencias de usuario para obtener el ID del usuario actual.
+ * @property alarmPermissionHelper Ayudante para gestionar los permisos de alarma.
+ * @property resourceProvider Proveedor de recursos para obtener cadenas localizadas.
+ */
 @HiltViewModel
 class CreateEditTaskViewModel @Inject constructor(
     private val createTaskUseCase: CreateTaskUseCase,
@@ -33,12 +51,19 @@ class CreateEditTaskViewModel @Inject constructor(
 ) : ViewModel() {
 
     companion object {
-        private const val TAG = "CreateEditTaskVM"
+        private const val VM_NAME = "CreateEditTaskVM"
     }
 
     private val _uiState = MutableStateFlow(CreateEditTaskUiState())
     val uiState: StateFlow<CreateEditTaskUiState> = _uiState.asStateFlow()
 
+    /**
+     * Inicializa el ViewModel con el ID de la tarea y el modo de lectura.
+     * Si se proporciona un `taskId`, carga los datos de la tarea existente.
+     *
+     * @param taskId El ID de la tarea a cargar/editar. `null` para crear una nueva tarea.
+     * @param isReadOnly Si `true`, la pantalla estará en modo de solo lectura.
+     */
     fun initializeTask(taskId: Long?, isReadOnly: Boolean = false) {
 
         val needsPermission = alarmPermissionHelper.needsPermissionRequest()
@@ -55,13 +80,19 @@ class CreateEditTaskViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Carga una tarea existente desde el repositorio basándose en su ID.
+     * Actualiza el estado de la UI con los datos de la tarea cargada.
+     *
+     * @param taskId El ID de la tarea a cargar.
+     */
     private fun loadTask(taskId: Long) {
-        Log.d(TAG, "loadTask: $taskId")
+        AppLogger.vm(VM_NAME, "Cargando tarea con ID: $taskId")
 
         viewModelScope.launch {
             try {
                 getTaskByIdUseCase(taskId).collect { task ->
-                    Log.d(TAG, "Task loaded: $task")
+                    AppLogger.vm(VM_NAME, "Task loaded: $task")
                     if (task != null) {
                         _uiState.value = _uiState.value.copy(
                             title = task.title,
@@ -83,6 +114,12 @@ class CreateEditTaskViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Actualiza el título de la tarea en el estado de la UI y valida su contenido.
+     * Establece `titleError` si el título está en blanco.
+     *
+     * @param title El nuevo título de la tarea.
+     */
     fun updateTitle(title: String) {
         _uiState.value = _uiState.value.copy(
             title = title,
@@ -92,20 +129,41 @@ class CreateEditTaskViewModel @Inject constructor(
         )
     }
 
+    /**
+     * Actualiza la descripción de la tarea en el estado de la UI.
+     *
+     * @param description La nueva descripción de la tarea.
+     */
     fun updateDescription(description: String) {
         _uiState.value = _uiState.value.copy(description = description)
     }
 
+    /**
+     * Actualiza la fecha de vencimiento de la tarea en el estado de la UI.
+     *
+     * @param date La nueva fecha de vencimiento, o `null` para eliminarla.
+     */
     fun updateDueDate(date: LocalDate?) {
         _uiState.value = _uiState.value.copy(dueDate = date)
     }
 
+    /**
+     * Actualiza la prioridad de la tarea en el estado de la UI.
+     *
+     * @param priority La nueva prioridad, o `null` para eliminarla.
+     */
     fun updatePriority(priority: Priority?) {
         _uiState.value = _uiState.value.copy(priority = priority)
     }
 
+    /**
+     * Actualiza el estado de habilitación del recordatorio.
+     * Si se intenta habilitar el recordatorio y faltan permisos, muestra el diálogo de permisos.
+     *
+     * @param enabled `true` para habilitar el recordatorio, `false` para deshabilitarlo.
+     */
     fun updateReminderEnabled(enabled: Boolean) {
-        Log.d(TAG, "updateReminderEnabled: $enabled")
+        AppLogger.vm(VM_NAME, "updateReminderEnabled: $enabled")
 
         if (enabled) {
             val missingPermissions = alarmPermissionHelper.getMissingPermissions()
@@ -125,17 +183,10 @@ class CreateEditTaskViewModel @Inject constructor(
         )
     }
 
-    fun onPermissionDialogResult(granted: Boolean) {
-
-        _uiState.value = _uiState.value.copy(
-            showPermissionDialog = false
-        )
-
-        if (granted) {
-            alarmPermissionHelper.requestExactAlarmPermission()
-        }
-    }
-
+    /**
+     * Revalida los permisos necesarios para las alarmas y notificaciones.
+     * Actualiza el estado de la UI si hay permisos faltantes.
+     */
     fun revalidatePermissions() {
         val missingPermissions = alarmPermissionHelper.getMissingPermissions()
 
@@ -151,6 +202,12 @@ class CreateEditTaskViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Actualiza la fecha y hora del recordatorio en el estado de la UI.
+     * Si se selecciona una fecha y hora, se habilita automáticamente el recordatorio.
+     *
+     * @param dateTime La nueva fecha y hora del recordatorio, o `null` para eliminarla.
+     */
     fun updateReminderDateTime(dateTime: LocalDateTime?) {
 
         if (dateTime != null) {
@@ -172,6 +229,12 @@ class CreateEditTaskViewModel @Inject constructor(
         )
     }
 
+    /**
+     * Maneja el resultado de la interacción con el diálogo de permisos.
+     * Navega a la configuración del sistema para solicitar el permiso correspondiente.
+     *
+     * @param permissionType El tipo de permiso seleccionado por el usuario.
+     */
     fun onPermissionDialogResult(permissionType: PermissionType) {
 
         _uiState.value = _uiState.value.copy(
@@ -189,6 +252,9 @@ class CreateEditTaskViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Maneja el cierre del diálogo de permisos, limpiando los estados relacionados.
+     */
     fun onPermissionDialogDismiss() {
         _uiState.value = _uiState.value.copy(
             showPermissionDialog = false,
@@ -196,6 +262,12 @@ class CreateEditTaskViewModel @Inject constructor(
         )
     }
 
+    /**
+     * Guarda o actualiza la tarea en la base de datos.
+     * Realiza validaciones, gestiona los permisos de recordatorio y programa/cancela recordatorios.
+     *
+     * @param onSuccess Lambda que se invoca tras guardar la tarea exitosamente.
+     */
     fun saveTask(onSuccess: () -> Unit) {
         val state = _uiState.value
 
@@ -234,7 +306,6 @@ class CreateEditTaskViewModel @Inject constructor(
                 }
 
                 val task = if (state.taskId != null) {
-                    // Actualizar tarea existente
                     Task(
                         id = state.taskId,
                         userId = userId,
@@ -250,7 +321,6 @@ class CreateEditTaskViewModel @Inject constructor(
                         isArchived = false
                     )
                 } else {
-                    // Crear nueva tarea
                     Task(
                         id = 0L,
                         userId = userId,
@@ -267,24 +337,22 @@ class CreateEditTaskViewModel @Inject constructor(
                     )
                 }
 
-                Log.d(TAG, "Task to save: $task")
+                AppLogger.vm(VM_NAME, "Task to save: $task")
 
-                // Guardar tarea
                 val taskId = if (state.taskId != null) {
                     updateTaskUseCase(task)
-                    Log.d(TAG, "Task updated")
+                    AppLogger.vm(VM_NAME, "Task updated")
                     state.taskId
                 } else {
                     val newTaskId = createTaskUseCase(task)
-                    Log.d(TAG, "Task created with ID: $newTaskId")
+                    AppLogger.vm(VM_NAME, "Task created with ID: $newTaskId")
                     newTaskId
                 }
 
-                // Manejar recordatorios después de guardar la tarea
                 if (state.isReminderEnabled &&
                     state.reminderDateTime != null &&
                     alarmPermissionHelper.canScheduleExactAlarms()) {
-                    Log.d(TAG, "Scheduling reminder for task $taskId")
+                    AppLogger.vm(VM_NAME, "Scheduling reminder for task $taskId")
                     try {
                         if (state.taskId != null) {
                             updateReminderUseCase(
@@ -300,7 +368,7 @@ class CreateEditTaskViewModel @Inject constructor(
                             )
                         }
                     } catch (e: Exception) {
-                        Log.e(TAG, "Error programming reminder", e)
+                        AppLogger.e(VM_NAME, "Error programming reminder", e)
                         _uiState.value = _uiState.value.copy(
                             error = resourceProvider.getString(
                                 R.string.task_saved_reminder_error,
@@ -309,15 +377,14 @@ class CreateEditTaskViewModel @Inject constructor(
                         )
                     }
                 } else if (state.taskId != null) {
-                    // Cancelar recordatorio si se deshabilitó
-                    Log.d(TAG, "Canceling reminder for task $taskId")
+                    AppLogger.vm(VM_NAME, "Canceling reminder for task $taskId")
                     cancelReminderUseCase(taskId)
                 }
 
                 onSuccess()
 
             } catch (e: Exception) {
-                Log.e(TAG, "Error saving task", e)
+                AppLogger.e(VM_NAME, "Error saving task", e)
                 _uiState.value = _uiState.value.copy(
                     error = e.message ?: resourceProvider.getString(R.string.unknown_error),
                     isSaving = false
@@ -326,6 +393,9 @@ class CreateEditTaskViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Limpia cualquier mensaje de error actual en el estado de la UI.
+     */
     fun clearError() {
         _uiState.value = _uiState.value.copy(error = null)
     }

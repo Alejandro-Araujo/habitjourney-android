@@ -1,7 +1,6 @@
 package com.alejandro.habitjourney.features.user.presentation.ui
 
-import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -14,37 +13,43 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.* // Mantenemos Material3 para Card, Icon, IconButton, etc.
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.alejandro.habitjourney.R
 import com.alejandro.habitjourney.features.user.presentation.state.LoginState
 import com.alejandro.habitjourney.features.user.presentation.viewmodel.LoginViewModel
-
-// Importa tus componentes personalizados
+import kotlinx.coroutines.launch
 import com.alejandro.habitjourney.core.presentation.ui.components.HabitJourneyButton
 import com.alejandro.habitjourney.core.presentation.ui.components.HabitJourneyButtonType
 import com.alejandro.habitjourney.core.presentation.ui.components.HabitJourneyTextField
+import com.alejandro.habitjourney.core.presentation.ui.components.HabitJourneySnackbarHost
+import com.alejandro.habitjourney.core.presentation.ui.theme.*
 
-// Importa tus dimensiones y colores personalizados
-import com.alejandro.habitjourney.core.presentation.ui.theme.Dimensions
-import com.alejandro.habitjourney.core.presentation.ui.theme.BaseClara
-import com.alejandro.habitjourney.core.presentation.ui.theme.BaseOscura
-import com.alejandro.habitjourney.core.presentation.ui.theme.AcentoInformativo
-import com.alejandro.habitjourney.core.presentation.ui.theme.InactivoDeshabilitado
-import com.alejandro.habitjourney.core.presentation.ui.theme.Error
-import com.alejandro.habitjourney.core.presentation.ui.theme.AcentoUrgente // Para el mensaje de error general
-
+/**
+ * Pantalla de inicio de sesión.
+ *
+ * Permite al usuario introducir sus credenciales (correo electrónico y contraseña)
+ * para iniciar sesión en la aplicación. Muestra el estado del proceso (carga, éxito, error)
+ * y ofrece navegación a la pantalla de registro.
+ *
+ * @param onNavigateToRegister Lambda que se invoca para navegar a la pantalla de registro.
+ * @param onLoginSuccess Lambda que se invoca tras un inicio de sesión exitoso, típicamente para navegar a la pantalla principal.
+ * @param viewModel La instancia de [LoginViewModel] inyectada por Hilt.
+ */
 @Composable
 fun LoginScreen(
     onNavigateToRegister: () -> Unit,
@@ -59,170 +64,192 @@ fun LoginScreen(
     val passwordError by viewModel.passwordError.collectAsState()
     val focusManager = LocalFocusManager.current
 
-    // Manejo del estado de éxito
+    // Snackbar host state para mostrar errores
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
+    // Manejo del estado
     LaunchedEffect(loginState) {
-        if (loginState is LoginState.Success) {
-            onLoginSuccess()
-            viewModel.resetState()
+        when (loginState) {
+            is LoginState.Success -> {
+                onLoginSuccess()
+                viewModel.resetState()
+            }
+            is LoginState.Error -> {
+                scope.launch {
+                    snackbarHostState.showSnackbar(
+                        message = (loginState as LoginState.Error).message,
+                        actionLabel = "ERROR",
+                        duration = SnackbarDuration.Long
+                    )
+                }
+            }
+            else -> {}
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BaseClara) // Usa tu color BaseClara para el fondo
-            .verticalScroll(rememberScrollState())
-            .padding(Dimensions.SpacingLarge), // Usa Dimensions.SpacingLarge para el padding de la pantalla
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.height(Dimensions.ButtonHeight)) // Usa una dimensión adecuada aquí
-
-        // Header
-        Text(
-            text = stringResource(R.string.welcome_back_title),
-            style = MaterialTheme.typography.displayLarge, // H1: 24sp
-            color = BaseOscura, // Tu BaseOscura para el texto principal
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(Dimensions.SpacingSmall)) // SpacingSmall = 8dp
-
-        Text(
-            text = stringResource(R.string.login_subtitle),
-            style = MaterialTheme.typography.bodyLarge, // Cuerpo: 16sp
-            color = InactivoDeshabilitado, // Tu A0AEC0 para textos secundarios/deshabilitados
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(Dimensions.ButtonHeight - Dimensions.SpacingSmall))
-
-        // Formulario
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            ),
-            elevation = CardDefaults.cardElevation(defaultElevation = Dimensions.ElevationLevel1),
-            shape = RoundedCornerShape(Dimensions.CornerRadius)
+    Scaffold(
+        snackbarHost = {
+            HabitJourneySnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.padding(bottom = Dimensions.SpacingMedium)
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surface)
+                .verticalScroll(rememberScrollState())
+                .padding(paddingValues)
+                .padding(horizontal = Dimensions.SpacingSmall),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                modifier = Modifier.padding(Dimensions.SpacingLarge),
-                verticalArrangement = Arrangement.spacedBy(Dimensions.SpacingMedium)
-            ) {
-                // Campo Email
-                HabitJourneyTextField(
-                    value = email,
-                    onValueChange = viewModel::onEmailChanged,
-                    label = stringResource(R.string.email_label),
-                    modifier = Modifier.fillMaxWidth(),
-                    isError = emailError != null,
-                    helperText = emailError,
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onNext = { focusManager.moveFocus(FocusDirection.Down) }
-                    )
-                )
+            Spacer(modifier = Modifier.height(Dimensions.SpacingMedium))
 
-                // Campo Contraseña
-                HabitJourneyTextField(
-                    value = password,
-                    onValueChange = viewModel::onPasswordChanged,
-                    label = stringResource(R.string.password_label),
-                    modifier = Modifier.fillMaxWidth(),
-                    isError = passwordError != null,
-                    helperText = passwordError,
-                    singleLine = true,
-                    visualTransformation = if (isPasswordVisible) VisualTransformation.None
-                    else PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Password,
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            focusManager.clearFocus()
-                            viewModel.login()
-                        }
-                    ),
-                    // Trailing icon para mostrar/ocultar contraseña
-                    trailingIcon = {
-                        IconButton(onClick = viewModel::togglePasswordVisibility) {
+            // Logo de la app
+            Image(
+                painter = painterResource(id = R.drawable.logo_habitjourney),
+                contentDescription = stringResource(R.string.app_logo_content_description),
+                modifier = Modifier
+                    .size(280.dp)
+                    .padding(bottom = Dimensions.SpacingMedium),
+                contentScale = ContentScale.Fit
+            )
+
+            // Header
+            Text(
+                text = stringResource(R.string.welcome_back_title),
+                style = MaterialTheme.typography.displayLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(Dimensions.SpacingSmall))
+
+            Text(
+                text = stringResource(R.string.login_subtitle),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = AlphaValues.MediumAlpha),
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(Dimensions.SpacingMedium))
+
+            // Formulario
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = Dimensions.ElevationLevel1),
+                shape = RoundedCornerShape(Dimensions.CornerRadius)
+            ) {
+                Column(
+                    modifier = Modifier.padding(Dimensions.SpacingLarge),
+                    verticalArrangement = Arrangement.spacedBy(Dimensions.SpacingMedium)
+                ) {
+                    // Campo Email
+                    HabitJourneyTextField(
+                        value = email,
+                        onValueChange = viewModel::onEmailChanged,
+                        label = stringResource(R.string.email_label),
+                        modifier = Modifier.fillMaxWidth(),
+                        isError = emailError != null,
+                        helperText = emailError,
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Email,
+                            imeAction = ImeAction.Next
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                        ),
+                        leadingIcon = {
                             Icon(
-                                imageVector = if (isPasswordVisible) Icons.Default.Visibility
-                                else Icons.Default.VisibilityOff,
-                                contentDescription = if (isPasswordVisible) stringResource(R.string.hide_password_content_description)
-                                else stringResource(R.string.show_password_content_description),
-                                tint = InactivoDeshabilitado
+                                imageVector = Icons.Default.Email,
+                                contentDescription = stringResource(R.string.content_description_email_icon),
+                                tint = MaterialTheme.colorScheme.primary
                             )
                         }
-                    }
-                )
+                    )
 
-                Spacer(modifier = Modifier.height(Dimensions.SpacingSmall))
-
-                // Botón de Login
-                HabitJourneyButton(
-                    text = stringResource(R.string.login_button_text),
-                    onClick = viewModel::login,
-                    type = HabitJourneyButtonType.PRIMARY,
-                    enabled = loginState !is LoginState.Loading,
-                    isLoading = loginState is LoginState.Loading
-                )
-
-                // Mensaje de error general
-                AnimatedVisibility(
-                    visible = loginState is LoginState.Error,
-                    enter = slideInVertically(
-                        initialOffsetY = { -it },
-                        animationSpec = tween(300)
-                    ) + fadeIn(animationSpec = tween(300)),
-                    exit = slideOutVertically(
-                        targetOffsetY = { -it },
-                        animationSpec = tween(300)
-                    ) + fadeOut(animationSpec = tween(300))
-                ) {
-                    Card(
+                    // Campo Contraseña
+                    HabitJourneyTextField(
+                        value = password,
+                        onValueChange = viewModel::onPasswordChanged,
+                        label = stringResource(R.string.password_label),
                         modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(
-                            containerColor = Error.copy(alpha = 0.2f)
+                        isError = passwordError != null,
+                        helperText = passwordError,
+                        singleLine = true,
+                        visualTransformation = if (isPasswordVisible) VisualTransformation.None
+                        else PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Password,
+                            imeAction = ImeAction.Done
                         ),
-                        shape = RoundedCornerShape(Dimensions.CornerRadius)
-                    ) {
-                        Text(
-                            text = if (loginState is LoginState.Error) (loginState as LoginState.Error).message else "",
-                            modifier = Modifier.padding(Dimensions.SpacingMedium),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Error,
-                            textAlign = TextAlign.Center
-                        )
-                    }
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                focusManager.clearFocus()
+                                viewModel.login()
+                            }
+                        ),
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Lock,
+                                contentDescription = stringResource(R.string.content_description_lock_icon),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        },
+                        trailingIcon = {
+                            IconButton(onClick = viewModel::togglePasswordVisibility) {
+                                Icon(
+                                    imageVector = if (isPasswordVisible) Icons.Default.Visibility
+                                    else Icons.Default.VisibilityOff,
+                                    contentDescription = if (isPasswordVisible)
+                                        stringResource(R.string.hide_password_content_description)
+                                    else stringResource(R.string.show_password_content_description),
+                                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = AlphaValues.MediumAlpha)
+                                )
+                            }
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(Dimensions.SpacingSmall))
+
+                    // Botón de Login
+                    HabitJourneyButton(
+                        text = stringResource(R.string.login_button_text),
+                        onClick = viewModel::login,
+                        type = HabitJourneyButtonType.PRIMARY,
+                        enabled = loginState !is LoginState.Loading,
+                        isLoading = loginState is LoginState.Loading,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
             }
+
+            Spacer(modifier = Modifier.height(Dimensions.SpacingLarge))
+
+            // Enlace a registro
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.no_account_question),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = AlphaValues.MediumAlpha)
+                )
+                HabitJourneyButton(
+                    text = stringResource(R.string.register_link_text),
+                    onClick = onNavigateToRegister,
+                    type = HabitJourneyButtonType.TERTIARY
+                )
+            }
+
+            Spacer(modifier = Modifier.height(Dimensions.SpacingLarge))
         }
-
-        Spacer(modifier = Modifier.height(Dimensions.SpacingLarge))
-
-        // Enlace a registro
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(R.string.no_account_question),
-                style = MaterialTheme.typography.bodyMedium,
-                color = InactivoDeshabilitado
-            )
-            HabitJourneyButton(
-                text = stringResource(R.string.register_link_text),
-                onClick = onNavigateToRegister,
-                type = HabitJourneyButtonType.TERTIARY
-            )
-        }
-
-        Spacer(modifier = Modifier.height(Dimensions.SpacingLarge))
     }
 }

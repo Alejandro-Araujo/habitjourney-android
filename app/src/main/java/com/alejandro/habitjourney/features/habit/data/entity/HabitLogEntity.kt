@@ -8,6 +8,10 @@ import androidx.room.PrimaryKey
 import com.alejandro.habitjourney.core.data.local.enums.LogStatus
 import kotlinx.datetime.LocalDate
 
+/**
+ * Entidad de logs con índice compuesto (habit_id, date) para consultas rápidas.
+ * Foreign key cascada para mantener integridad referencial.
+ */
 @Entity(
     tableName = "habit_logs",
     foreignKeys = [ForeignKey(

@@ -19,10 +19,10 @@ data class HabitListItemUiModel(
     val type: HabitType,
     val icon: ImageVector,
     val dailyTarget: Int?,
-    val currentCompletionCount: Int, // Valor numérico del progreso actual
+    val currentCompletionCount: Int,
     val completionProgressPercentage: Float,
-    val logStatus: LogStatus, // El estado actual del log (NOT_COMPLETED, PARTIAL, COMPLETED, SKIPPED, MISSED)
-    val isArchived: Boolean, // Indica si el hábito está archivado (antes isDeleted)
+    val logStatus: LogStatus,
+    val isArchived: Boolean,
 
     // Propiedades de conveniencia para la UI basadas en logStatus
     val isCompletedToday: Boolean,
@@ -54,32 +54,25 @@ fun Habit.toHabitListItemUiModel(
     todayLog: HabitLog?,
     icon: ImageVector
 ): HabitListItemUiModel {
-    // CORREGIDO: Cálculo del porcentaje de progreso
     val progressPercentage = when {
         dailyTarget == null || dailyTarget <= 0 -> {
-            // Para hábitos sin target específico o target 0
             if (currentCompletionCount > 0) 100f else 0f
         }
         dailyTarget == 1 -> {
-            // Para hábitos con target 1 (checkbox simple)
             if (currentCompletionCount >= 1) 100f else 0f
         }
         else -> {
-            // Para hábitos con target > 1
             (currentCompletionCount.toFloat() / dailyTarget.toFloat() * 100f).coerceAtMost(100f)
         }
     }
 
-    // CORREGIDO: Determinación del estado del log basado en el progreso y el target
     val effectiveLogStatus = when {
         todayLog?.status == LogStatus.SKIPPED -> LogStatus.SKIPPED
         todayLog?.status == LogStatus.MISSED -> LogStatus.MISSED
         dailyTarget == null || dailyTarget <= 1 -> {
-            // Hábitos simples (sin target o target 1)
             if (currentCompletionCount >= 1) LogStatus.COMPLETED else LogStatus.NOT_COMPLETED
         }
         else -> {
-            // Hábitos con target > 1
             when {
                 currentCompletionCount >= dailyTarget -> LogStatus.COMPLETED
                 currentCompletionCount > 0 -> LogStatus.PARTIAL

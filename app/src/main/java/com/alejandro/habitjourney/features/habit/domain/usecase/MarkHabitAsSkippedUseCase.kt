@@ -24,19 +24,17 @@ class MarkHabitAsSkippedUseCase @Inject constructor(
 
         val existingLog = repository.getLogForDate(habitId, date).firstOrNull()
 
-        // Un hábito omitido siempre tiene un valor de progreso de 0.
         val valueToSet = 0f
 
         val updatedLog = existingLog?.copy(
             value = valueToSet,
-            status = LogStatus.SKIPPED // Directamente asignamos SKIPPED
+            status = LogStatus.SKIPPED
         ) ?: HabitLog(
             habitId = habitId,
             date = date,
             value = valueToSet,
             status = LogStatus.SKIPPED
         )
-
         repository.logHabitCompletion(updatedLog)
     }
 }

@@ -16,7 +16,10 @@ import com.alejandro.habitjourney.core.presentation.ui.theme.HabitJourneyThemeWr
 import com.alejandro.habitjourney.features.settings.domain.repository.SettingsRepository
 import javax.inject.Inject
 
-
+/**
+ * Activity principal que actúa como host de la navegación.
+ * Configurada con Hilt y tema wrapper.
+ */
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 

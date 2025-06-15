@@ -1,114 +1,101 @@
 package com.alejandro.habitjourney.features.habit.di
 
-
-import com.alejandro.habitjourney.features.habit.data.dao.HabitDao
-import com.alejandro.habitjourney.features.habit.data.dao.HabitLogDao
-import com.alejandro.habitjourney.features.habit.data.mapper.HabitLocalMapper
 import com.alejandro.habitjourney.features.habit.data.repository.HabitRepositoryImpl
 import com.alejandro.habitjourney.features.habit.domain.repository.HabitRepository
-import com.alejandro.habitjourney.features.habit.domain.usecase.CreateHabitUseCase
-import com.alejandro.habitjourney.features.habit.domain.usecase.GetActiveHabitsUseCase
-import com.alejandro.habitjourney.features.habit.domain.usecase.GetAllUserHabitsUseCase
-import com.alejandro.habitjourney.features.habit.domain.usecase.GetHabitByIdUseCase
-import com.alejandro.habitjourney.features.habit.domain.usecase.GetHabitWithLogsUseCase
-import com.alejandro.habitjourney.features.habit.domain.usecase.GetHabitsDueTodayWithCompletionCountUseCase
-import com.alejandro.habitjourney.features.habit.domain.usecase.GetLogForDateUseCase
-import com.alejandro.habitjourney.features.habit.domain.usecase.LogHabitCompletionUseCase
-import com.alejandro.habitjourney.features.habit.domain.usecase.MarkHabitAsNotCompletedUseCase
-import com.alejandro.habitjourney.features.habit.domain.usecase.MarkHabitAsSkippedUseCase
-import com.alejandro.habitjourney.features.habit.domain.usecase.MarkMissedHabitsUseCase
-import com.alejandro.habitjourney.features.habit.domain.usecase.ToggleHabitArchivedUseCase
-import com.alejandro.habitjourney.features.habit.domain.usecase.UpdateHabitProgressValueUseCase
-import com.alejandro.habitjourney.features.habit.domain.usecase.UpdateHabitUseCase
+import com.alejandro.habitjourney.features.habit.domain.usecase.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+/**
+ * Módulo de Dagger Hilt para la inyección de dependencias del feature de Hábitos.
+ *
+ * Proporciona la implementación del repositorio [HabitRepository] y todos los casos de uso
+ * relacionados con la gestión de hábitos, asegurando que estén disponibles en el grafo
+ * de dependencias de la aplicación.
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 object HabitModule {
 
+    /**
+     * Proporciona una instancia única (Singleton) de [HabitRepository].
+     *
+     * @param habitDao DAO para operaciones de hábitos.
+     * @param habitLogDao DAO para operaciones de registros de hábitos.
+     * @param habitLocalMapper Mapeador entre entidades locales y modelos de dominio.
+     * @return Una implementación de [HabitRepository].
+     */
     @Provides
     @Singleton
     fun provideHabitRepository(
-        habitDao: HabitDao,
-        habitLogDao: HabitLogDao,
-        habitLocalMapper: HabitLocalMapper
+        habitDao: com.alejandro.habitjourney.features.habit.data.dao.HabitDao,
+        habitLogDao: com.alejandro.habitjourney.features.habit.data.dao.HabitLogDao,
+        habitLocalMapper: com.alejandro.habitjourney.features.habit.data.mapper.HabitLocalMapper
     ): HabitRepository {
         return HabitRepositoryImpl(habitDao, habitLogDao, habitLocalMapper)
     }
 
-    // Use Cases
-    @Provides
-    fun provideGetHabitsForDayUseCase(
-        habitRepository: HabitRepository
-    ): GetActiveHabitsUseCase = GetActiveHabitsUseCase(habitRepository)
+    // --- Casos de Uso (Use Cases) ---
 
     @Provides
-    fun provideGetTodayHabitsUseCase(
-        habitRepository: HabitRepository
-    ): LogHabitCompletionUseCase = LogHabitCompletionUseCase(habitRepository)
+    fun provideCreateHabitUseCase(repository: HabitRepository): CreateHabitUseCase =
+        CreateHabitUseCase(repository)
 
     @Provides
-    fun provideGetHabitByIdUseCase(
-        habitRepository: HabitRepository
-    ): GetHabitByIdUseCase = GetHabitByIdUseCase(habitRepository)
+    fun provideUpdateHabitUseCase(repository: HabitRepository): UpdateHabitUseCase =
+        UpdateHabitUseCase(repository)
 
     @Provides
-    fun provideCreateHabitUseCase(
-        habitRepository: HabitRepository
-    ): CreateHabitUseCase = CreateHabitUseCase(habitRepository)
+    fun provideGetActiveHabitsUseCase(repository: HabitRepository): GetActiveHabitsUseCase =
+        GetActiveHabitsUseCase(repository)
 
     @Provides
-    fun provideUpdateHabitUseCase(
-        habitRepository: HabitRepository
-    ): UpdateHabitUseCase = UpdateHabitUseCase(habitRepository)
+    fun provideGetAllUserHabitsUseCase(repository: HabitRepository): GetAllUserHabitsUseCase =
+        GetAllUserHabitsUseCase(repository)
 
     @Provides
-    fun provideToggleHabitCompletionUseCase(
-        habitRepository: HabitRepository
-    ): GetAllUserHabitsUseCase = GetAllUserHabitsUseCase(habitRepository)
+    fun provideGetHabitByIdUseCase(repository: HabitRepository): GetHabitByIdUseCase =
+        GetHabitByIdUseCase(repository)
 
     @Provides
-    fun provideGetHabitLogsUseCase(
-        habitRepository: HabitRepository
-    ): GetHabitsDueTodayWithCompletionCountUseCase = GetHabitsDueTodayWithCompletionCountUseCase(habitRepository)
+    fun provideGetHabitWithLogsUseCase(repository: HabitRepository): GetHabitWithLogsUseCase =
+        GetHabitWithLogsUseCase(repository)
 
     @Provides
-    fun provideGetHabitCompletionRateUseCase(
-        habitRepository: HabitRepository
-    ): UpdateHabitProgressValueUseCase = UpdateHabitProgressValueUseCase(habitRepository)
+    fun provideGetHabitsDueTodayWithCompletionCountUseCase(repository: HabitRepository): GetHabitsDueTodayWithCompletionCountUseCase =
+        GetHabitsDueTodayWithCompletionCountUseCase(repository)
 
     @Provides
-    fun provideGetHabitStreakUseCase(
-        habitRepository: HabitRepository
-    ): GetHabitWithLogsUseCase = GetHabitWithLogsUseCase(habitRepository)
+    fun provideGetLogForDateUseCase(repository: HabitRepository): GetLogForDateUseCase =
+        GetLogForDateUseCase(repository)
 
     @Provides
-    fun provideGetWeeklyHabitsUseCase(
-        habitRepository: HabitRepository,
+    fun provideLogHabitCompletionUseCase(repository: HabitRepository): LogHabitCompletionUseCase =
+        LogHabitCompletionUseCase(repository)
+
+    @Provides
+    fun provideMarkHabitAsNotCompletedUseCase(
+        repository: HabitRepository,
         getLogForDateUseCase: GetLogForDateUseCase
-    ): MarkHabitAsNotCompletedUseCase = MarkHabitAsNotCompletedUseCase(habitRepository, getLogForDateUseCase)
+    ): MarkHabitAsNotCompletedUseCase =
+        MarkHabitAsNotCompletedUseCase(repository, getLogForDateUseCase)
 
     @Provides
-    fun provideGetMonthlyHabitsUseCase(
-        habitRepository: HabitRepository
-    ): GetLogForDateUseCase = GetLogForDateUseCase(habitRepository)
+    fun provideMarkHabitAsSkippedUseCase(repository: HabitRepository): MarkHabitAsSkippedUseCase =
+        MarkHabitAsSkippedUseCase(repository)
 
     @Provides
-    fun provideGetHabitStatsUseCase(
-        habitRepository: HabitRepository
-    ): MarkHabitAsSkippedUseCase = MarkHabitAsSkippedUseCase(habitRepository)
+    fun provideMarkMissedHabitsUseCase(repository: HabitRepository): MarkMissedHabitsUseCase =
+        MarkMissedHabitsUseCase(repository)
 
     @Provides
-    fun provideMarkMissedHabitsUseCase(
-        habitRepository: HabitRepository
-    ): MarkMissedHabitsUseCase = MarkMissedHabitsUseCase(habitRepository)
+    fun provideToggleHabitArchivedUseCase(repository: HabitRepository): ToggleHabitArchivedUseCase =
+        ToggleHabitArchivedUseCase(repository)
 
     @Provides
-    fun provideToggleHabitArchivedUseCase(
-        habitRepository: HabitRepository
-    ): ToggleHabitArchivedUseCase = ToggleHabitArchivedUseCase(habitRepository)
+    fun provideUpdateHabitProgressValueUseCase(repository: HabitRepository): UpdateHabitProgressValueUseCase =
+        UpdateHabitProgressValueUseCase(repository)
 }

@@ -2,10 +2,9 @@ package com.alejandro.habitjourney.navigation
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.getValue
-import androidx.hilt.navigation.compose.hiltViewModel // Asegúrate que está usado o elimínalo si no
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Note
-import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -17,31 +16,27 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.alejandro.habitjourney.R
+import com.alejandro.habitjourney.core.presentation.ui.theme.AcentoInformativo
 import com.alejandro.habitjourney.features.user.presentation.viewmodel.AuthViewModel
 
 /**
  * Composable principal de la aplicación que maneja la navegación
- * y la estructura general (con o sin BottomNavigation)
+ * y la estructura general
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HabitJourneyApp() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    // Inyectar el AuthViewModel al nivel más alto de la aplicación
     val authViewModel: AuthViewModel = hiltViewModel()
     val isLoggedIn by authViewModel.isLoggedIn.collectAsState()
     val isLoadingAuth by authViewModel.isLoading.collectAsState()
 
-    // Determinar si mostrar BottomNavigation
-    // Solo se muestra si el usuario está logueado Y la ruta actual está en las rutas de bottomNav
     val showBottomNav = isLoggedIn && (currentDestination?.route in NavigationRoutes.bottomNavRoutes)
 
-    // Decidir el destino inicial basándose en el estado de autenticación
     val startDestination = if (isLoadingAuth) {
-        Screen.Login.route // O una pantalla de carga dedicada si prefieres
+        Screen.Login.route
     } else if (isLoggedIn) {
         Screen.Dashboard.route
     } else {
@@ -74,20 +69,21 @@ private fun HabitJourneyBottomNavigation(
     navController: androidx.navigation.NavHostController,
     currentDestination: androidx.navigation.NavDestination?
 ) {
-    NavigationBar {
+    NavigationBar(
+        containerColor = AcentoInformativo
+    ) {
         bottomNavItems.forEach { item ->
             val isSelected = currentDestination?.hierarchy?.any {
                 it.route == item.route
             } == true
+
             NavigationBarItem(
                 icon = {
                     Icon(
                         imageVector = item.icon,
-                        // Mantenemos el contentDescription para accesibilidad
                         contentDescription = stringResource(id = item.contentDescriptionResId)
                     )
                 },
-                // Aquí está el cambio: label se establece a null para no mostrar texto
                 label = null,
                 selected = isSelected,
                 onClick = {
@@ -98,7 +94,12 @@ private fun HabitJourneyBottomNavigation(
                         launchSingleTop = true
                         restoreState = true
                     }
-                }
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = MaterialTheme.colorScheme.onPrimary,
+                    unselectedIconColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f),
+                    indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                )
             )
         }
     }
@@ -110,7 +111,7 @@ private fun HabitJourneyBottomNavigation(
 private data class BottomNavItem(
     val route: String,
     val icon: androidx.compose.ui.graphics.vector.ImageVector,
-    val titleResId: Int, // Aunque ya no se use para el label visual, puede ser útil para otros propósitos o para el contentDescription si fueran diferentes.
+    val titleResId: Int,
     val contentDescriptionResId: Int
 )
 

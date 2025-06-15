@@ -1,14 +1,16 @@
 package com.alejandro.habitjourney.features.settings.presentation.viewmodel
 
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.alejandro.habitjourney.R
+import com.alejandro.habitjourney.core.data.remote.exception.ErrorHandler
 import com.alejandro.habitjourney.core.data.remote.network.NetworkResponse
+import com.alejandro.habitjourney.core.utils.resources.ResourceProvider
 import com.alejandro.habitjourney.features.settings.domain.repository.SettingsRepository
-import com.alejandro.habitjourney.features.settings.presentation.screen.Language
-import com.alejandro.habitjourney.features.settings.presentation.screen.ThemeMode
+import com.alejandro.habitjourney.features.settings.presentation.state.Language
 import com.alejandro.habitjourney.features.settings.presentation.state.SettingsUiState
+import com.alejandro.habitjourney.features.settings.presentation.state.ThemeMode
 import com.alejandro.habitjourney.features.user.domain.repository.UserRepository
 import com.alejandro.habitjourney.features.user.domain.usecase.DeleteUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,12 +18,22 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
+/**
+ * ViewModel principal para la pantalla de configuración.
+ *
+ * Responsabilidades:
+ * - Gestionar configuraciones de tema y idioma
+ * - Manejar cierre de sesión y eliminación de cuenta
+ * - Cargar datos del usuario actual
+ * - Coordinar navegación entre pantallas de configuración
+ */
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val settingsRepository: SettingsRepository,
-    private val deleteUserUseCase: DeleteUserUseCase
+    private val deleteUserUseCase: DeleteUserUseCase,
+    private val errorHandler: ErrorHandler,
+    private val resourceProvider: ResourceProvider,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsUiState())
@@ -32,6 +44,9 @@ class SettingsViewModel @Inject constructor(
         loadSettings()
     }
 
+    /**
+     * Carga los datos del usuario actual desde el repositorio local.
+     */
     private fun loadUserData() {
         viewModelScope.launch {
             userRepository.getLocalUser().collect { user ->
@@ -40,19 +55,26 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Carga las configuraciones actuales de la aplicación.
+     */
     private fun loadSettings() {
         viewModelScope.launch {
             settingsRepository.getAppSettings().collect { settings ->
                 _uiState.update {
                     it.copy(
                         currentTheme = mapToThemeMode(settings.theme),
-                        currentLanguage = mapToLanguage(settings.language)
+                        currentLanguage = Language.fromCode(settings.language)
                     )
                 }
             }
         }
     }
 
+    /**
+     * Actualiza el tema de la aplicación.
+     * Aplica el cambio tanto en el repositorio como en AppCompatDelegate.
+     */
     fun updateTheme(themeMode: ThemeMode) {
         viewModelScope.launch {
             val themeString = when (themeMode) {
@@ -62,7 +84,7 @@ class SettingsViewModel @Inject constructor(
             }
             settingsRepository.updateTheme(themeString)
 
-            // Aplica el cambio a nivel de aplicación
+            // Aplicar el cambio a nivel de aplicación
             val appCompatThemeMode = when (themeMode) {
                 ThemeMode.LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
                 ThemeMode.DARK -> AppCompatDelegate.MODE_NIGHT_YES
@@ -74,6 +96,9 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Cierra la sesión del usuario actual.
+     */
     fun logout() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
@@ -91,16 +116,24 @@ class SettingsViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            message = "Error al cerrar sesión"
+                            message = resourceProvider.getString(
+                                R.string.error_logout_failed,
+                                errorHandler.getErrorMessage(result.exception)
+                            )
                         )
                     }
                 }
                 is NetworkResponse.Loading -> {
+                    // Estado ya manejado arriba
                 }
             }
         }
     }
 
+    /**
+     * Elimina permanentemente la cuenta del usuario.
+     * Requiere confirmación del usuario.
+     */
     fun deleteAccount() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
@@ -118,53 +151,42 @@ class SettingsViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            message = result.exception.message ?: "Error al eliminar la cuenta"
+                            message = resourceProvider.getString(
+                                R.string.error_deleting_account,
+                                errorHandler.getErrorMessage(result.exception)
+                            )
                         )
                     }
                 }
                 is NetworkResponse.Loading -> {
-                    // No-op
+                    // Estado ya manejado arriba
                 }
             }
         }
     }
 
-    fun updateLanguage(language: Language) {
-        viewModelScope.launch {
-            // Guardar en el repository
-            settingsRepository.updateLanguage(language.code)
-
-            // Aplicar el cambio de idioma
-            val appLocale = LocaleListCompat.forLanguageTags(language.code)
-            AppCompatDelegate.setApplicationLocales(appLocale)
-
-            _uiState.update { it.copy(currentLanguage = language) }
-        }
-    }
-
+    /**
+     * Limpia el mensaje de estado actual.
+     */
     fun clearMessage() {
         _uiState.update { it.copy(message = null) }
     }
 
+    /**
+     * Marca la navegación como manejada después de navegar a auth.
+     */
     fun onNavigationHandled() {
         _uiState.update { it.copy(navigateToAuth = false) }
     }
 
+    /**
+     * Convierte string de tema a enum ThemeMode.
+     */
     private fun mapToThemeMode(theme: String): ThemeMode {
         return when (theme) {
             "light" -> ThemeMode.LIGHT
             "dark" -> ThemeMode.DARK
             else -> ThemeMode.SYSTEM
-        }
-    }
-
-    private fun mapToLanguage(languageCode: String): Language {
-        return when (languageCode) {
-            "en" -> Language("en", "English")
-            "es" -> Language("es", "Español")
-            "fr" -> Language("fr", "Français")
-            "de" -> Language("de", "Deutsch")
-            else -> Language("es", "Español")
         }
     }
 }

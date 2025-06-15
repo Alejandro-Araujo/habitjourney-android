@@ -8,13 +8,9 @@ import com.alejandro.habitjourney.core.data.local.enums.HabitType
 import com.alejandro.habitjourney.core.data.local.enums.LogStatus
 import com.alejandro.habitjourney.core.data.local.enums.Priority
 import com.alejandro.habitjourney.core.data.local.enums.Weekday
-import com.alejandro.habitjourney.features.achievement.data.entity.AchievementDefinitionEntity
-import com.alejandro.habitjourney.features.achievement.data.entity.UserAchievementEntity
 import com.alejandro.habitjourney.features.habit.data.entity.HabitEntity
 import com.alejandro.habitjourney.features.habit.data.entity.HabitLogEntity
 import com.alejandro.habitjourney.features.note.data.entity.NoteEntity
-import com.alejandro.habitjourney.features.progress.data.entity.ProgressEntity
-import com.alejandro.habitjourney.features.reward.data.entity.RewardEntity
 import com.alejandro.habitjourney.features.task.data.entity.TaskEntity
 import com.alejandro.habitjourney.features.user.data.local.entity.UserEntity
 import kotlinx.datetime.Clock
@@ -44,18 +40,23 @@ object TestDataFactory {
         ).build()
     }
 
+
     /**
      * Crea una entidad de usuario para pruebas
      */
     fun createUserEntity(
-        id: Long = 0, // 0 para que Room asigne un ID automáticamente
-        name: String = "Test User ${System.currentTimeMillis()}",
-        email: String = "test${System.currentTimeMillis()}@example.com"
+        id: Long = 1L, // Como no es autogenerado, le damos un ID fijo para el test
+        name: String = "Test User",
+        email: String = "test@example.com",
+        createdAt: Long = System.currentTimeMillis(),
+        updatedAt: Long = System.currentTimeMillis()
     ): UserEntity {
         return UserEntity(
             id = id,
             name = name,
-            email = email
+            email = email,
+            createdAt = createdAt,
+            updatedAt = updatedAt
         )
     }
 
@@ -137,7 +138,7 @@ object TestDataFactory {
             dueDate = dueDate,
             priority = priority,
             isCompleted = isCompleted,
-            isArchived = isDeleted, // Aquí también asumo que `isArchived` en TaskEntity corresponde a `isDeleted` del parámetro
+            isArchived = isDeleted,
             createdAt = createdAt
         )
     }
@@ -150,98 +151,26 @@ object TestDataFactory {
         id: Long = 0,
         title: String = "Test Note ${System.currentTimeMillis()}",
         content: String = "Test note content",
-        noteType: String = "TEXT", // ¡Añadido! Valor por defecto
-        listItems: String? = null, // ¡Añadido! Valor por defecto
+        noteType: String = "TEXT",
+        listItems: String? = null,
         isArchived: Boolean = false,
         createdAt: Long = TEST_TIMESTAMP,
-        updatedAt: Long = TEST_TIMESTAMP, // ¡Añadido! Valor por defecto
-        wordCount: Int = 0, // ¡Añadido! Valor por defecto
-        isFavorite: Boolean = false // ¡Añadido! Valor por defecto
+        updatedAt: Long = TEST_TIMESTAMP,
+        wordCount: Int = 0,
+        isFavorite: Boolean = false
     ): NoteEntity {
         return NoteEntity(
             id = id,
             userId = userId,
             title = title,
             content = content,
-            noteType = noteType, // ¡Añadido!
-            listItems = listItems, // ¡Añadido!
+            noteType = noteType,
+            listItems = listItems,
             isArchived = isArchived,
             createdAt = createdAt,
-            updatedAt = updatedAt, // ¡Añadido!
-            wordCount = wordCount, // ¡Añadido!
-            isFavorite = isFavorite // ¡Añadido!
-        )
-    }
-
-    /**
-     * Crea una entidad de recompensa para pruebas
-     */
-    fun createRewardEntity(
-        userId: Long,
-        id: Long = 0,
-        name: String = "Test Reward ${System.currentTimeMillis()}",
-        description: String? = "Test reward description",
-        isClaimed: Boolean = false,
-        createdAt: Long = TEST_TIMESTAMP
-    ): RewardEntity {
-        return RewardEntity(
-            id = id,
-            userId = userId,
-            name = name,
-            description = description,
-            isClaimed = isClaimed,
-            createdAt = createdAt
-        )
-    }
-
-    /**
-     * Crea una entidad de progreso para pruebas
-     */
-    fun createProgressEntity(
-        userId: Long,
-        totalHabitsCompleted: Int = 0,
-        totalXp: Int = 0,
-        currentStreak: Int = 0,
-        longestStreak: Int = 0
-    ): ProgressEntity {
-        return ProgressEntity(
-            userId = userId,
-            totalHabitsCompleted = totalHabitsCompleted,
-            totalXp = totalXp,
-            currentStreak = currentStreak,
-            longestStreak = longestStreak
-        )
-    }
-
-    /**
-     * Crea una entidad de definición de logro para pruebas
-     */
-    fun createAchievementDefinitionEntity(
-        id: Long = 0, // 0 para que Room asigne un ID automáticamente
-        code: String = "ACH_CODE_${System.currentTimeMillis()}",
-        name: String = "Test Achievement Name",
-        description: String = "Test achievement description"
-    ): AchievementDefinitionEntity {
-        return AchievementDefinitionEntity(
-            id = id,
-            code = code,
-            name = name,
-            description = description
-        )
-    }
-
-    /**
-     * Crea una entidad de logro de usuario para pruebas
-     */
-    fun createUserAchievementEntity(
-        userId: Long,
-        achievementDefinitionId: Long,
-        unlockedAt: Long = TEST_TIMESTAMP
-    ): UserAchievementEntity {
-        return UserAchievementEntity(
-            userId = userId,
-            achievementDefinitionId = achievementDefinitionId,
-            unlockedAt = unlockedAt
+            updatedAt = updatedAt,
+            wordCount = wordCount,
+            isFavorite = isFavorite
         )
     }
 }

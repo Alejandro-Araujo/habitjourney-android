@@ -1,6 +1,5 @@
 package com.alejandro.habitjourney.features.user.data.remote.dto.response
 
-
 import com.alejandro.habitjourney.features.user.data.remote.dto.UserDTO
 import com.google.gson.annotations.SerializedName
 

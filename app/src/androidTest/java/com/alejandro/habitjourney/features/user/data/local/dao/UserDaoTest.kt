@@ -4,7 +4,6 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.alejandro.habitjourney.core.data.local.database.AppDatabase
 import com.alejandro.habitjourney.core.util.TestCoroutineRule
 import com.alejandro.habitjourney.core.util.TestDataFactory
-import com.alejandro.habitjourney.features.user.data.local.dao.UserDao
 import junit.framework.TestCase.*
 import kotlinx.coroutines.flow.first
 import org.junit.After
@@ -21,78 +20,73 @@ class UserDaoTest {
     @get:Rule
     val coroutineRule = TestCoroutineRule()
 
-    private lateinit var database: AppDatabase // Instancia de la base de datos en memoria
-    private lateinit var userDao: UserDao // Instancia del DAO a testear
+    private lateinit var database: AppDatabase
+    private lateinit var userDao: UserDao
 
     @Before
     fun setupDatabase() {
-        // Configura una base de datos en memoria para los tests
         database = TestDataFactory.createInMemoryDatabase()
-
-        // Obtiene la instancia del DAO desde la base de datos
         userDao = database.userDao()
     }
 
     @After
     fun closeDatabase() {
-        // Cierra la base de datos en memoria
         database.close()
     }
 
     @Test
-    fun testInsertAndGetUser() = coroutineRule.runTest {
-        val user = TestDataFactory.createUserEntity(
-            name = "Test User",
-            email = "test@example.com"
-        )
-        val userId = userDao.insertUser(user) // Insertamos el usuario
+    fun testInsertAndGetUserById() = coroutineRule.runTest {
+        // Given: creamos un usuario con un ID específico
+        val user = TestDataFactory.createUserEntity(id = 1L, name = "Test User", email = "test@example.com")
 
-        // Verificamos que podemos recuperar el usuario único
-        val retrievedUser = userDao.getUser().first() // CAMBIO: Usar getUser() en lugar de getUserById()
+        // When: insertamos el usuario
+        val insertedId = userDao.insertUser(user)
+
+        // Then: verificamos que podemos recuperarlo por su ID
+        val retrievedUser = userDao.getUserById(insertedId).first()
 
         assertNotNull(retrievedUser)
-        assertEquals(userId, retrievedUser?.id) // Usar ?.id por si es nulo
-        assertEquals(user.email, retrievedUser?.email)
+        assertEquals(user.id, retrievedUser?.id)
         assertEquals(user.name, retrievedUser?.name)
+        assertEquals(user.email, retrievedUser?.email)
     }
 
     @Test
-    fun updateUserInfo() = coroutineRule.runTest {
-        // Given: Un usuario insertado
-        val user = TestDataFactory.createUserEntity(
-            name = "Test User",
-            email = "test@example.com"
-        )
+    fun testUpdateUserInfo() = coroutineRule.runTest {
+        // Given: un usuario insertado
+        val user = TestDataFactory.createUserEntity(id = 1L, name = "Original Name", email = "original@example.com")
         val userId = userDao.insertUser(user)
 
-        // When: Actualizamos la información del usuario
+        // When: actualizamos su información
         val newName = "Updated Name"
         val newEmail = "updated@test.com"
         val rowsAffected = userDao.updateUserInfo(userId, newName, newEmail)
 
-        // Then: Verificamos que se actualizó correctamente
-        assertEquals(1, rowsAffected)  // Debe afectar a 1 fila
+        // Then: verificamos que la operación afectó a una fila
+        assertEquals(1, rowsAffected)
 
-        // And: Verificamos que los datos se actualizaron correctamente
-        val updatedUser = userDao.getUser().first() // CAMBIO: Usar getUser()
-        assertEquals(newName, updatedUser?.name) // Usar ?.name
-        assertEquals(newEmail, updatedUser?.email) // Usar ?.email
+        // And: verificamos que los datos se actualizaron correctamente
+        val updatedUser = userDao.getUserById(userId).first()
+        assertEquals(newName, updatedUser?.name)
+        assertEquals(newEmail, updatedUser?.email)
+        // Opcional: Verificar que updatedAt ha cambiado
+        assertTrue(updatedUser!!.updatedAt > user.updatedAt)
     }
 
     @Test
-    fun deleteUser() = coroutineRule.runTest {
-        // Given: Un usuario insertado
-        val user = TestDataFactory.createUserEntity(
-            name = "Test User",
-            email = "test@example.com"
-        )
+    fun testDeleteUser() = coroutineRule.runTest {
+        // Given: un usuario insertado
+        val user = TestDataFactory.createUserEntity(id = 1L)
         val userId = userDao.insertUser(user)
 
-        // When: Eliminamos todos los usuarios (en este caso, el único)
-        userDao.deleteAllUsers() // CAMBIO: Usar deleteAllUsers()
+        // Verificamos que existe antes de borrar
+        assertNotNull(userDao.getUserById(userId).first())
 
-        // Then: Verificamos que el usuario ya no existe
-        val found = userDao.getUser().first() // CAMBIO: Usar getUser()
-        assertNull("El usuario debería ser eliminado", found)
+        // When: eliminamos el usuario por su ID
+        userDao.deleteUser(userId)
+
+        // Then: verificamos que el usuario ya no existe
+        val retrievedUser = userDao.getUserById(userId).first()
+        assertNull("El usuario debería haber sido eliminado", retrievedUser)
     }
 }

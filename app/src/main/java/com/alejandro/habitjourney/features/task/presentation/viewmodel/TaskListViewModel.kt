@@ -14,6 +14,24 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
+/**
+ * ViewModel para la pantalla de lista de tareas.
+ *
+ * Gestiona el estado de la UI para la visualización de tareas, incluyendo filtrado,
+ * búsqueda y operaciones sobre tareas individuales como completar, archivar y eliminar.
+ * Interactúa con los casos de uso de la capa de dominio y las preferencias de usuario.
+ *
+ * @property getAllTasksUseCase Caso de uso para obtener todas las tareas no archivadas.
+ * @property getActiveTasksUseCase Caso de uso para obtener tareas activas.
+ * @property getCompletedTasksUseCase Caso de uso para obtener tareas completadas.
+ * @property getArchivedTasksUseCase Caso de uso para obtener tareas archivadas.
+ * @property getOverdueTasksUseCase Caso de uso para obtener tareas vencidas.
+ * @property toggleTaskCompletionUseCase Caso de uso para alternar el estado de completado de una tarea.
+ * @property archiveTaskUseCase Caso de uso para archivar/desarchivar una tarea.
+ * @property deleteTaskUseCase Caso de uso para eliminar una tarea.
+ * @property userPreferences Preferencias de usuario para obtener el ID del usuario actual.
+ */
 @HiltViewModel
 class TaskListViewModel @Inject constructor(
     private val getAllTasksUseCase: GetAllTasksUseCase,
@@ -23,6 +41,7 @@ class TaskListViewModel @Inject constructor(
     private val getOverdueTasksUseCase: GetOverdueTasksUseCase,
     private val toggleTaskCompletionUseCase: ToggleTaskCompletionUseCase,
     private val archiveTaskUseCase: ArchiveTaskUseCase,
+    private val deleteTaskUseCase: DeleteTaskUseCase,
     private val userPreferences: UserPreferences
 ) : ViewModel() {
 
@@ -33,13 +52,11 @@ class TaskListViewModel @Inject constructor(
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
     private val _selectedPriority = MutableStateFlow<Priority?>(null)
-    val selectedPriority: StateFlow<Priority?> = _selectedPriority.asStateFlow()
 
     private val _isLoading = MutableStateFlow(false)
     private val _error = MutableStateFlow<String?>(null)
 
     private val _isSearchActive = MutableStateFlow(false)
-    private val _isFilterDropdownExpanded = MutableStateFlow(false)
 
     private val _baseUiState = combine(
         _currentFilter,
@@ -57,14 +74,16 @@ class TaskListViewModel @Inject constructor(
         )
     }
 
+    /**
+     * El estado de la interfaz de usuario ([TaskListUiState]) que se expone a la vista.
+     * Combina varios estados internos para proporcionar una representación completa del UI.
+     */
     val uiState: StateFlow<TaskListUiState> = combine(
         _baseUiState,
         _isSearchActive,
-        _isFilterDropdownExpanded
-    ) { baseState, searchActive, dropdownExpanded ->
+    ) { baseState, searchActive ->
         baseState.copy(
             isSearchActive = searchActive,
-            isFilterDropdownExpanded = dropdownExpanded
         )
     }.stateIn(
         scope = viewModelScope,
@@ -72,7 +91,12 @@ class TaskListViewModel @Inject constructor(
         initialValue = TaskListUiState()
     )
 
-    // Flow de tareas basado en filtros
+    /**
+     * Un [StateFlow] que emite la lista de tareas actualmente visible,
+     * aplicando el filtro y la búsqueda seleccionados.
+     * Se recalcula reactivamente a los cambios en el filtro actual, la consulta de búsqueda,
+     * la prioridad seleccionada y el ID del usuario.
+     */
     @OptIn(ExperimentalCoroutinesApi::class)
     val tasks: StateFlow<List<Task>> =
         combine(
@@ -114,15 +138,28 @@ class TaskListViewModel @Inject constructor(
                 initialValue = emptyList()
             )
 
+    /**
+     * Establece el filtro actual para la lista de tareas.
+     *
+     * @param filter El nuevo [TaskFilterType] a aplicar.
+     */
     fun setFilter(filter: TaskFilterType) {
         _currentFilter.value = filter
-        _isFilterDropdownExpanded.value = false
     }
 
+    /**
+     * Establece la consulta de búsqueda para filtrar tareas por título o descripción.
+     *
+     * @param query La cadena de texto a usar para la búsqueda.
+     */
     fun setSearchQuery(query: String) {
         _searchQuery.value = query
     }
 
+    /**
+     * Alterna el estado de la barra de búsqueda (activa/inactiva).
+     * Si se desactiva la búsqueda, la consulta de búsqueda se limpia.
+     */
     fun toggleSearch() {
         _isSearchActive.value = !_isSearchActive.value
         if (!_isSearchActive.value) {
@@ -130,14 +167,13 @@ class TaskListViewModel @Inject constructor(
         }
     }
 
-    fun setFilterDropdownExpanded(expanded: Boolean) {
-        _isFilterDropdownExpanded.value = expanded
-    }
-
-    fun setPriorityFilter(priority: Priority?) {
-        _selectedPriority.value = priority
-    }
-
+    /**
+     * Alterna el estado de completado de una tarea específica.
+     * Si ocurre un error, actualiza el estado de error de la UI.
+     *
+     * @param taskId El ID de la tarea a actualizar.
+     * @param isCompleted El nuevo estado de completado (`true` para completada, `false` para incompleta).
+     */
     fun toggleTaskCompletion(taskId: Long, isCompleted: Boolean) {
         viewModelScope.launch {
             try {
@@ -148,6 +184,12 @@ class TaskListViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Archiva una tarea específica.
+     * Si ocurre un error, actualiza el estado de error de la UI.
+     *
+     * @param taskId El ID de la tarea a archivar.
+     */
     fun archiveTask(taskId: Long) {
         viewModelScope.launch {
             try {
@@ -158,6 +200,41 @@ class TaskListViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Desarchiva una tarea específica.
+     * Si ocurre un error, actualiza el estado de error de la UI.
+     *
+     * @param taskId El ID de la tarea a desarchivar.
+     */
+    fun unarchiveTask(taskId: Long) {
+        viewModelScope.launch {
+            try {
+                archiveTaskUseCase(taskId, false)
+            } catch (e: Exception) {
+                _error.value = e.message
+            }
+        }
+    }
+
+    /**
+     * Elimina una tarea específica de forma permanente.
+     * Si ocurre un error, actualiza el estado de error de la UI.
+     *
+     * @param taskId El ID de la tarea a eliminar.
+     */
+    fun deleteTask(taskId: Long) {
+        viewModelScope.launch {
+            try {
+                deleteTaskUseCase(taskId)
+            } catch (e: Exception) {
+                _error.value = e.message
+            }
+        }
+    }
+
+    /**
+     * Limpia cualquier mensaje de error actual en el estado de la UI.
+     */
     fun clearError() {
         _error.value = null
     }

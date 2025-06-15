@@ -1,7 +1,7 @@
 package com.alejandro.habitjourney.features.task.presentation.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -11,13 +11,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.alejandro.habitjourney.R
-import com.alejandro.habitjourney.core.presentation.ui.components.HabitJourneyButton
-import com.alejandro.habitjourney.core.presentation.ui.components.HabitJourneyButtonType
 import com.alejandro.habitjourney.core.presentation.ui.theme.*
 import kotlinx.datetime.*
-import java.util.Locale
 
 
+/**
+ * Un diálogo Composable que permite al usuario seleccionar una fecha y una hora.
+ *
+ * Combina un [DatePicker] y un [TimePicker] de Material Design 3,
+ * permitiendo al usuario alternar entre la selección de fecha y hora.
+ * La selección inicial puede ser proporcionada, y los resultados finales se devuelven al confirmar.
+ *
+ * @param onDateTimeSelected Lambda que se invoca cuando el usuario confirma la fecha y hora seleccionadas.
+ * Recibe un objeto [LocalDateTime] con la fecha y hora combinadas.
+ * @param onDismiss Lambda que se invoca cuando el diálogo se descarta sin confirmar una selección.
+ * @param initialDateTime La [LocalDateTime] inicial a mostrar en los selectores. Por defecto, es la fecha y hora actual del sistema.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskDateTimePickerDialog(
@@ -25,158 +34,166 @@ fun TaskDateTimePickerDialog(
     onDismiss: () -> Unit,
     initialDateTime: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 ) {
-    var selectedDate by remember {
-        mutableStateOf(initialDateTime.date)
-    }
-    var selectedTime by remember {
-        mutableStateOf(initialDateTime.time)
-    }
+    val timeZone = TimeZone.currentSystemDefault()
+    val initialDate = initialDateTime.date
+    val initialTime = initialDateTime.time
+
+    var selectedDate by remember { mutableStateOf(initialDate) }
+    var selectedTime by remember { mutableStateOf(initialTime) }
     var showingDatePicker by remember { mutableStateOf(true) }
 
+
+    val initialMillis = remember(initialDate) {
+        initialDate.atStartOfDayIn(timeZone)
+        val utcStartOfDay = initialDate.atStartOfDayIn(TimeZone.UTC)
+        utcStartOfDay.toEpochMilliseconds()
+    }
+
     val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = selectedDate.toEpochDays().toLong() * 24 * 60 * 60 * 1000
+        initialSelectedDateMillis = initialMillis,
+        initialDisplayedMonthMillis = initialMillis
     )
 
     val timePickerState = rememberTimePickerState(
-        initialHour = selectedTime.hour,
-        initialMinute = selectedTime.minute
+        initialHour = initialTime.hour,
+        initialMinute = initialTime.minute,
+        is24Hour = true
     )
-    val formattedDate = TaskDateUtils.formatDateForDisplay(selectedDate)
-    val formattedTime = String.format(Locale.getDefault(),"%02d:%02d", selectedTime.hour, selectedTime.minute)
 
     Dialog(
         onDismissRequest = onDismiss,
-        properties = DialogProperties(
-            dismissOnBackPress = true,
-            dismissOnClickOutside = true,
-            usePlatformDefaultWidth = false
-        )
+        properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
-        Card(
+        Surface(
+            shape = MaterialTheme.shapes.extraLarge,
+            tonalElevation = 6.dp,
+            color = MaterialTheme.colorScheme.surface,
             modifier = Modifier
-                .fillMaxWidth(0.98f)
-                .padding(horizontal = 16.dp, vertical = 24.dp),
-            shape = RoundedCornerShape(Dimensions.CornerRadiusLarge),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            )
+                .width(360.dp)
+                .heightIn(min = 500.dp, max = 600.dp)
         ) {
             Column(
-                modifier = Modifier.padding(
-                    top = Dimensions.SpacingLarge,
-                    bottom = Dimensions.SpacingLarge,
-                    start = 12.dp,
-                    end = 12.dp
-                )
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.surface),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Tabs para cambiar entre fecha y hora
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(Dimensions.SpacingSmall)
+                Column(
+                    modifier = Modifier.padding(horizontal = Dimensions.SpacingLarge),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    FilterChip(
-                        selected = showingDatePicker,
-                        onClick = { showingDatePicker = true },
-                        label = { Text(stringResource(R.string.date_label)) },
-                        modifier = Modifier.weight(1f),
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = AcentoInformativo,
-                            selectedLabelColor = MaterialTheme.colorScheme.onPrimary
+                    Text(
+                        text = stringResource(R.string.select_date_and_time),
+                        style = Typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(
+                            top = Dimensions.SpacingLarge,
+                            bottom = Dimensions.SpacingMedium
                         )
                     )
 
-                    FilterChip(
-                        selected = !showingDatePicker,
-                        onClick = { showingDatePicker = false },
-                        label = { Text(stringResource(R.string.time_label)) },
-                        modifier = Modifier.weight(1f),
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = AcentoInformativo,
-                            selectedLabelColor = MaterialTheme.colorScheme.onPrimary
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(Dimensions.SpacingSmall)
+                    ) {
+                        FilterChip(
+                            selected = showingDatePicker,
+                            onClick = { showingDatePicker = true },
+                            label = { Text(stringResource(R.string.date_label)) },
+                            modifier = Modifier.weight(1f),
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = AcentoInformativo,
+                                selectedLabelColor = MaterialTheme.colorScheme.onPrimary
+                            )
                         )
-                    )
+                        FilterChip(
+                            selected = !showingDatePicker,
+                            onClick = { showingDatePicker = false },
+                            label = { Text(stringResource(R.string.time_label)) },
+                            modifier = Modifier.weight(1f),
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = AcentoInformativo,
+                                selectedLabelColor = MaterialTheme.colorScheme.onPrimary
+                            )
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(Dimensions.SpacingMedium))
                 }
 
-                Spacer(modifier = Modifier.height(Dimensions.SpacingMedium))
-
                 Box(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.weight(1f),
                     contentAlignment = Alignment.Center
                 ) {
                     if (showingDatePicker) {
                         DatePicker(
                             state = datePickerState,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 2.dp, end = 6.dp),
+                            title = null,
+                            headline = null,
+                            showModeToggle = false,
                             colors = DatePickerDefaults.colors(
                                 selectedDayContainerColor = AcentoInformativo,
                                 todayDateBorderColor = AcentoInformativo,
-                                dayContentColor = MaterialTheme.colorScheme.onSurface,
                                 selectedDayContentColor = MaterialTheme.colorScheme.onPrimary,
-                                todayContentColor = AcentoInformativo
+                                todayContentColor = AcentoInformativo,
+                                containerColor = MaterialTheme.colorScheme.surface
                             )
                         )
                     } else {
                         TimePicker(
                             state = timePickerState,
-                            modifier = Modifier.padding(horizontal = 8.dp),
+                            modifier = Modifier.align(Alignment.Center),
                             colors = TimePickerDefaults.colors(
                                 selectorColor = AcentoInformativo,
-                                periodSelectorSelectedContainerColor = AcentoInformativo
+                                periodSelectorSelectedContainerColor = AcentoInformativo,
+                                periodSelectorSelectedContentColor = MaterialTheme.colorScheme.onPrimary,
+                                timeSelectorSelectedContainerColor = AcentoInformativo,
+                                timeSelectorSelectedContentColor = MaterialTheme.colorScheme.onPrimary
                             )
                         )
                     }
                 }
 
-
-                Spacer(modifier = Modifier.height(Dimensions.SpacingLarge))
-
-                // Resumen de fecha y hora seleccionada
-                Text(
-                    text = stringResource(R.string.task_reminder_text, formattedDate, formattedTime),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(Dimensions.SpacingMedium))
-
-                // Botones
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(Dimensions.SpacingSmall)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .padding(
+                            horizontal = Dimensions.SpacingSmall,
+                            vertical = Dimensions.SpacingExtraSmall
+                        ),
+                    horizontalArrangement = Arrangement.End
                 ) {
-                    HabitJourneyButton(
-                        text = stringResource(R.string.cancel),
+                    TextButton(
                         onClick = onDismiss,
-                        type = HabitJourneyButtonType.SECONDARY,
-                        modifier = Modifier.weight(1f)
-                    )
+                        colors = ButtonDefaults.textButtonColors(
+                            contentColor = MaterialTheme.colorScheme.onSurface
+                        )
+                    ) {
+                        Text(stringResource(R.string.cancel))
+                    }
 
-                    HabitJourneyButton(
-                        text = stringResource(R.string.ok),
+                    TextButton(
                         onClick = {
-                            // Actualizar fecha y hora seleccionadas
                             datePickerState.selectedDateMillis?.let { millis ->
                                 val instant = Instant.fromEpochMilliseconds(millis)
-                                selectedDate = instant.toLocalDateTime(TimeZone.currentSystemDefault()).date
+                                val utcDateTime = instant.toLocalDateTime(TimeZone.UTC)
+                                selectedDate = utcDateTime.date
                             }
+
                             selectedTime = LocalTime(timePickerState.hour, timePickerState.minute)
 
-                            // Crear LocalDateTime combinado
-                            val dateTime = LocalDateTime(selectedDate, selectedTime)
-                            onDateTimeSelected(dateTime)
+                            val finalDateTime = LocalDateTime(selectedDate, selectedTime)
+                            onDateTimeSelected(finalDateTime)
+                            onDismiss()
                         },
-                        type = HabitJourneyButtonType.PRIMARY,
-                        modifier = Modifier.weight(1f)
-                    )
+                        colors = ButtonDefaults.textButtonColors(
+                            contentColor = AcentoInformativo
+                        )
+                    ) {
+                        Text(stringResource(R.string.action_confirm))
+                    }
                 }
             }
         }
     }
 }
-
-

@@ -1,7 +1,6 @@
 package com.alejandro.habitjourney.features.user.data.local.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -9,60 +8,80 @@ import com.alejandro.habitjourney.features.user.data.local.entity.UserEntity
 import kotlinx.coroutines.flow.Flow
 
 /**
- * DAO (Data Access Object) para la entidad UserEntity.
- * Define las operaciones de base de datos local para la información del perfil del usuario.
- * NO debe contener métodos para la gestión de contraseñas, ya que la autenticación se maneja en el backend.
+ * Data Access Object para operaciones de usuario en la base de datos local.
+ *
+ * Gestiona el almacenamiento y recuperación del perfil del usuario autenticado.
+ * Solo debe existir un usuario activo a la vez en la aplicación.
  */
 @Dao
 interface UserDao {
 
     /**
-     * Obtiene el usuario actualmente almacenado en la base de datos local.
-     * Como solo debería haber un usuario autenticado a la vez, limitamos a 1.
-     * Retorna un Flow para observar cambios en tiempo real.
+     * Observa al usuario actualmente autenticado.
+     * @return Flow que emite el usuario actual o null si no hay sesión activa
      */
-    @Query("SELECT * FROM users LIMIT 1")
-    fun getUser(): Flow<UserEntity?>
+    @Query("SELECT * FROM users WHERE id = :userId")
+    fun getUserById(userId: Long): Flow<UserEntity?>
 
     /**
-     * Inserta un nuevo usuario o reemplaza al usuario existente si ya hay uno con el mismo ID.
-     * Esto es útil después de un login o registro exitoso para guardar/actualizar el perfil localmente.
-     * @param user La entidad UserEntity a insertar/actualizar.
+     * Obtiene un usuario por ID de forma síncrona.
      */
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUser(user: UserEntity):Long
+    @Query("SELECT * FROM users WHERE id = :userId")
+    suspend fun getUserByIdSync(userId: Long): UserEntity?
 
     /**
-     * Actualiza el nombre y/o email del usuario localmente.
-     * Esto podría usarse si permites editar el perfil offline o si el backend devuelve el usuario actualizado.
-     * @param userId El ID del usuario a actualizar.
-     * @param newName El nuevo nombre del usuario.
-     * @param newEmail El nuevo email del usuario.
-     * @return El número de filas afectadas (debería ser 1 si el usuario existe).
+     * Inserta un nuevo usuario.
+     * Falla si ya existe un usuario con el mismo ID.
+     *
+     * @param user Usuario a insertar
+     * @return ID del usuario insertado
+     */
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insertUser(user: UserEntity): Long
+
+    /**
+     * Actualiza campos específicos del usuario.
+     *
+     * @param userId ID del usuario
+     * @param name Nuevo nombre
+     * @param email Nuevo email
+     * @return Número de filas actualizadas (debe ser 1)
      */
     @Query("""
         UPDATE users
-        SET name = :newName, email = :newEmail
+        SET name = :name, 
+            email = :email,
+            updated_at = :updatedAt
         WHERE id = :userId
     """)
     suspend fun updateUserInfo(
         userId: Long,
-        newName: String,
-        newEmail: String
+        name: String,
+        email: String,
+        updatedAt: Long = System.currentTimeMillis()
     ): Int
 
     /**
-     * Elimina todos los usuarios de la tabla 'users'.
-     * Esto se usa típicamente al cerrar la sesión del usuario.
+     * Elimina el usuario actual y todos sus datos asociados.
+     *
+     * @param userId ID del usuario a eliminar
      */
-    @Query("DELETE FROM users")
-    suspend fun deleteAllUsers()
+    @Query("DELETE FROM users WHERE id = :userId")
+    suspend fun deleteUser(userId: Long)
 
-    // --- Métodos relacionados con contraseñas o autenticación local ELIMINADOS ---
-    // Ya que la autenticación se gestiona en el backend.
-    // - changePassword()
-    // - getUserByEmail() para login local
-    // - verifyCredentials()
-    // - delete(user: UserEntity) - Usamos deleteAllUsers() para simplificar la limpieza del usuario único.
-    // - getUserById() - getUser() es suficiente para el usuario único autenticado.
+    /**
+     * Verifica si existe un usuario con el email dado.
+     * Útil para validaciones antes del registro.
+     *
+     * @param email Email a verificar
+     * @return true si el email ya está registrado
+     */
+    @Query("SELECT EXISTS(SELECT 1 FROM users WHERE email = :email)")
+    suspend fun isEmailRegistered(email: String): Boolean
+
+    /**
+     * Verifica si existe un usuario con el ID dado.
+     */
+    @Query("SELECT EXISTS(SELECT 1 FROM users WHERE id = :userId)")
+    suspend fun userExists(userId: Long): Boolean
 }

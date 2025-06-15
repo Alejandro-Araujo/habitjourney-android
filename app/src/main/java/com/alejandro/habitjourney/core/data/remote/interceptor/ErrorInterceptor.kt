@@ -4,6 +4,10 @@ import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
 
+/**
+ * Interceptor que convierte respuestas HTTP de error en excepciones.
+ * Captura el body del error para debugging.
+ */
 class ErrorInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
@@ -18,6 +22,9 @@ class ErrorInterceptor : Interceptor {
     }
 }
 
+/**
+ * Excepción para errores de API con código HTTP, mensaje y body de error.
+ */
 data class ApiException(
     val code: Int,
     override val message: String,

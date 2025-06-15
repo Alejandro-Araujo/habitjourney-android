@@ -25,11 +25,9 @@ class MarkMissedHabitsUseCase @Inject constructor(
         for (habit in habitsDueOnDate) {
             val existingLog = repository.getLogForDate(habit.id, date).firstOrNull()
 
-            // Solo marcamos como MISSED si no está COMPLETED o SKIPPED.
-            // Si no hay log, significa que no se interactuó con el hábito.
             if (existingLog == null || (existingLog.status != LogStatus.COMPLETED && existingLog.status != LogStatus.SKIPPED)) {
                 val missedLog = existingLog?.copy(
-                    value = 0f, // Un hábito perdido tiene valor 0
+                    value = 0f,
                     status = LogStatus.MISSED
                 ) ?: HabitLog(
                     habitId = habit.id,

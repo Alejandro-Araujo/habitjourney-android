@@ -10,9 +10,9 @@ import androidx.navigation.NavType
 import com.alejandro.habitjourney.features.user.presentation.ui.LoginScreen
 import com.alejandro.habitjourney.features.user.presentation.ui.RegisterScreen
 import androidx.compose.ui.Modifier
-import com.alejandro.habitjourney.features.habit.presentation.ui.CreateEditHabitScreen
-import com.alejandro.habitjourney.features.habit.presentation.ui.HabitDetailScreen
-import com.alejandro.habitjourney.features.habit.presentation.ui.HabitListScreen
+import com.alejandro.habitjourney.features.habit.presentation.screen.CreateEditHabitScreen
+import com.alejandro.habitjourney.features.habit.presentation.screen.HabitDetailScreen
+import com.alejandro.habitjourney.features.habit.presentation.screen.HabitListScreen
 import com.alejandro.habitjourney.features.habit.presentation.viewmodel.CreateEditHabitViewModel
 import com.alejandro.habitjourney.features.habit.presentation.viewmodel.HabitDetailViewModel
 import com.alejandro.habitjourney.features.habit.presentation.viewmodel.HabitListViewModel
@@ -79,8 +79,7 @@ fun NavGraph(
                     }
                 },
                 onRegisterSuccess = {
-                    authViewModel.onLoginSuccess()
-                    navController.navigate(Screen.Dashboard.route) {
+                    navController.navigate(Screen.Login.route) {
                         popUpTo(Screen.Register.route) { inclusive = true }
                         launchSingleTop = true
                     }
@@ -98,7 +97,6 @@ fun NavGraph(
                     backStackEntry
                 )
 
-            // Usar el DashboardScreen real
             com.alejandro.habitjourney.features.dashboard.presentation.screen.DashboardScreen(
                 onNavigateToHabits = {
                     navController.navigate(Screen.HabitList.route)
@@ -125,7 +123,7 @@ fun NavGraph(
                     navController.navigate(Screen.TaskDetail.createRoute(taskId))
                 },
                 onNavigateToNoteDetail = { noteId ->
-                    navController.navigate(Screen.EditNote.createRoute(noteId))
+                    navController.navigate(Screen.NoteDetail.createRoute(noteId))
                 }
             )
         }
@@ -201,9 +199,6 @@ fun NavGraph(
             com.alejandro.habitjourney.features.task.presentation.screen.TaskListScreen(
                 onNavigateToCreateTask = {
                     navController.navigate(Screen.CreateTask.route)
-                },
-                onNavigateToEditTask = { taskId ->
-                    navController.navigate(Screen.EditTask.createRoute(taskId))
                 },
                 onNavigateToTaskDetail = { taskId ->
                     navController.navigate(Screen.TaskDetail.createRoute(taskId))
@@ -284,8 +279,32 @@ fun NavGraph(
                 onNavigateToCreateNote = {
                     navController.navigate(Screen.CreateNote.route)
                 },
-                onNavigateToEditNote = { noteId ->
-                    navController.navigate(Screen.EditNote.createRoute(noteId))
+                onNavigateToNoteDetail = { noteId ->
+                    navController.navigate(Screen.NoteDetail.createRoute(noteId))
+                },
+                viewModel = viewModel
+            )
+        }
+
+        composable(
+            route = Screen.NoteDetail.route,
+            arguments = listOf(
+                navArgument("noteId") {
+                    type = NavType.LongType
+                    defaultValue = -1L
+                }
+            )
+        ) { backStackEntry ->
+            val noteId = backStackEntry.arguments?.getLong("noteId") ?: -1L
+            val viewModel =
+                hiltViewModel<com.alejandro.habitjourney.features.note.presentation.viewmodel.NoteDetailsViewModel>(
+                    backStackEntry
+                )
+            com.alejandro.habitjourney.features.note.presentation.screen.NoteDetailsScreen(
+                noteId = noteId,
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToEdit = { idToEdit ->
+                    navController.navigate(Screen.EditNote.createRoute(idToEdit))
                 },
                 viewModel = viewModel
             )
