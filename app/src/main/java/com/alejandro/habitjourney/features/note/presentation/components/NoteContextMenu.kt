@@ -1,6 +1,5 @@
 package com.alejandro.habitjourney.features.note.presentation.components
 
-
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Archive
 import androidx.compose.material.icons.filled.Delete
@@ -18,6 +17,19 @@ import com.alejandro.habitjourney.R
 import com.alejandro.habitjourney.core.presentation.ui.theme.ErrorColor
 import com.alejandro.habitjourney.features.note.domain.model.Note
 
+/**
+ * Menú contextual.
+ *
+ * Muestra opciones relevantes como marcar/desmarcar favorito, archivar/desarchivar y eliminar.
+ *
+ * @param expanded `true` si el menú debe estar visible.
+ * @param onDismiss Callback para cuando se solicita cerrar el menú.
+ * @param note El objeto [Note] para determinar qué acciones mostrar (ej: favorito vs. no favorito).
+ * @param onArchiveNote Callback para la acción de archivar.
+ * @param onUnarchiveNote Callback para la acción de desarchivar.
+ * @param onToggleFavorite Callback para cambiar el estado de favorito.
+ * @param onDeleteNote Callback para la acción de eliminar.
+ */
 @Composable
 fun NoteContextMenu(
     expanded: Boolean,
@@ -100,3 +112,4 @@ fun NoteContextMenu(
         )
     }
 }
+

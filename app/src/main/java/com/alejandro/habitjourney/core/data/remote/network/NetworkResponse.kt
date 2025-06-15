@@ -1,6 +1,10 @@
 package com.alejandro.habitjourney.core.data.remote.network
 
 
+/**
+ * Representa los estados de una operación de red: Success, Error, Loading.
+ * Type-safe alternative a callbacks.
+ */
 sealed class NetworkResponse<out T> {
     data class Success<T>(val data: T) : NetworkResponse<T>()
     data class Error(val exception: Throwable) : NetworkResponse<Nothing>()
@@ -12,6 +16,7 @@ sealed class NetworkResponse<out T> {
         fun loading(): NetworkResponse<Nothing> = Loading
     }
 
+    // Métodos útiles para chaining
     inline fun onSuccess(action: (T) -> Unit): NetworkResponse<T> {
         if (this is Success) action(data)
         return this
@@ -27,6 +32,9 @@ sealed class NetworkResponse<out T> {
         return this
     }
 
+    /**
+     * Transforma los datos exitosos manteniendo estados de error/loading.
+     */
     fun <R> map(transform: (T) -> R): NetworkResponse<R> {
         return when (this) {
             is Success -> Success(transform(data))

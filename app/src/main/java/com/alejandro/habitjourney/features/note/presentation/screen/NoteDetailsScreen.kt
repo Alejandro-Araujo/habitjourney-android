@@ -5,6 +5,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -20,11 +21,25 @@ import com.alejandro.habitjourney.R
 import com.alejandro.habitjourney.core.data.local.enums.NoteType
 import com.alejandro.habitjourney.core.presentation.ui.components.*
 import com.alejandro.habitjourney.core.presentation.ui.theme.*
+import com.alejandro.habitjourney.core.utils.formatter.DateTimeFormatters
 import com.alejandro.habitjourney.features.note.domain.model.Note
 import com.alejandro.habitjourney.features.note.presentation.components.*
 import com.alejandro.habitjourney.features.note.presentation.viewmodel.NoteDetailsViewModel
 import kotlinx.datetime.*
 
+
+/**
+ * Pantalla que muestra la vista de solo lectura de los detalles de una nota.
+ *
+ * Es responsable de cargar y presentar toda la información de una nota,
+ * incluyendo título, contenido, tipo, fechas y estado. Proporciona acciones
+ * en la barra superior para editar, archivar, marcar como favorito y eliminar.
+ *
+ * @param noteId El ID de la nota que se debe cargar y mostrar.
+ * @param onNavigateBack Callback para manejar la acción de volver a la pantalla anterior.
+ * @param onNavigateToEdit Callback para navegar a la pantalla de edición de la nota.
+ * @param viewModel El [NoteDetailsViewModel] que gestiona el estado y la lógica de esta pantalla.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoteDetailsScreen(
@@ -36,7 +51,7 @@ fun NoteDetailsScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val note by viewModel.note.collectAsStateWithLifecycle()
 
-    // Inicializar el ViewModel
+    // Inicializar el ViewModel con el ID de la nota.
     LaunchedEffect(noteId) {
         viewModel.initializeWithNoteId(noteId)
     }
@@ -46,6 +61,7 @@ fun NoteDetailsScreen(
     var showArchiveDialog by remember { mutableStateOf(false) }
     var showMenuDropdown by remember { mutableStateOf(false) }
 
+    // Si la nota no se encuentra después de cargar, vuelve atrás.
     LaunchedEffect(uiState.isLoading, uiState.noteExists) {
         if (!uiState.isLoading && !uiState.noteExists && uiState.error != null) {
             onNavigateBack()
@@ -192,6 +208,11 @@ fun NoteDetailsScreen(
     }
 }
 
+/**
+ * Contenedor principal para el contenido de los detalles de la nota.
+ * @param note La nota a mostrar.
+ * @param modifier Modificador para el layout.
+ */
 @Composable
 private fun NoteDetailsContent(
     note: Note,
@@ -231,6 +252,11 @@ private fun NoteDetailsContent(
     }
 }
 
+/**
+ * Muestra la cabecera de la nota con el título.
+ * @param note La nota de la que se extrae el título.
+ * @param modifier Modificador para el layout.
+ */
 @Composable
 private fun NoteHeaderSection(
     note: Note,
@@ -268,6 +294,12 @@ private fun NoteHeaderSection(
     }
 }
 
+
+/**
+ * Muestra una sección con el tipo de nota.
+ * @param note La nota de la que se extrae el tipo.
+ * @param modifier Modificador para el layout.
+ */
 @Composable
 private fun NoteTypeAndFavoriteSection(
     note: Note,
@@ -281,7 +313,7 @@ private fun NoteTypeAndFavoriteSection(
             Icon(
                 imageVector = when (note.noteType) {
                     NoteType.TEXT -> Icons.Default.Description
-                    NoteType.LIST -> Icons.Default.List
+                    NoteType.LIST -> Icons.AutoMirrored.Filled.List
                 },
                 contentDescription = null,
                 modifier = Modifier.size(Dimensions.IconSizeNormal),
@@ -308,6 +340,11 @@ private fun NoteTypeAndFavoriteSection(
     }
 }
 
+/**
+ * Muestra el contenido de texto de una nota.
+ * @param content El texto a mostrar.
+ * @param modifier Modificador para el layout.
+ */
 @Composable
 private fun NoteContentSection(
     content: String,
@@ -340,6 +377,11 @@ private fun NoteContentSection(
     }
 }
 
+/**
+ * Muestra el contenido de una nota de tipo lista.
+ * @param listItems La lista de ítems a mostrar.
+ * @param modifier Modificador para el layout.
+ */
 @Composable
 private fun NoteListContentSection(
     listItems: List<com.alejandro.habitjourney.features.note.domain.model.NoteListItem>,
@@ -348,7 +390,7 @@ private fun NoteListContentSection(
     HabitJourneyCard(modifier = modifier) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
-                imageVector = Icons.Default.List,
+                imageVector = Icons.AutoMirrored.Filled.List,
                 contentDescription = null,
                 modifier = Modifier.size(Dimensions.IconSizeNormal),
                 tint = AcentoInformativo
@@ -404,6 +446,11 @@ private fun NoteListContentSection(
     }
 }
 
+/**
+ * Muestra las fechas de creación y actualización de la nota.
+ * @param note La nota de la que se extraen las fechas.
+ * @param modifier Modificador para el layout.
+ */
 @Composable
 private fun NoteDatesSection(
     note: Note,
@@ -433,7 +480,7 @@ private fun NoteDatesSection(
             .toLocalDateTime(TimeZone.currentSystemDefault()).date
         DateInfoRow(
             label = stringResource(R.string.created_date),
-            date = formatDateForDisplay(createdDate),
+            date = DateTimeFormatters.formatDateLocalized(createdDate),
             isError = false
         )
 
@@ -442,12 +489,18 @@ private fun NoteDatesSection(
             .toLocalDateTime(TimeZone.currentSystemDefault()).date
         DateInfoRow(
             label = stringResource(R.string.updated_date),
-            date = formatDateForDisplay(updatedDate),
+            date = DateTimeFormatters.formatDateLocalized(updatedDate),
             isError = false
         )
     }
 }
 
+/**
+ * Muestra una fila con una etiqueta y una fecha.
+ * @param label El texto de la etiqueta.
+ * @param date La fecha formateada como String.
+ * @param modifier Modificador para el layout.
+ */
 @Composable
 private fun DateInfoRow(
     label: String,
@@ -475,6 +528,11 @@ private fun DateInfoRow(
     }
 }
 
+/**
+ * Muestra el estado de la nota (activa/archivada y favorita/no favorita).
+ * @param note La nota de la que se extrae el estado.
+ * @param modifier Modificador para el layout.
+ */
 @Composable
 private fun NoteStatusSection(
     note: Note,
@@ -527,6 +585,13 @@ private fun NoteStatusSection(
     }
 }
 
+/**
+ * Muestra una fila con una etiqueta y un valor de estado con color.
+ * @param label El texto de la etiqueta.
+ * @param value El texto del valor del estado.
+ * @param color El color a aplicar al valor.
+ * @param modifier Modificador para el layout.
+ */
 @Composable
 private fun StatusInfoRow(
     label: String,
@@ -554,12 +619,16 @@ private fun StatusInfoRow(
     }
 }
 
-// Función helper para formatear fechas
-private fun formatDateForDisplay(date: LocalDate): String {
-    return "${date.dayOfMonth}/${date.monthNumber}/${date.year}"
-}
-
-// Diálogo de confirmación
+/**
+ * Muestra un diálogo de confirmación genérico.
+ * @param onDismissRequest Callback para cerrar el diálogo.
+ * @param title Título del diálogo.
+ * @param message Mensaje del cuerpo del diálogo.
+ * @param onConfirm Callback para la acción de confirmación.
+ * @param confirmText Texto del botón de confirmación.
+ * @param cancelText Texto del botón de cancelación.
+ * @param icon Ícono a mostrar en el diálogo.
+ */
 @Composable
 private fun ConfirmationDialog(
     onDismissRequest: () -> Unit,

@@ -10,6 +10,18 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
+/**
+ * Tema principal de HabitJourney con soporte para Material You y tema personalizado.
+ *
+ * @param darkTheme Si debe usar tema oscuro
+ * @param dynamicColor Si debe usar colores dinámicos de Android 12+ (desactivado por defecto)
+ * @param content Contenido de la app
+ *
+ * Esquemas de color:
+ * - LightColorScheme: Paleta personalizada para tema claro
+ * - DarkColorScheme: Paleta personalizada para tema oscuro
+ * - Dynamic: Usa colores del sistema (Android 12+)
+ */
 private val DarkColorScheme = darkColorScheme(
     primary = Primary,
     onPrimary = OnPrimary,

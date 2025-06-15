@@ -7,8 +7,14 @@ import com.alejandro.habitjourney.core.data.remote.network.NetworkResponse
 import retrofit2.HttpException
 import retrofit2.Response
 
+/**
+ * Ejecuta llamadas de API de forma segura, convirtiendo excepciones en NetworkResponse.
+ *
+ * @param apiCall La función que hace la llamada a Retrofit
+ * @return NetworkResponse con el resultado o error
+ */
 suspend fun <T> safeApiCall(
-    context: Context, // Recibe el Context como parámetro
+    context: Context,
     errorHandler: ErrorHandler,
     apiCall: suspend () -> Response<T>
 ): NetworkResponse<T> {

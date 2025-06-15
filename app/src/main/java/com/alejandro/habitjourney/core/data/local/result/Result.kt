@@ -20,7 +20,6 @@ sealed class Result<out T> { // 'out T' permite la covarianza, bueno para este t
      * @param message Un mensaje descriptivo opcional del error.
      */
     data class Error(val exception: Exception, val message: String? = null) : Result<Nothing>()
-    // Usamos Result<Nothing> porque este estado no contiene datos del tipo T.
 
     /**
      * Representa el estado de carga de la operación.
@@ -28,8 +27,4 @@ sealed class Result<out T> { // 'out T' permite la covarianza, bueno para este t
      * O un data object si usas Kotlin 1.9+
      */
     data object Loading : Result<Nothing>()
-    // Si usas una versión de Kotlin anterior a 1.9, puedes usar 'object Loading : Result<Nothing>()'
-    // O, si en algún caso quisieras pasar datos parciales durante la carga (menos común para un Result.Loading inicial):
-    // data class Loading<out T>(val partialData: T? = null) : Result<T>()
-    // Pero para tu UseCase actual, un 'object Loading' simple es suficiente.
 }

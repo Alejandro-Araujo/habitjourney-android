@@ -2,11 +2,9 @@ package com.alejandro.habitjourney.features.note.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.media3.common.util.UnstableApi
 import com.alejandro.habitjourney.R
 import com.alejandro.habitjourney.core.data.local.enums.NoteType
 import com.alejandro.habitjourney.core.utils.resources.ResourceProvider
-import com.alejandro.habitjourney.core.presentation.ui.theme.Dimensions
 import com.alejandro.habitjourney.features.note.domain.model.Note
 import com.alejandro.habitjourney.features.note.domain.model.NoteListItem
 import com.alejandro.habitjourney.features.note.domain.usecase.*
@@ -18,14 +16,23 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import javax.inject.Inject
 
+/**
+ * ViewModel para la pantalla de creación y edición de notas.
+ *
+ * Gestiona el estado de la UI ([CreateEditNoteUiState]), la lógica del formulario,
+ * la validación de datos y la comunicación con los casos de uso para persistir las notas.
+ *
+ * @property createNoteUseCase Caso de uso para crear una nueva nota.
+ * @property updateNoteUseCase Caso de uso para actualizar una nota existente.
+ * @property getNoteByIdUseCase Caso de uso para obtener los datos de una nota por su ID.
+ * @property userPreferences Preferencias para obtener el ID del usuario actual.
+ * @property resourceProvider Proveedor de recursos para acceder a strings localizados.
+ */
 @HiltViewModel
 class CreateEditNoteViewModel @Inject constructor(
     private val createNoteUseCase: CreateNoteUseCase,
     private val updateNoteUseCase: UpdateNoteUseCase,
     private val getNoteByIdUseCase: GetNoteByIdUseCase,
-    private val archiveNoteUseCase: ArchiveNoteUseCase,
-    private val toggleFavoriteNoteUseCase: ToggleFavoriteNoteUseCase,
-    private val deleteNoteUseCase: DeleteNoteUseCase,
     private val userPreferences: UserPreferences,
     private val resourceProvider: ResourceProvider
 ) : ViewModel() {
@@ -33,6 +40,11 @@ class CreateEditNoteViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(CreateEditNoteUiState())
     val uiState: StateFlow<CreateEditNoteUiState> = _uiState.asStateFlow()
 
+    /**
+     * Inicializa el estado del ViewModel para una nota nueva o existente.
+     * @param noteId El ID de la nota a editar. Si es `null`, se prepara para crear una nota nueva.
+     * @param isReadOnly `true` si la nota debe abrirse en modo de solo lectura.
+     */
     fun initializeNote(noteId: Long?, isReadOnly: Boolean = false) {
         _uiState.value = _uiState.value.copy(
             noteId = noteId,
@@ -45,6 +57,10 @@ class CreateEditNoteViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Carga los datos de una nota existente desde el repositorio.
+     * @param noteId El ID de la nota a cargar.
+     */
     private fun loadNote(noteId: Long) {
         viewModelScope.launch {
             try {
@@ -56,6 +72,7 @@ class CreateEditNoteViewModel @Inject constructor(
                             noteType = note.noteType,
                             listItems = note.listItems,
                             isFavorite = note.isFavorite,
+                            createdAt = note.createdAt, // Preservar fecha de creación
                             isLoading = false,
                             hasUnsavedChanges = false
                         )
@@ -75,6 +92,7 @@ class CreateEditNoteViewModel @Inject constructor(
         }
     }
 
+    /** Actualiza el título de la nota en el estado de la UI. */
     fun updateTitle(title: String) {
         _uiState.value = _uiState.value.copy(
             title = title,
@@ -82,6 +100,7 @@ class CreateEditNoteViewModel @Inject constructor(
         )
     }
 
+    /** Actualiza el contenido de la nota de texto en el estado de la UI. */
     fun updateContent(content: String) {
         _uiState.value = _uiState.value.copy(
             content = content,
@@ -89,37 +108,22 @@ class CreateEditNoteViewModel @Inject constructor(
         )
     }
 
-    @androidx.annotation.OptIn(UnstableApi::class)
+    /** Actualiza el tipo de nota. Si se cambia a LISTA, añade un ítem inicial si no hay ninguno. */
     fun updateNoteType(noteType: NoteType) {
         val currentState = _uiState.value
-
-        try {
-            val newListItems = when (noteType) {
-                NoteType.TEXT -> {
-                    currentState.listItems
-                }
-                NoteType.LIST -> {
-                    if (currentState.noteType == NoteType.TEXT && currentState.listItems.isEmpty()) {
-                        listOf(createNewListItem(0))
-                    } else {
-                        currentState.listItems
-                    }
-                }
-            }
-
-            _uiState.value = currentState.copy(
-                noteType = noteType,
-                listItems = newListItems,
-                hasUnsavedChanges = true
-            )
-
-        } catch (e: Exception) {
-            _uiState.value = currentState.copy(
-                error = resourceProvider.getString(R.string.error_updating_note)
-            )
+        val newListItems = if (noteType == NoteType.LIST && currentState.listItems.isEmpty()) {
+            listOf(createNewListItem(0))
+        } else {
+            currentState.listItems
         }
+        _uiState.value = currentState.copy(
+            noteType = noteType,
+            listItems = newListItems,
+            hasUnsavedChanges = true
+        )
     }
 
+    /** Actualiza la lista completa de ítems de una nota de tipo lista. */
     fun updateListItems(items: List<NoteListItem>) {
         _uiState.value = _uiState.value.copy(
             listItems = items,
@@ -127,73 +131,34 @@ class CreateEditNoteViewModel @Inject constructor(
         )
     }
 
-    fun reorderListItems(fromIndex: Int, toIndex: Int) {
+    /** Añade un nuevo ítem en blanco al final de la lista. */
+    fun addListItem() {
+        val currentItems = _uiState.value.listItems
+        val newItem = createNewListItem(currentItems.size)
+        updateListItems(currentItems + newItem)
+    }
+
+    /** Elimina un ítem de la lista por su índice. */
+    fun deleteListItem(index: Int) {
         val currentItems = _uiState.value.listItems.toMutableList()
-
-        if (fromIndex < currentItems.size && toIndex < currentItems.size) {
-            val item = currentItems.removeAt(fromIndex)
-            currentItems.add(toIndex, item)
-
-            // Actualizar orden
-            val reorderedItems = currentItems.mapIndexed { index, item ->
-                item.copy(order = index)
-            }
-
+        if (index in currentItems.indices) {
+            currentItems.removeAt(index)
+            val reorderedItems = currentItems.mapIndexed { newIndex, item -> item.copy(order = newIndex) }
             updateListItems(reorderedItems)
         }
     }
 
-    fun addListItem() {
-        val currentItems = _uiState.value.listItems
-        val newItem = createNewListItem(currentItems.size)
-
-        // Asegurar que el nuevo item tenga un ID único
-        val itemWithUniqueId = newItem.copy(
-            id = "item_${System.currentTimeMillis()}_${currentItems.size}"
-        )
-
-        updateListItems(currentItems + itemWithUniqueId)
-    }
-
-    fun updateListItem(index: Int, updatedItem: NoteListItem) {
+    /** Cambia el estado de completado de un ítem de la lista. */
+    fun toggleItemCompletion(index: Int) {
         val currentItems = _uiState.value.listItems.toMutableList()
-        if (index < currentItems.size) {
-            currentItems[index] = updatedItem
+        if (index in currentItems.indices) {
+            val item = currentItems[index]
+            currentItems[index] = item.copy(isCompleted = !item.isCompleted)
             updateListItems(currentItems)
         }
     }
 
-    fun deleteListItem(index: Int) {
-        val currentItems = _uiState.value.listItems.toMutableList()
-        if (index < currentItems.size) {
-            currentItems.removeAt(index)
-            // Reordenar después de eliminar
-            val reorderedItems = currentItems.mapIndexed { newIndex, item ->
-                item.copy(order = newIndex)
-            }
-            updateListItems(reorderedItems)
-        }
-    }
-
-    fun toggleItemCompletion(index: Int) {
-        val currentItems = _uiState.value.listItems
-        if (index < currentItems.size) {
-            val item = currentItems[index]
-            val updatedItem = item.copy(isCompleted = !item.isCompleted)
-            updateListItem(index, updatedItem)
-        }
-    }
-
-    fun changeItemIndent(index: Int, newIndentLevel: Int) {
-        val currentItems = _uiState.value.listItems
-        if (index < currentItems.size) {
-            val item = currentItems[index]
-            val clampedIndent = newIndentLevel.coerceIn(0, Dimensions.MaxIndentLevel)
-            val updatedItem = item.copy(indentLevel = clampedIndent)
-            updateListItem(index, updatedItem)
-        }
-    }
-
+    /** Cambia el estado de favorito de la nota. */
     fun toggleFavorite() {
         _uiState.value = _uiState.value.copy(
             isFavorite = !_uiState.value.isFavorite,
@@ -201,13 +166,15 @@ class CreateEditNoteViewModel @Inject constructor(
         )
     }
 
+    /**
+     * Guarda la nota actual, ya sea creando una nueva o actualizando una existente.
+     * @param onSuccess Callback que se ejecuta tras un guardado exitoso.
+     */
     fun saveNote(onSuccess: () -> Unit) {
         val state = _uiState.value
 
         if (state.isEmpty) {
-            _uiState.value = state.copy(
-                error = resourceProvider.getString(R.string.empty_note_cannot_save)
-            )
+            _uiState.value = state.copy(error = resourceProvider.getString(R.string.empty_note_cannot_save))
             return
         }
 
@@ -215,62 +182,38 @@ class CreateEditNoteViewModel @Inject constructor(
             try {
                 _uiState.value = state.copy(isSaving = true, error = null)
 
-                val userId = userPreferences.getCurrentUserId().first()
-                if (userId == null) {
-                    _uiState.value = state.copy(
-                        error = resourceProvider.getString(R.string.user_not_found),
-                        isSaving = false
-                    )
-                    return@launch
-                }
+                val userId = userPreferences.userIdFlow.first()
+                    ?: throw IllegalStateException(resourceProvider.getString(R.string.user_not_found))
 
                 val now = Clock.System.now().toEpochMilliseconds()
 
-                val note = if (state.noteId != null) {
-                    // Actualizar nota existente
-                    Note(
-                        id = state.noteId,
-                        userId = userId,
-                        title = state.title.trim(),
-                        content = state.content,
-                        noteType = state.noteType,
-                        listItems = state.listItems,
-                        isFavorite = state.isFavorite,
-                        isArchived = false,
-                        createdAt = 0L,
-                        updatedAt = now
-                    )
-                } else {
-                    // Crear nueva nota
-                    Note(
-                        id = 0L,
-                        userId = userId,
-                        title = state.title.trim(),
-                        content = state.content,
-                        noteType = state.noteType,
-                        listItems = state.listItems,
-                        isFavorite = state.isFavorite,
-                        isArchived = false,
-                        createdAt = now,
-                        updatedAt = now
-                    )
-                }
+                val noteToSave = Note(
+                    id = state.noteId ?: 0L,
+                    userId = userId,
+                    title = state.title.trim(),
+                    content = state.content.trim(),
+                    noteType = state.noteType,
+                    listItems = state.listItems,
+                    isFavorite = state.isFavorite,
+                    isArchived = false,
+                    createdAt = if (state.noteId != null) state.createdAt else now,
+                    updatedAt = now
+                )
 
                 if (state.noteId != null) {
-                    updateNoteUseCase(note)
+                    updateNoteUseCase(noteToSave)
                 } else {
-                    createNoteUseCase(note)
+                    createNoteUseCase(noteToSave)
                 }
 
-                _uiState.value = state.copy(
+                _uiState.value = _uiState.value.copy(
                     isSaving = false,
                     hasUnsavedChanges = false
                 )
-
                 onSuccess()
 
             } catch (e: Exception) {
-                _uiState.value = state.copy(
+                _uiState.value = _uiState.value.copy(
                     error = resourceProvider.getString(R.string.error_saving_note),
                     isSaving = false
                 )
@@ -278,9 +221,9 @@ class CreateEditNoteViewModel @Inject constructor(
         }
     }
 
+    /** Crea una nueva instancia de [NoteListItem] con un ID único. */
     private fun createNewListItem(order: Int): NoteListItem {
         return NoteListItem(
-            id = "item_${System.currentTimeMillis()}_$order",
             text = "",
             isCompleted = false,
             indentLevel = 0,
@@ -288,6 +231,7 @@ class CreateEditNoteViewModel @Inject constructor(
         )
     }
 
+    /** Limpia el mensaje de error del estado de la UI. */
     fun clearError() {
         _uiState.value = _uiState.value.copy(error = null)
     }

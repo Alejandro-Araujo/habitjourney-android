@@ -2,95 +2,96 @@ package com.alejandro.habitjourney.features.user.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.alejandro.habitjourney.R
+import com.alejandro.habitjourney.core.data.remote.exception.ErrorHandler
+import com.alejandro.habitjourney.core.utils.resources.ResourceProvider
 import com.alejandro.habitjourney.features.user.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine // Importar combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel principal para la gestión del estado de autenticación de la aplicación.
+ *
+ * Se encarga de observar el estado de inicio de sesión del usuario a través del [UserRepository]
+ * y de exponer este estado a la interfaz de usuario. También maneja los errores iniciales
+ * de autenticación y el estado de carga.
+ *
+ * @property userRepository El repositorio de usuario para acceder a la lógica de autenticación.
+ * @property errorHandler El manejador de errores para obtener mensajes legibles a partir de excepciones.
+ * @property resourceProvider Proveedor de recursos para obtener cadenas localizadas.
+ */
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val userRepository: UserRepository // Solo necesitamos el UserRepository
+    private val userRepository: UserRepository,
+    private val errorHandler: ErrorHandler,
+    private val resourceProvider: ResourceProvider,
 ) : ViewModel() {
 
-    // isLoggedIn ahora se deriva del Flow del UserRepository
     private val _isLoggedIn = MutableStateFlow(false)
+    /**
+     * Un [StateFlow] que indica si el usuario está actualmente autenticado.
+     * `true` si el usuario ha iniciado sesión, `false` en caso contrario.
+     */
     val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
 
     private val _isLoading = MutableStateFlow(true)
+    /**
+     * Un [StateFlow] que indica si el estado de autenticación se está verificando.
+     * `true` mientras se realiza la comprobación inicial, `false` una vez completada.
+     */
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     private val _authError = MutableStateFlow<String?>(null)
+    /**
+     * Un [StateFlow] que contiene un mensaje de error de autenticación, si lo hay.
+     * `null` si no hay errores.
+     */
     val authError: StateFlow<String?> = _authError.asStateFlow()
 
+
     init {
-        // Observar el estado de login del repositorio
         viewModelScope.launch {
-            // Combinar isLoggedIn del repositorio con nuestro isLoading para
-            // decidir el estado final de _isLoggedIn.
-            // Opcionalmente, puedes usar simplemente userRepository.isLoggedIn() si isLoading no afecta _isLoggedIn
             userRepository.isLoggedIn().collectLatest { loggedIn ->
                 _isLoggedIn.value = loggedIn
-                // Una vez que sabemos el estado de login, podemos decir que no estamos cargando inicialmente
-                // Si el isLoading se maneja en otro lado (ej. durante login/registro), quita el finally en checkAuthStatus
-                if (_isLoading.value) { // Solo cambiar a false si aún está en true al inicio
+
+                if (_isLoading.value) {
                     _isLoading.value = false
                 }
             }
         }
-        checkAuthStatus() // Llamada inicial para verificar el estado
+        checkAuthStatus()
     }
 
-    // `checkAuthStatus` puede ser más simple ahora, ya que `isLoggedIn` del repo ya observa el token
+    /**
+     * Realiza una comprobación inicial del estado de autenticación del usuario.
+     *
+     * Establece el estado de carga y maneja posibles errores durante la verificación.
+     */
     private fun checkAuthStatus() {
         viewModelScope.launch {
             _isLoading.value = true
             _authError.value = null
             try {
-                // No necesitamos validar token aquí. El `isLoggedIn()` del repositorio ya lo hace.
-                // Solo esperamos a que el flow emita su primer valor para quitar el estado de carga inicial.
-                userRepository.isLoggedIn().first() // Esperar a que el flow emita su primer valor
+                userRepository.isLoggedIn().first()
             } catch (e: Exception) {
-                // Manejar errores si la lectura inicial de preferencias falla (poco probable)
-                _authError.value = "Error inicial de autenticación: ${e.message}"
+                val errorMessage = resourceProvider.getString(R.string.error_auth_initial_check, errorHandler.getErrorMessage(e))
+                _authError.value = errorMessage
             } finally {
                 _isLoading.value = false
             }
         }
     }
 
-    fun logout() {
-        viewModelScope.launch {
-            _authError.value = null
-            try {
-                // El `logout()` del repositorio ya limpia localmente y notifica al backend si es necesario
-                val response = userRepository.logout()
-                response.onError { exception ->
-                    // Si hay un error al hacer logout en el backend, registrarlo o mostrarlo
-                    _authError.value = "Error al cerrar sesión: ${exception.message}"
-                }
-                // userRepository.logout() ya limpia el token, lo que hará que isLoggedIn.value se actualice
-                // y se redirija al login. No necesitamos _isLoggedIn.value = false aquí.
-            } catch (e: Exception) {
-                _authError.value = "Error inesperado al cerrar sesión: ${e.message}"
-            }
-        }
-    }
-
-    // Este método se llamará desde LoginScreen/RegisterScreen después de una operación exitosa
-    // El token ya se guarda en el UserRepository.login/register, así que no es necesario pasarlo aquí.
+    /**
+     * Reinicia el estado de error de autenticación después de un inicio de sesión exitoso.
+     */
     fun onLoginSuccess() {
-        _authError.value = null // Limpiar cualquier error de autenticación anterior
-        // El `_isLoggedIn.value` se actualizará automáticamente a través del flow del userRepository
-        // al guardar el token en userPreferences.
-    }
-
-    fun clearAuthError() {
         _authError.value = null
     }
 }

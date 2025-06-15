@@ -7,6 +7,17 @@ import com.alejandro.habitjourney.features.dashboard.domain.usecase.GetDashboard
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
+
+/**
+ * Implementación concreta del repositorio de dashboard.
+ *
+ * Esta implementación actúa como una capa de abstracción sobre el use case
+ * principal, proporcionando beneficios como:
+ * - Separación clara entre lógica de negocio y acceso a datos
+ * - Cumple con el principio de inversión de dependencias
+ *
+ * @param getDashboardDataUseCase Use case principal que contiene toda la lógica
+ */
 class DashboardRepositoryImpl @Inject constructor(
     private val getDashboardDataUseCase: GetDashboardDataUseCase
 ) : DashboardRepository {

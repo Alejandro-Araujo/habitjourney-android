@@ -1,6 +1,5 @@
 package com.alejandro.habitjourney.features.settings.presentation.screen
 
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -11,7 +10,6 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -23,6 +21,15 @@ import com.alejandro.habitjourney.core.presentation.ui.components.*
 import com.alejandro.habitjourney.core.presentation.ui.theme.*
 import com.alejandro.habitjourney.features.settings.presentation.viewmodel.EditProfileViewModel
 
+/**
+ * Pantalla que permite al usuario editar su información de perfil.
+ *
+ * Muestra un formulario para que el usuario actualice su nombre y dirección de correo electrónico.
+ * Gestiona el estado de carga y muestra mensajes de éxito o error a través de un Snackbar.
+ *
+ * @param onNavigateBack Callback para navegar a la pantalla anterior, típicamente tras un cambio exitoso.
+ * @param viewModel El [EditProfileViewModel] que gestiona el estado y la lógica de esta pantalla.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileScreen(
@@ -83,24 +90,23 @@ fun EditProfileScreen(
                     value = uiState.name,
                     onValueChange = viewModel::updateName,
                     label = stringResource(R.string.full_name_label),
-                    leadingIcon = { Icon(imageVector = Icons.Default.Person, contentDescription = null) }, // Solución 1
-                    isError = uiState.nameError != null,        // Solución 4a
-                    helperText = uiState.nameError,             // Solución 4b
-                    enabled = !uiState.isLoading,               // Solución 5 (nombre correcto)
+                    leadingIcon = { Icon(imageVector = Icons.Default.Person, contentDescription = null) },
+                    isError = uiState.nameError != null,
+                    helperText = uiState.nameError,
+                    enabled = !uiState.isLoading,
                     modifier = Modifier.fillMaxWidth()
-                    // keyboardOptions y visualTransformation usarán sus valores por defecto (Default y None)
                 )
 
-// Email field
+                // Email field
                 HabitJourneyTextField(
                     value = uiState.email,
                     onValueChange = viewModel::updateEmail,
                     label = stringResource(R.string.email_label),
-                    leadingIcon = { Icon(imageVector = Icons.Default.Email, contentDescription = null) }, // Solución 1
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email), // Solución 2
-                    isError = uiState.emailError != null,        // Solución 4a
-                    helperText = uiState.emailError,             // Solución 4b
-                    enabled = !uiState.isLoading,               // Solución 5 (nombre correcto)
+                    leadingIcon = { Icon(imageVector = Icons.Default.Email, contentDescription = null) },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    isError = uiState.emailError != null,
+                    helperText = uiState.emailError,
+                    enabled = !uiState.isLoading,
                     modifier = Modifier.fillMaxWidth()
                 )
 

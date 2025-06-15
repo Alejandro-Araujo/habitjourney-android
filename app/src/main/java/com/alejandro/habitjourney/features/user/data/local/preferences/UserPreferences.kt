@@ -1,6 +1,7 @@
 package com.alejandro.habitjourney.features.user.data.local.preferences
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -12,73 +13,129 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
+
+/**
+ * Extensión de [Context] para crear una instancia de [DataStore] para las preferencias de usuario.
+ * Esta es la forma recomendada de inicializar DataStore.
+ */
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_preferences")
 
+/**
+ * Clase singleton para gestionar las preferencias de usuario, como tokens de autenticación e ID de usuario.
+ *
+ * Utiliza [DataStore Preferences] como fuente principal de verdad para la persistencia de datos,
+ * ofreciendo un [Flow] reactivo para observar cambios. También incluye un respaldo en
+ * [SharedPreferences] para casos específicos que requieran acceso síncrono, como interceptores de red.
+ *
+ * @property context El contexto de la aplicación, inyectado por Dagger Hilt.
+ */
 @Singleton
 class UserPreferences @Inject constructor(
     private val context: Context
 ) {
-    companion object {
+    private companion object {
         private val AUTH_TOKEN = stringPreferencesKey("auth_token")
         private val USER_ID = stringPreferencesKey("user_id")
     }
 
-    // Flow reactivo para observar cambios en el token
+    /**
+     * Un [Flow] reactivo que emite el token de autenticación actual almacenado.
+     * Emitirá `null` si no hay ningún token guardado.
+     */
     val authTokenFlow: Flow<String?> = context.dataStore.data
         .map { preferences ->
             preferences[AUTH_TOKEN]
         }
 
-    // Método suspend para obtener el token de forma síncrona cuando sea necesario
+    /**
+     * Obtiene el token de autenticación de forma asíncrona.
+     * Este es un metodo suspendido y bloqueará hasta que se emita el primer valor del [authTokenFlow].
+     *
+     * @return El token de autenticación como [String] o `null` si no está presente.
+     */
     suspend fun getAuthToken(): String? {
         return authTokenFlow.first()
     }
 
-    // Método no-suspend para casos donde se necesite acceso inmediato (interceptors, etc.)
+    /**
+     * Obtiene el token de autenticación de forma síncrona.
+     *
+     * **Advertencia:** Este metodo utiliza [SharedPreferences] como un respaldo para casos
+     * donde se necesita acceso inmediato y no se puede usar un [Flow] (ej. en interceptores de red
+     * donde el contexto suspendido no está disponible). La fuente de verdad principal es [DataStore].
+     *
+     * @return El token de autenticación como [String] o `null` si no está presente.
+     */
     fun getAuthTokenSync(): String? {
         return context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
             .getString("auth_token", null)
     }
 
+    /**
+     * Guarda el token de autenticación tanto en [DataStore] como en [SharedPreferences] (como respaldo).
+     *
+     * @param token El token de autenticación a guardar.
+     */
     suspend fun saveAuthToken(token: String) {
-        // Guardar en DataStore (fuente de verdad)
         context.dataStore.edit { preferences ->
             preferences[AUTH_TOKEN] = token
         }
 
-        // Backup en SharedPreferences para acceso síncrono en interceptors
         context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
             .edit()
             .putString("auth_token", token)
             .apply()
     }
 
+    /**
+     * Guarda el ID del usuario en [DataStore].
+     *
+     * @param userId El ID del usuario a guardar.
+     */
     suspend fun saveUserId(userId: Long) {
         context.dataStore.edit { preferences ->
             preferences[USER_ID] = userId.toString()
         }
     }
 
+    /**
+     * Un [Flow] reactivo que emite el ID del usuario actual almacenado.
+     * Emitirá `null` si no hay ningún ID de usuario guardado o si la conversión falla.
+     */
     val userIdFlow: Flow<Long?> = context.dataStore.data
         .map { preferences ->
             preferences[USER_ID]?.toLongOrNull()
         }
 
+    /**
+     * Obtiene el ID del usuario de forma asíncrona.
+     * Bloqueará hasta que se emita el primer valor del [userIdFlow].
+     *
+     * @return El ID del usuario como [Long] o `null` si no está presente.
+     */
     suspend fun getUserId(): Long? {
         return userIdFlow.first()
     }
 
+    /**
+     * Obtiene un [Flow] que emite el ID del usuario actual.
+     * Este metodo proporciona un acceso reactivo al ID del usuario.
+     *
+     * @return Un [Flow] que emite el ID del usuario como [Long] o `null`.
+     */
     fun getCurrentUserId(): Flow<Long?> {
         return userIdFlow
     }
 
+    /**
+     * Limpia todos los datos almacenados tanto en [DataStore] como en [SharedPreferences].
+     * Esto se usa típicamente para cerrar la sesión del usuario.
+     */
     suspend fun clear() {
-        // Limpiar DataStore
         context.dataStore.edit { preferences ->
             preferences.clear()
         }
 
-        // Limpiar SharedPreferences
         context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
             .edit()
             .clear()

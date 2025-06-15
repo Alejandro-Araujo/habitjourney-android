@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -15,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.Forward
 import androidx.compose.material.icons.automirrored.filled.Note
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.*
@@ -28,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -43,7 +46,6 @@ import com.alejandro.habitjourney.features.habit.domain.model.HabitWithLogs
 import com.alejandro.habitjourney.features.habit.presentation.screen.HabitIconMapper
 import com.alejandro.habitjourney.features.task.domain.model.Task
 import com.alejandro.habitjourney.features.note.domain.model.Note
-import com.alejandro.habitjourney.features.task.presentation.components.TaskDateUtils
 import com.alejandro.habitjourney.features.task.presentation.components.TaskPriorityIndicator
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
@@ -51,13 +53,40 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 import androidx.compose.ui.res.stringResource
 import com.alejandro.habitjourney.R
+import com.alejandro.habitjourney.core.utils.formatter.DateTimeFormatters
 import com.alejandro.habitjourney.features.dashboard.presentation.components.CalculationInfoDialog
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
 
-
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+/**
+ * Pantalla principal del dashboard de la aplicación HabitJourney.
+ *
+ * Funcionalidades principales:
+ * - Mostrar resumen diario de productividad y estadísticas
+ * - Vista rápida de hábitos, tareas y notas
+ * - Navegación hacia pantallas de detalle y creación
+ * - Pull-to-refresh para actualizar datos
+ * - FAB expandible para crear nuevo contenido
+ *
+ * Estados manejados:
+ * - Loading: Pantalla de carga inicial
+ * - Empty: Estado vacío para usuarios nuevos
+ * - Content: Dashboard completo con datos
+ * - Error: Manejo de errores con Snackbar
+ *
+ * @param onNavigateToHabits Navegación a la lista de hábitos
+ * @param onNavigateToTasks Navegación a la lista de tareas
+ * @param onNavigateToNotes Navegación a la lista de notas
+ * @param onNavigateToCreateHabit Navegación a crear nuevo hábito
+ * @param onNavigateToCreateTask Navegación a crear nueva tarea
+ * @param onNavigateToCreateNote Navegación a crear nueva nota
+ * @param onNavigateToHabitDetail Navegación a detalle de hábito específico
+ * @param onNavigateToTaskDetail Navegación a detalle de tarea específica
+ * @param onNavigateToNoteDetail Navegación a detalle de nota específica
+ * @param viewModel ViewModel que gestiona el estado del dashboard
+ */
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DashboardScreen(
     onNavigateToHabits: () -> Unit,
@@ -74,7 +103,7 @@ fun DashboardScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
 
-    // Pull to refresh
+    // Pull para refresh
     val pullRefreshState = rememberPullRefreshState(
         refreshing = isRefreshing,
         onRefresh = { viewModel.refreshDashboard() }
@@ -82,7 +111,7 @@ fun DashboardScreen(
 
     var showStatsInfo by remember { mutableStateOf(false) }
 
-    // FAB expanded state
+    // FAB expanded
     var isFabExpanded by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -136,7 +165,7 @@ fun DashboardScreen(
                             ),
                             verticalArrangement = Arrangement.spacedBy(Dimensions.SpacingMedium)
                         ) {
-                            // Welcome Header
+                            // Bienvenida
                             WelcomeHeader(
                                 userName = uiState.user?.name ?: "",
                                 greeting = viewModel.greetingMessage
@@ -147,7 +176,6 @@ fun DashboardScreen(
                                 completedHabits = uiState.completedHabitsToday,
                                 totalHabits = uiState.totalHabitsToday,
                                 activeTasks = uiState.totalActiveTasks,
-                                overdueTasks = uiState.overdueTasks,
                                 currentStreak = uiState.currentStreak,
                                 productivityScore = uiState.productivityScore,
                                 summaryMessage = uiState.summaryMessage,
@@ -156,7 +184,11 @@ fun DashboardScreen(
                             )
                         }
 
-                        // CONTENIDO SCROLLEABLE
+                        GradientSeparator(
+                            modifier = Modifier.padding(horizontal = Dimensions.SpacingMedium)
+                        )
+
+                        // Contenido scrolleable
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
                             contentPadding = PaddingValues(
@@ -166,7 +198,7 @@ fun DashboardScreen(
                             ),
                             verticalArrangement = Arrangement.spacedBy(Dimensions.SpacingMedium)
                         ) {
-                            // Today's Habits
+                            // Hábitos de hoy
                             if (uiState.todayHabits.isNotEmpty()) {
                                 item {
                                     SectionHeader(
@@ -187,7 +219,7 @@ fun DashboardScreen(
                                 }
                             }
 
-                            // Priority Tasks
+                            // Tareas
                             if (uiState.activeTasks.isNotEmpty()) {
                                 item {
                                     SectionHeader(
@@ -208,7 +240,7 @@ fun DashboardScreen(
                                 }
                             }
 
-                            // Recent Notes
+                            // Notas recientes
                             if (uiState.recentNotes.isNotEmpty()) {
                                 item {
                                     SectionHeader(
@@ -226,22 +258,22 @@ fun DashboardScreen(
                                 }
                             }
 
-                            // Motivational Card
-                            if (uiState.productivityScore >= 80 || uiState.currentStreak >= 7) {
+                            // Tarjeta motivacional
                                 item {
-                                    MotivationalCard(
+                                    DailySummaryCard(
                                         score = uiState.productivityScore,
+                                        summaryMessage = uiState.summaryMessage,
                                         message = uiState.motivationalQuote,
-                                        streak = uiState.currentStreak
+                                        streak = uiState.currentStreak,
+                                        isExcellentDay = uiState.productivityScore >= 70
                                     )
                                 }
-                            }
                         }
                     }
                 }
             }
 
-            // Pull refresh indicator
+            // Indicador Pull refresh
             PullRefreshIndicator(
                 refreshing = isRefreshing,
                 state = pullRefreshState,
@@ -272,6 +304,14 @@ fun DashboardScreen(
 }
 
 // Componentes auxiliares
+
+/**
+ * Header de bienvenida que muestra saludo personalizado y fecha actual.
+ *
+ * @param userName Nombre del usuario actual
+ * @param greeting Mensaje de saludo basado en la hora del día
+ * @param modifier Modificador opcional para personalización
+ */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun WelcomeHeader(
@@ -318,7 +358,7 @@ private fun WelcomeHeader(
                         )
                         javaLocalDate.format(formatter)
                     },
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = Typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -326,12 +366,31 @@ private fun WelcomeHeader(
     }
 }
 
+
+/**
+ * Tarjeta con estadísticas rápidas del día actual.
+ *
+ * Muestra:
+ * - Progreso de hábitos completados vs total
+ * - Número de tareas activas
+ * - Racha actual de días consecutivos
+ * - Score de productividad con color dinámico
+ * - Mensaje resumen personalizado
+ *
+ * @param completedHabits Número de hábitos completados hoy
+ * @param totalHabits Total de hábitos programados para hoy
+ * @param activeTasks Número de tareas activas
+ * @param currentStreak Racha actual de días consecutivos
+ * @param productivityScore Score de productividad (0-100%)
+ * @param summaryMessage Mensaje resumen generado dinámicamente
+ * @param onShowStatsInfo Callback para mostrar información de cálculo
+ * @param modifier Modificador opcional
+ */
 @Composable
 private fun QuickStatsCard(
     completedHabits: Int,
     totalHabits: Int,
     activeTasks: Int,
-    overdueTasks: Int,
     currentStreak: Int,
     productivityScore: Int,
     summaryMessage: String,
@@ -352,7 +411,7 @@ private fun QuickStatsCard(
             ) {
                 Text(
                     text = stringResource(R.string.dashboard_daily_summary),
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = Typography.headlineSmall,
                     fontWeight = FontWeight.Medium
                 )
 
@@ -368,12 +427,12 @@ private fun QuickStatsCard(
                 }
             }
 
-            // Stats Grid
+            // Estadísticas
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                // Habits
+                // Hábitos
                 StatItem(
                     icon = Icons.Default.CheckCircle,
                     value = stringResource(R.string.dashboard_habits_fraction, completedHabits, totalHabits),
@@ -381,7 +440,7 @@ private fun QuickStatsCard(
                     color = AcentoPositivo
                 )
 
-                // Tasks
+                // Tareas
                 StatItem(
                     icon = Icons.Default.Task,
                     value = activeTasks.toString(),
@@ -389,7 +448,7 @@ private fun QuickStatsCard(
                     color = AcentoInformativo
                 )
 
-                // Streak
+                // Racha
                 StatItem(
                     icon = Icons.Default.LocalFireDepartment,
                     value = currentStreak.toString(),
@@ -397,7 +456,7 @@ private fun QuickStatsCard(
                     color = Logro
                 )
 
-                // Score
+                // Progeso diario
                 StatItem(
                     icon = Icons.AutoMirrored.Filled.TrendingUp,
                     value = stringResource(R.string.dashboard_score_percentage, productivityScore),
@@ -410,10 +469,10 @@ private fun QuickStatsCard(
                 )
             }
 
-            // Summary message
+            // Mensaje
             Text(
                 text = summaryMessage,
-                style = MaterialTheme.typography.bodyMedium,
+                style = Typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
@@ -422,6 +481,35 @@ private fun QuickStatsCard(
     }
 }
 
+@Composable
+private fun GradientSeparator(
+    modifier: Modifier = Modifier
+) {
+    Spacer(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(12.dp)
+            .background(
+                brush = androidx.compose.ui.graphics.Brush.verticalGradient(
+                    colors = listOf(
+                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.05f),
+                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.02f),
+                        Color.Transparent
+                    )
+                )
+            )
+    )
+}
+
+/**
+ * Item individual de estadística con icono, valor y etiqueta.
+ *
+ * @param icon Icono representativo de la métrica
+ * @param value Valor a mostrar (puede incluir formato)
+ * @param label Etiqueta descriptiva
+ * @param color Color temático para el icono y valor
+ * @param modifier Modificador opcional
+ */
 @Composable
 private fun StatItem(
     icon: ImageVector,
@@ -445,19 +533,27 @@ private fun StatItem(
 
         Text(
             text = value,
-            style = MaterialTheme.typography.headlineSmall,
+            style = Typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             color = color
         )
 
         Text(
             text = label,
-            style = MaterialTheme.typography.bodySmall,
+            style = Typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
 
+/**
+ * Header de sección con título y botón de acción opcional.
+ *
+ * @param title Título de la sección
+ * @param actionText Texto del botón de acción (opcional)
+ * @param onActionClick Callback del botón de acción (opcional)
+ * @param modifier Modificador opcional
+ */
 @Composable
 private fun SectionHeader(
     modifier: Modifier = Modifier,
@@ -472,7 +568,7 @@ private fun SectionHeader(
     ) {
         Text(
             text = title,
-            style = MaterialTheme.typography.headlineSmall,
+            style = Typography.headlineSmall,
             fontWeight = FontWeight.Medium
         )
 
@@ -487,6 +583,19 @@ private fun SectionHeader(
     }
 }
 
+/**
+ * Fila horizontal scrolleable con hábitos del día actual.
+ *
+ * Permite:
+ * - Scroll horizontal para ver todos los hábitos
+ * - Interacción rápida para completar hábitos
+ * - Navegación a detalle de hábito
+ *
+ * @param habits Lista de hábitos con sus logs
+ * @param onHabitClick Callback para navegar a detalle
+ * @param onToggleCompletion Callback para marcar como completado
+ * @param modifier Modificador opcional
+ */
 @Composable
 private fun TodayHabitsRow(
     habits: List<HabitWithLogs>,
@@ -511,6 +620,20 @@ private fun TodayHabitsRow(
     }
 }
 
+/**
+ * Tarjeta compacta de hábito para vista rápida en dashboard.
+ *
+ * Características:
+ * - Muestra icono, nombre y progreso del hábito
+ * - Indicador visual de completado
+ * - Interacción directa para marcar como completado
+ * - Progreso visual para hábitos con objetivos numéricos
+ *
+ * @param habitWithLogs Hábito con sus logs asociados
+ * @param onHabitClick Callback para navegar a detalle
+ * @param onToggleCompletion Callback para marcar como completado
+ * @param modifier Modificador opcional
+ */
 @Composable
 private fun HabitQuickCard(
     habitWithLogs: HabitWithLogs,
@@ -548,7 +671,7 @@ private fun HabitQuickCard(
                 .padding(Dimensions.SpacingSmall),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            // Icon and name
+            // Icono y nombre
             Column {
                 Icon(
                     imageVector = HabitIconMapper.getIconForHabitType(habit.type),
@@ -561,17 +684,16 @@ private fun HabitQuickCard(
 
                 Text(
                     text = habit.name,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = Typography.bodyMedium,
                     fontWeight = FontWeight.Medium,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
             }
 
-            // Progress or completion
+            // Progreso
             Column {
                 if (habit.dailyTarget != null && habit.dailyTarget > 1) {
-                    // Show progress for habits with targets
                     HabitJourneyProgressIndicator(
                         progress = progress / 100f,
                         type = HabitJourneyProgressType.LINEAR,
@@ -585,11 +707,10 @@ private fun HabitQuickCard(
                             habitWithLogs.todayProgress,
                             habit.dailyTarget
                         ),
-                        style = MaterialTheme.typography.labelSmall,
+                        style = Typography.labelSmall,
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
                 } else {
-                    // Simple check for DO habits
                     IconButton(
                         onClick = onToggleCompletion,
                         modifier = Modifier.align(Alignment.End)
@@ -610,6 +731,20 @@ private fun HabitQuickCard(
     }
 }
 
+
+/**
+ * Tarjeta compacta de tarea para vista rápida en dashboard.
+ *
+ * Muestra:
+ * - Checkbox para marcar como completada
+ * - Título y información relevante (fecha, prioridad)
+ * - Indicadores visuales de estado (vencida, completada)
+ *
+ * @param task Tarea a mostrar
+ * @param onTaskClick Callback para navegar a detalle
+ * @param onToggleCompletion Callback para marcar como completada
+ * @param modifier Modificador opcional
+ */
 @Composable
 private fun TaskQuickCard(
     task: Task,
@@ -617,6 +752,8 @@ private fun TaskQuickCard(
     onToggleCompletion: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+
     HabitJourneyCard(
         onClick = onTaskClick,
         modifier = modifier,
@@ -630,7 +767,6 @@ private fun TaskQuickCard(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Checkbox
             Checkbox(
                 checked = task.isCompleted,
                 onCheckedChange = { onToggleCompletion() },
@@ -639,7 +775,6 @@ private fun TaskQuickCard(
                 )
             )
 
-            // Content
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -647,7 +782,7 @@ private fun TaskQuickCard(
             ) {
                 Text(
                     text = task.title,
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = Typography.bodyLarge,
                     fontWeight = FontWeight.Medium,
                     textDecoration = if (task.isCompleted) {
                         TextDecoration.LineThrough
@@ -656,7 +791,6 @@ private fun TaskQuickCard(
                     overflow = TextOverflow.Ellipsis
                 )
 
-                // Due date or priority
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(Dimensions.SpacingSmall)
@@ -670,8 +804,8 @@ private fun TaskQuickCard(
                             tint = if (isOverdue && !task.isCompleted) Error else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
-                            text = TaskDateUtils.formatDate(date),
-                            style = MaterialTheme.typography.bodySmall,
+                            text = DateTimeFormatters.formatDateRelatively(date, context),
+                            style = Typography.bodySmall,
                             color = if (isOverdue && !task.isCompleted) Error else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -684,7 +818,6 @@ private fun TaskQuickCard(
                 }
             }
 
-            // Arrow
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                 contentDescription = null,
@@ -695,6 +828,18 @@ private fun TaskQuickCard(
     }
 }
 
+/**
+ * Tarjeta compacta de nota para vista rápida en dashboard.
+ *
+ * Características:
+ * - Icono basado en tipo de nota (texto/lista)
+ * - Título y preview del contenido
+ * - Indicadores de favorito y conteo de palabras
+ *
+ * @param note Nota a mostrar
+ * @param onNoteClick Callback para navegar a detalle
+ * @param modifier Modificador opcional
+ */
 @Composable
 private fun NoteQuickCard(
     note: Note,
@@ -709,7 +854,6 @@ private fun NoteQuickCard(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Note type icon
             Icon(
                 imageVector = when (note.noteType) {
                     NoteType.TEXT -> Icons.Default.Description
@@ -722,13 +866,12 @@ private fun NoteQuickCard(
 
             Spacer(modifier = Modifier.width(Dimensions.SpacingMedium))
 
-            // Content
             Column(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
                     text = note.title.ifBlank { stringResource(R.string.note_untitled) },
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = Typography.bodyLarge,
                     fontWeight = FontWeight.Medium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -736,14 +879,13 @@ private fun NoteQuickCard(
 
                 Text(
                     text = note.preview,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = Typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
             }
 
-            // Stats
             Column(
                 horizontalAlignment = Alignment.End
             ) {
@@ -757,7 +899,7 @@ private fun NoteQuickCard(
                 }
                 Text(
                     text = stringResource(R.string.dashboard_note_word_count, note.wordCount),
-                    style = MaterialTheme.typography.labelSmall,
+                    style = Typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -765,26 +907,66 @@ private fun NoteQuickCard(
     }
 }
 
+/**
+ * Tarjeta de resumen diario que siempre se muestra en el dashboard.
+ *
+ * Características:
+ * - Siempre visible, independientemente del score
+ * - Cambia colores y estilo según el rendimiento
+ * - Muestra el mensaje apropiado (motivacional o de ánimo)
+ * - Incluye información de racha cuando es relevante
+ *
+ * @param score Score de productividad actual (0-100)
+ * @param message Mensaje principal a mostrar
+ * @param streak Racha actual de días
+ * @param isExcellentDay Si true, usa estilo de celebración
+ * @param modifier Modificador opcional
+ */
 @Composable
-private fun MotivationalCard(
+private fun DailySummaryCard(
+    modifier: Modifier = Modifier,
     score: Int,
+    summaryMessage: String,
     message: String,
     streak: Int,
-    modifier: Modifier = Modifier
+    isExcellentDay: Boolean = false,
 ) {
+    val (containerColor, iconColor, icon) = when {
+        score >= 90 -> Triple(
+            AcentoPositivo.copy(alpha = 0.1f),
+            Logro,
+            Icons.Default.EmojiEvents
+        )
+        score >= 70 -> Triple(
+            AcentoInformativo.copy(alpha = 0.1f),
+            AcentoInformativo,
+            Icons.AutoMirrored.Filled.TrendingUp
+        )
+        score >= 50 -> Triple(
+            Premium.copy(alpha = 0.3f),
+            Premium,
+            Icons.Default.Route
+        )
+        else -> Triple(
+            AcentoUrgente.copy(alpha = 0.3f),
+            AcentoUrgente,
+            Icons.Default.Insights
+        )
+    }
+
     HabitJourneyCard(
         modifier = modifier,
-        containerColor = AcentoPositivo.copy(alpha = 0.1f)
+        containerColor = containerColor
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = Icons.Default.EmojiEvents,
+                imageVector = icon,
                 contentDescription = null,
-                tint = Logro,
-                modifier = Modifier.size(48.dp)
+                tint = iconColor,
+                modifier = Modifier.size(if (isExcellentDay) 48.dp else 40.dp)
             )
 
             Spacer(modifier = Modifier.width(Dimensions.SpacingMedium))
@@ -793,20 +975,22 @@ private fun MotivationalCard(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = stringResource(R.string.dashboard_excellent_progress),
-                    style = MaterialTheme.typography.headlineSmall,
+                    text = summaryMessage,
+                    style = Typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
-                    color = AcentoPositivo
+                    color = iconColor
                 )
+
                 Text(
                     text = message,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = Typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                if (streak >= 7) {
+
+                if (streak >= 3) {
                     Text(
                         text = stringResource(R.string.dashboard_streak_days, streak),
-                        style = MaterialTheme.typography.bodySmall,
+                        style = Typography.bodySmall,
                         color = Logro,
                         fontWeight = FontWeight.Medium
                     )
@@ -815,14 +999,25 @@ private fun MotivationalCard(
 
             Text(
                 text = stringResource(R.string.dashboard_score_percentage, score),
-                style = MaterialTheme.typography.headlineMedium,
+                style = if (isExcellentDay) Typography.headlineMedium else Typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
-                color = AcentoPositivo
+                color = iconColor
             )
         }
     }
 }
 
+/**
+ * Estado vacío mostrado a usuarios nuevos sin contenido.
+ *
+ * Características:
+ * - Mensaje de bienvenida atractivo
+ * - Botón directo para crear primer hábito
+ * - Diseño centrado y amigable
+ *
+ * @param onCreateHabit Callback para crear primer hábito
+ * @param modifier Modificador opcional
+ */
 @Composable
 private fun EmptyDashboardState(
     onCreateHabit: () -> Unit,
@@ -844,7 +1039,7 @@ private fun EmptyDashboardState(
 
         Text(
             text = stringResource(R.string.dashboard_welcome_title),
-            style = MaterialTheme.typography.headlineMedium,
+            style = Typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
         )
@@ -853,7 +1048,7 @@ private fun EmptyDashboardState(
 
         Text(
             text = stringResource(R.string.dashboard_welcome_subtitle),
-            style = MaterialTheme.typography.bodyLarge,
+            style = Typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
         )
@@ -870,6 +1065,25 @@ private fun EmptyDashboardState(
     }
 }
 
+/**
+ * FAB expandible para crear nuevo contenido.
+ *
+ * Estados:
+ * - Collapsed: Botón + simple
+ * - Expanded: Muestra opciones para crear hábito, tarea o nota
+ *
+ * Características:
+ * - Animaciones suaves de expansión/colapso
+ * - Labels descriptivos para cada opción
+ * - Colores temáticos por tipo de contenido
+ *
+ * @param isExpanded Estado actual del FAB
+ * @param onToggle Callback para alternar estado
+ * @param onCreateHabit Callback para crear hábito
+ * @param onCreateTask Callback para crear tarea
+ * @param onCreateNote Callback para crear nota
+ * @param modifier Modificador opcional
+ */
 @Composable
 private fun ExpandableFAB(
     isExpanded: Boolean,
@@ -884,7 +1098,6 @@ private fun ExpandableFAB(
         horizontalAlignment = Alignment.End,
         verticalArrangement = Arrangement.spacedBy(Dimensions.SpacingSmall)
     ) {
-        // Mini FABs (visible when expanded)
         AnimatedVisibility(
             visible = isExpanded,
             enter = fadeIn() + slideInVertically(),
@@ -894,7 +1107,6 @@ private fun ExpandableFAB(
                 horizontalAlignment = Alignment.End,
                 verticalArrangement = Arrangement.spacedBy(Dimensions.SpacingSmall)
             ) {
-                // Note FAB
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(Dimensions.SpacingSmall)
@@ -907,7 +1119,7 @@ private fun ExpandableFAB(
                         Text(
                             text = stringResource(R.string.dashboard_fab_new_note),
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                            style = MaterialTheme.typography.bodyMedium
+                            style = Typography.bodyMedium
                         )
                     }
                     SmallFloatingActionButton(
@@ -918,7 +1130,6 @@ private fun ExpandableFAB(
                     }
                 }
 
-                // Task FAB
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(Dimensions.SpacingSmall)
@@ -931,7 +1142,7 @@ private fun ExpandableFAB(
                         Text(
                             text = stringResource(R.string.dashboard_fab_new_task),
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                            style = MaterialTheme.typography.bodyMedium
+                            style = Typography.bodyMedium
                         )
                     }
                     SmallFloatingActionButton(
@@ -942,7 +1153,6 @@ private fun ExpandableFAB(
                     }
                 }
 
-                // Habit FAB
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(Dimensions.SpacingSmall)
@@ -955,7 +1165,7 @@ private fun ExpandableFAB(
                         Text(
                             text = stringResource(R.string.dashboard_fab_new_habit),
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                            style = MaterialTheme.typography.bodyMedium
+                            style = Typography.bodyMedium
                         )
                     }
                     SmallFloatingActionButton(
@@ -968,7 +1178,6 @@ private fun ExpandableFAB(
             }
         }
 
-        // Main FAB
         FloatingActionButton(
             onClick = onToggle,
             containerColor = if (isExpanded) MaterialTheme.colorScheme.surfaceVariant else AcentoInformativo

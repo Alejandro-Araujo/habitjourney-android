@@ -1,6 +1,5 @@
 package com.alejandro.habitjourney.core.presentation.ui.components
 
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -9,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.alejandro.habitjourney.core.presentation.ui.theme.*
 
@@ -18,6 +16,10 @@ enum class SnackbarType {
 }
 
 
+/**
+ * Host para Snackbars personalizadas con iconos y colores según tipo.
+ * Determina automáticamente el tipo basado en el action label.
+ */
 @Composable
 fun HabitJourneySnackbarHost(
     hostState: SnackbarHostState,

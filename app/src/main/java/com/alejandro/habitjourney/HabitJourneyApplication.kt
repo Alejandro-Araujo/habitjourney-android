@@ -8,6 +8,7 @@ import androidx.hilt.work.HiltWorkerFactory
 import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import androidx.work.Configuration
+import com.alejandro.habitjourney.core.utils.logging.AppLogger
 import com.alejandro.habitjourney.features.settings.domain.repository.SettingsRepository
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
@@ -17,14 +18,20 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * Clase principal de aplicación que configura el entorno global.
+ *
+ * Responsabilidades:
+ * - Inicialización de Hilt
+ * - Configuración de WorkManager
+ * - Aplicar configuraciones de usuario (tema, idioma)
+ * - Setup inicial de la app
+ */
 @HiltAndroidApp
 class HabitJourneyApplication : Application(), Configuration.Provider {
 
-    @Inject
-    lateinit var settingsRepository: SettingsRepository
-
-    @Inject
-    lateinit var workerFactory: HiltWorkerFactory
+    @Inject lateinit var settingsRepository: SettingsRepository
+    @Inject lateinit var workerFactory: HiltWorkerFactory
 
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
@@ -48,15 +55,18 @@ class HabitJourneyApplication : Application(), Configuration.Provider {
                     AppCompatDelegate.setApplicationLocales(localeList)
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                AppLogger.e("Application", "Error applying user settings", e)
             }
         }
     }
 
+    /**
+     * Configuración de WorkManager con HiltWorkerFactory para DI.
+     */
     override val workManagerConfiguration: Configuration
         @OptIn(UnstableApi::class)
         get() {
-            Log.d(
+            AppLogger.d(
                 "HabitJourneyApp",
                 "Creating WorkManager config with HiltWorkerFactory: $workerFactory"
             )

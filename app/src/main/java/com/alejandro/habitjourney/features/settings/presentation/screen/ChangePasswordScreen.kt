@@ -11,7 +11,6 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -25,6 +24,16 @@ import com.alejandro.habitjourney.core.presentation.ui.components.*
 import com.alejandro.habitjourney.core.presentation.ui.theme.*
 import com.alejandro.habitjourney.features.settings.presentation.viewmodel.ChangePasswordViewModel
 
+/**
+ * Pantalla que permite al usuario cambiar su contraseña.
+ *
+ * Muestra un formulario para que el usuario introduzca su contraseña actual,
+ * la nueva contraseña y la confirmación. Proporciona validación en tiempo real
+ * y gestiona el estado de carga y los mensajes de éxito o error.
+ *
+ * @param onNavigateBack Callback para navegar a la pantalla anterior, típicamente tras un cambio exitoso.
+ * @param viewModel El [ChangePasswordViewModel] que gestiona el estado y la lógica de esta pantalla.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChangePasswordScreen(
@@ -81,27 +90,27 @@ fun ChangePasswordScreen(
                 }
 
                 // Current password
-                var currentPasswordVisible by remember { mutableStateOf(false) } // Para alternar visibilidad
+                var currentPasswordVisible by remember { mutableStateOf(false) }
                 HabitJourneyTextField(
                     value = uiState.currentPassword,
                     onValueChange = viewModel::updateCurrentPassword,
                     label = stringResource(R.string.label_current_password),
-                    leadingIcon = { Icon(imageVector = Icons.Default.Lock, contentDescription = null) }, // Solución 1
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password), // Solución 2
-                    visualTransformation = if (currentPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(), // Solución 3
-                    trailingIcon = { // Opcional: para alternar visibilidad
+                    leadingIcon = { Icon(imageVector = Icons.Default.Lock, contentDescription = null) },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    visualTransformation = if (currentPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = {
                         val image = if (currentPasswordVisible) Icons.Filled.VisibilityOff else Icons.Filled.Visibility
                         IconButton(onClick = { currentPasswordVisible = !currentPasswordVisible }) {
                             Icon(imageVector = image, contentDescription = if (currentPasswordVisible) "Ocultar contraseña" else "Mostrar contraseña")
                         }
                     },
-                    isError = uiState.currentPasswordError != null, // Solución 4a
-                    helperText = uiState.currentPasswordError,      // Solución 4b
-                    enabled = !uiState.isLoading,                   // Solución 5 (nombre correcto)
+                    isError = uiState.currentPasswordError != null,
+                    helperText = uiState.currentPasswordError,
+                    enabled = !uiState.isLoading,
                     modifier = Modifier.fillMaxWidth()
                 )
 
-// New password (aplicar cambios similares)
+                // New password
                 var newPasswordVisible by remember { mutableStateOf(false) }
                 HabitJourneyTextField(
                     value = uiState.newPassword,
@@ -122,7 +131,7 @@ fun ChangePasswordScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-// Confirm new password (aplicar cambios similares)
+                // Confirm new password
                 var confirmPasswordVisible by remember { mutableStateOf(false) }
                 HabitJourneyTextField(
                     value = uiState.confirmPassword,
@@ -189,6 +198,10 @@ fun ChangePasswordScreen(
     }
 }
 
+/**
+ * Componente privado que muestra una tarjeta con los requisitos de la contraseña.
+ * @param modifier Modificador para personalizar el layout.
+ */
 @Composable
 private fun PasswordRequirements(
     modifier: Modifier = Modifier

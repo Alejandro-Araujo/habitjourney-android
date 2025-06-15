@@ -1,7 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">HabitJourney</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- ============================================ -->
+    <!-- APP GENERAL -->
+    <!-- ============================================ -->
+    <string name="app_name" translatable="false">HabitJourney</string>
+    <string name="app_version" translatable="false">v1.0.0</string>
+    <string name="app_author" translatable="false">© 2025 Alejandro Araujo</string>
+    <string name="app_logo_content_description" translatable="false">Logo HabitJourney</string>
+
+    <!-- ============================================ -->
+    <!-- ACCIONES GENERALES -->
+    <!-- ============================================ -->
+    <string name="action_save">Guardar</string>
+    <string name="action_cancel">Cancelar</string>
+    <string name="action_back">Atrás</string>
+    <string name="action_ok">Aceptar</string>
+    <string name="action_confirm">Confirmar</string>
+    <string name="action_understood">Entendido</string>
+    <string name="save_changes">Guardar cambios</string>
+    <string name="action_clear_date">Quitar fecha</string>
+    <string name="close">Cerrar</string>
+    <string name="yes">Sí</string>
+    <string name="no">No</string>
+    <string name="save">Guardar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="delete">Eliminar</string>
+    <string name="archive">Archivar</string>
+    <string name="unarchive">Desarchivar</string>
+
+    <!-- ============================================ -->
+    <!-- ERRORES DE RED Y BACKEND -->
+    <!-- ============================================ -->
     <string name="no_internet_connection">No hay conexión a internet.</string>
     <string name="connection_timeout">La conexión ha tardado demasiado. Inténtalo de nuevo.</string>
     <string name="server_not_found">No se pudo encontrar el servidor.</string>
@@ -15,7 +45,25 @@
     <string name="unexpected_error">Ha ocurrido un error inesperado.</string>
     <string name="response_body_null">El cuerpo de la respuesta es nulo.</string>
     <string name="error_unknown">Error desconocido.</string>
+    <string name="unknown_error">Error desconocido</string>
 
+    <!-- Errores de usuario y autenticación -->
+    <string name="error_user_not_logged_in">Usuario no autenticado. Por favor, inicie sesión.</string>
+    <string name="error_no_active_session">No hay sesión activa</string>
+    <string name="user_not_found">Usuario no encontrado</string>
+    <string name="error_user_not_found_locally">Usuario no encontrado localmente</string>
+    <string name="error_saving_user_locally">Error al guardar usuario localmente</string>
+    <string name="error_recreating_local_user">Error en la recreación del usuario local</string>
+    <string name="error_unexpected_loading_state">Estado de carga inesperado</string>
+    <string name="error_auth_initial_check">Error inicial de autenticación: %1$s</string>
+    <string name="error_logout_failed">Error al cerrar sesión: %1$s</string>
+    <string name="error_logout_unexpected">Error inesperado al cerrar sesión: %1$s</string>
+
+    <!-- ============================================ -->
+    <!-- AUTH: LOGIN Y REGISTER -->
+    <!-- ============================================ -->
+
+    <!-- Login Screen -->
     <string name="welcome_back_title">¡Bienvenida de vuelta!</string>
     <string name="login_subtitle">Inicia sesión para continuar con tus hábitos.</string>
     <string name="email_label">Email</string>
@@ -23,8 +71,8 @@
     <string name="login_button_text">Iniciar Sesión</string>
     <string name="no_account_question">¿No tienes cuenta? </string>
     <string name="register_link_text">Regístrate</string>
-    <string name="success_login">¡Bienvenido de vuelta!</string>
 
+    <!-- Register Screen -->
     <string name="create_account_title">Crear Cuenta</string>
     <string name="register_subtitle">Únete a HabitJourney y comienza tu transformación.</string>
     <string name="full_name_label">Nombre completo</string>
@@ -34,9 +82,10 @@
     <string name="terms_and_privacy_text">Al registrarte, aceptas nuestros Términos de Servicio y Política de Privacidad.</string>
     <string name="already_have_account_question">¿Ya tienes cuenta? </string>
     <string name="login_here_link_text">Inicia sesión aquí</string>
-    <string name="account_created_success">¡Cuenta creada exitosamente! Redirigiendo…</string>
-    <string name="success_register">¡Cuenta creada exitosamente!</string>
+    <string name="successful_account_creation">Cuenta creada con éxito</string>
 
+
+    <!-- Validaciones de campos -->
     <string name="error_email_empty">El email no puede estar vacío.</string>
     <string name="error_email_invalid_format">Formato de email inválido.</string>
     <string name="error_password_empty">La contraseña no puede estar vacía.</string>
@@ -49,12 +98,504 @@
     <string name="error_name_min_length">El nombre debe tener al menos 2 caracteres.</string>
     <string name="error_name_max_length">El nombre no puede exceder 50 caracteres.</string>
     <string name="error_name_invalid_format">El nombre solo puede contener letras y espacios.</string>
-    <string name="error_marking_habit">Error al marcar hábito: %1$s</string>
+    <string name="title_required">El título es obligatorio</string>
+
+    <!-- ============================================ -->
+    <!-- NAVEGACIÓN -->
+    <!-- ============================================ -->
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_habits">Hábitos</string>
+    <string name="nav_tasks">Tareas</string>
+    <string name="nav_notes">Notas</string>
+    <string name="nav_settings">Configuración</string>
+
+    <!-- ============================================ -->
+    <!-- DASHBOARD -->
+    <!-- ============================================ -->
+    <string name="dashboard_daily_summary">Resumen del Día</string>
+    <string name="dashboard_todays_habits">Hábitos de Hoy</string>
+    <string name="dashboard_pending_tasks">Tareas Pendientes</string>
+    <string name="dashboard_recent_notes">Notas Recientes</string>
+    <string name="dashboard_view_all">Ver todos</string>
+
+    <!-- Dashboard Stats -->
+    <string name="dashboard_habits_fraction">%1$d/%2$d</string>
+    <string name="dashboard_habits_label">Hábitos</string>
+    <string name="dashboard_tasks_label">Tareas</string>
+    <string name="dashboard_streak_label">Racha</string>
+    <string name="dashboard_score_label">Score</string>
+    <string name="dashboard_score_percentage">%1$d%%</string>
+    <string name="dashboard_habit_progress">%1$d/%2$d</string>
+    <string name="dashboard_note_word_count">%1$d palabras</string>
+    <string name="dashboard_excellent_progress">¡Excelente progreso!</string>
+    <string name="dashboard_create_first_habit">Crear primer hábito</string>
+    <string name="dashboard_streak_days">🔥 Racha de %d días</string>
+
+    <!-- Dashboard Welcome -->
+    <string name="dashboard_welcome_title">¡Bienvenido a HabitJourney!</string>
+    <string name="dashboard_welcome_subtitle">Comienza tu viaje creando tu primer hábito</string>
+    <string name="dashboard_summary_start">¡Comienza tu viaje creando tus primeros hábitos y tareas!</string>
+
+    <!-- Dashboard Messages -->
+    <string name="dashboard_summary_all_habits_completed_no_streak">¡Excelente día! Has completado todos tus hábitos.</string>
+    <string name="dashboard_summary_all_habits_completed_with_streak">¡Excelente día! Has completado todos tus hábitos y mantienes una racha de %d días.</string>
+    <string name="dashboard_summary_good_progress">¡Muy buen progreso! Has completado el %d%% de tus hábitos.</string>
+    <string name="dashboard_summary_decent_progress">Buen avance del día. ¡Sigue así para completar todos tus hábitos!</string>
+    <string name="dashboard_summary_keep_going">¡Aún queda mucho día por delante! Es momento de trabajar en tus hábitos.</string>
+
+    <!-- Dashboard Quotes -->
+    <string name="dashboard_quote_excellent">¡Excelente trabajo! Cada día es un paso hacia tus metas.</string>
+    <string name="dashboard_quote_great">¡Excelente trabajo! Cada día es un paso hacia tus metas.</string>
+    <string name="dashboard_quote_good">¡Sigue adelante! El progreso es progreso, sin importar lo pequeño.</string>
+    <string name="dashboard_quote_default">Cada nuevo día es una oportunidad para mejorar. ¡Tú puedes!</string>
+
+    <!-- Dashboard FAB -->
+    <string name="dashboard_fab_new_note">Nueva Nota</string>
+    <string name="dashboard_fab_new_task">Nueva Tarea</string>
+    <string name="dashboard_fab_new_habit">Nuevo Hábito</string>
+    <string name="dashboard_fab_close">Cerrar</string>
+    <string name="dashboard_fab_create_new">Crear nuevo</string>
+
+    <!-- ============================================ -->
+    <!-- HÁBITOS -->
+    <!-- ============================================ -->
+
+    <!-- Crear/Editar Hábito -->
+    <string name="create_habit_title">Crear Hábito</string>
+    <string name="edit_habit_title">Editar Hábito</string>
+    <string name="habit_name_label">Nombre del Hábito</string>
+    <string name="habit_description_label">Descripción (Opcional)</string>
+    <string name="habit_daily_target_label">Meta Diaria (opcional)</string>
+    <string name="habit_daily_target_quantity_label">Objetivo diario (cantidad)</string>
+    <string name="habit_frequency_label">Frecuencia</string>
+    <string name="habit_frequency_days_label">Días de la Semana</string>
+    <string name="habit_start_date_label">Fecha de inicio</string>
+    <string name="habit_end_date_label">Fecha de fin</string>
+    <string name="habit_start_date">Fecha de Inicio</string>
+    <string name="habit_end_date">Fecha de Fin</string>
+
+    <!-- Frecuencias -->
+    <string name="select_habit_frequency">Seleccionar Frecuencia del Hábito</string>
+    <string name="select_frequency_days">Seleccionar Días</string>
+    <string name="frequency_daily">Diario</string>
+    <string name="frequency_weekly">Semanal</string>
+    <string name="frequency_custom">Personalizado</string>
+    <string name="select_days_placeholder">Seleccionar días</string>
+
+    <!-- Estados de hábitos -->
+    <string name="habit_status_label">Estado</string>
+    <string name="habit_status_active">Activo</string>
+    <string name="habit_status_archived">Archivado</string>
+    <string name="habit_completed_today">✓ Completado</string>
+    <string name="habit_pending_today">⏸ Pendiente</string>
+
+    <!-- Progreso de hábitos -->
+    <string name="habit_detail_section_info">Información General</string>
+    <string name="habit_detail_section_progress">Progreso</string>
+    <string name="habit_detail_section_history">Historial de Registros</string>
+    <string name="habit_detail_today_progress">Progreso de hoy</string>
+    <string name="habit_detail_overall_progress">Progreso general</string>
+    <string name="habit_detail_completion_rate">Completado: %1$d de %2$d</string>
+    <string name="habit_detail_no_history">No hay registros de este hábito aún.</string>
+    <string name="habit_progress_text">Progeso del hábito</string>
+    <string name="habit_streak_progress_label">Racha: %1$d / %2$d días</string>
+    <string name="weekly_goal_progress_label">%1$d/%2$d</string>
+
+    <!-- Estados de log -->
+    <string name="log_status_completed">Completado</string>
+    <string name="log_status_skipped">Saltado</string>
+    <string name="log_status_missed">Perdido</string>
+    <string name="log_status_partial">Parcial</string>
+    <string name="log_status_not_completed">Sin completar</string>
+    <string name="status_completed">Completado</string>
+    <string name="status_partial">Parcial (%1$d)</string>
+    <string name="status_not_completed">No completado</string>
+    <string name="status_not_started">Sin iniciar</string>
+
+    <!-- Acciones de hábitos -->
+    <string name="action_decrease">Bajar</string>
+    <string name="action_increase">Aumentar</string>
+    <string name="action_skip">Saltar</string>
+    <string name="action_undo_skip">Deshacer saltar</string>
+    <string name="action_archive_habit">Archivar hábito</string>
+    <string name="action_unarchive_habit">Desarchivar hábito</string>
+    <string name="habit_card_complete">Completada</string>
+    <string name="title_archive_habit">¿Quieres archivar el hábito?</string>
+    <string name="title_unarchive_habit">Desarchivar hábito</string>
+
+    <!-- Lista de hábitos -->
+    <string name="habit_list_screen_title">Mis Hábitos</string>
+    <string name="filter_habits_today">Para hoy</string>
+    <string name="filter_habits_all">Todos</string>
+    <string name="filter_habits_archived">Archivados</string>
+    <string name="filter_habits_completed">Completados</string>
+    <string name="filter_habits_pending">Pendientes</string>
+    <string name="search_habits">Buscar hábitos</string>
+
+    <!-- Empty states de hábitos -->
+    <string name="no_habits_found_search">No se encontraron hábitos</string>
+    <string name="no_habits_found_search_message">No hay hábitos que coincidan con \"%s\"</string>
+    <string name="no_habits_today_title">Sin hábitos para hoy</string>
+    <string name="no_habits_today_message">No tienes hábitos programados para hoy</string>
+    <string name="no_habits_all_title">Sin hábitos creados</string>
+    <string name="no_habits_all_message">Crea tu primer hábito para comenzar tu viaje</string>
+    <string name="no_habits_archived_title">Sin hábitos archivados</string>
+    <string name="no_habits_archived_message">Los hábitos archivados aparecerán aquí</string>
+    <string name="no_habits_completed_title">Sin hábitos completados</string>
+    <string name="no_habits_completed_message">Completa tus hábitos para verlos aquí</string>
+    <string name="no_habits_pending_title">Sin hábitos pendientes</string>
+    <string name="no_habits_pending_message">¡Genial! Has completado todos tus hábitos de hoy</string>
+    <string name="create_first_habit">Crear mi primer hábito</string>
+
+    <!-- Errores de hábitos -->
     <string name="error_saving_habit">Error al guardar hábito</string>
     <string name="error_habit_name_empty">El nombre del hábito no puede estar vacío</string>
     <string name="error_loading_habit_details">Error al cargar detalles del hábito</string>
-    <string name="error_user_not_logged_in">Usuario no autenticado. Por favor, inicie sesión.</string>
+    <string name="error_loading_habit">Error al cargar el hábito</string>
+    <string name="error_daily_target_required">El objetivo diario es requerido para este tipo de hábito</string>
+    <string name="error_frequency_days_required">Los días de la semana son requeridos para esta frecuencia</string>
+    <string name="error_archiving_habit">Error al archivar el hábito</string>
+    <string name="error_marking_habit_skipped">Error al marcar saltar</string>
+    <string name="error_updating_habit_progress">Error al actualixar el progreso</string>
+    <string name="error_processing_missed_habits">Error al procesar los hábitos perdidos</string>
+    <string name="error_undoing_skip">Error al deshacer el salto</string>
 
+    <!-- Success messages -->
+    <string name="habit_saved_success_title">¡Hábito Guardado!</string>
+    <string name="habit_saved_success_message">Tu hábito se ha guardado exitosamente.</string>
+
+    <!-- ============================================ -->
+    <!-- TAREAS -->
+    <!-- ============================================ -->
+
+    <!-- Básicos de Task -->
+    <string name="tasks">Tareas</string>
+    <string name="create_task">Crear Tarea</string>
+    <string name="edit_task">Editar Tarea</string>
+    <string name="task_details">Detalles de Tarea</string>
+    <string name="update_task">Actualizar Tarea</string>
+    <string name="delete_task">Eliminar Tarea</string>
+    <string name="archive_task">Archivar Tarea</string>
+    <string name="unarchive_task">Desarchivar Tarea</string>
+    <string name="add_task">Añadir tarea</string>
+
+    <!-- Formularios de tareas -->
+    <string name="task_title">Título de la tarea</string>
+    <string name="task_title_placeholder">Ingresa el título de la tarea</string>
+    <string name="task_description">Descripción</string>
+    <string name="task_description_placeholder">Describe la tarea (opcional)</string>
+    <string name="due_date">Fecha de vencimiento</string>
+    <string name="select_date">Seleccionar fecha</string>
+    <string name="clear_date">Limpiar fecha</string>
+    <string name="date_label">Fecha</string>
+    <string name="time_label">Hora</string>
+    <string name="select_date_and_time">Seleccionar fecha y hora</string>
+    <string name="select_date_placeholder">Seleccionar fecha</string>
+
+    <!-- Prioridades -->
+    <string name="priority">Prioridad</string>
+    <string name="select_priority">Seleccionar prioridad</string>
+    <string name="priority_high">Alta</string>
+    <string name="priority_medium">Media</string>
+    <string name="priority_low">Baja</string>
+    <string name="no_priority">Sin prioridad</string>
+    <string name="clear_priority">Limpiar prioridad</string>
+
+    <!-- Recordatorios de tareas -->
+    <string name="reminder">Recordatorio</string>
+    <string name="select_reminder_time">Seleccionar hora</string>
+    <string name="clear_reminder">Limpiar recordatorio</string>
+    <string name="reminder_label">Recordatorio</string>
+    <string name="reminder_description">Te notificaremos cuando sea el momento</string>
+
+    <!-- Filtros de tareas -->
+    <string name="filter_active">Activas</string>
+    <string name="filter_completed">Completadas</string>
+    <string name="filter_archived">Archivadas</string>
+    <string name="filter_overdue">Vencidas</string>
+    <string name="filter_all">Todas</string>
+
+    <!-- Estados de tareas -->
+    <string name="task_overdue">Vencida</string>
+    <string name="task_status">Estado de la tarea</string>
+    <string name="status">Estado</string>
+    <string name="active">Activa</string>
+    <string name="completed">Completada</string>
+    <string name="archived">Archivada</string>
+    <string name="description">Descripción</string>
+    <string name="dates">Fechas</string>
+    <string name="completion_date">Fecha de finalización</string>
+    <string name="created_date">Fecha de creación</string>
+
+    <!-- Empty states de tareas -->
+    <string name="no_active_tasks">No hay tareas activas</string>
+    <string name="no_completed_tasks">No hay tareas completadas</string>
+    <string name="no_archived_tasks">No hay tareas archivadas</string>
+    <string name="no_overdue_tasks">No hay tareas vencidas</string>
+    <string name="no_active_tasks_subtitle">Crea tu primera tarea para empezar</string>
+    <string name="no_completed_tasks_subtitle">Las tareas completadas aparecerán aquí</string>
+    <string name="no_archived_tasks_subtitle">Las tareas archivadas aparecerán aquí</string>
+    <string name="no_overdue_tasks_subtitle">¡Genial! No tienes tareas vencidas</string>
+    <string name="create_first_task">Crear primera tarea</string>
+    <string name="no_tasks">Todavía no has creado ninguna tarea :D</string>
+    <string name="no_tasks_subtitle">No se han creado tareas</string>
+
+    <!-- Notificaciones de tareas -->
+    <string name="task_reminders_channel">Recordatorios de Tareas</string>
+    <string name="task_reminders_channel_desc">Notificaciones para recordatorios de tareas</string>
+    <string name="task_reminder_title">Recordatorio de Tarea</string>
+    <string name="task_reminder_default">Recordatorio de tarea</string>
+    <string name="complete_action">Completar</string>
+    <string name="task_completed">Tarea completada</string>
+    <string name="task_saved_reminder_error">Tarea guardada, pero no se pudo programar el recordatorio: %1$s</string>
+
+    <!-- Diálogos de tareas -->
+    <string name="delete_task_title">¿Eliminar tarea?</string>
+    <string name="delete_task_message">Esta acción no se puede deshacer.</string>
+    <string name="archive_task_title">¿Archivar tarea?</string>
+    <string name="archive_task_message">La tarea se moverá al archivo.</string>
+    <string name="unarchive_task_title">¿Desarchivar tarea?</string>
+    <string name="unarchive_task_message">La tarea se moverá a activas.</string>
+
+    <!-- ============================================ -->
+    <!-- NOTAS -->
+    <!-- ============================================ -->
+
+    <!-- Básicos de Notes -->
+    <string name="notes">Notas</string>
+    <string name="add_note">Agregar nota</string>
+    <string name="edit_note">Editar nota</string>
+    <string name="note_details">Detalles de nota</string>
+    <string name="create_note">Crear nota</string>
+    <string name="save_note">Guardar nota</string>
+    <string name="delete_note">Eliminar nota</string>
+
+    <!-- Tipos de notas -->
+    <string name="note_type_text">Texto libre</string>
+    <string name="note_type_list">Lista de tareas</string>
+    <string name="note_type_label">Tipo de nota</string>
+
+    <!-- Filtros de notas -->
+    <string name="filter_notes_all">Todas</string>
+    <string name="filter_notes_active">Activas</string>
+    <string name="filter_notes_archived">Archivadas</string>
+    <string name="filter_notes_favorites">Favoritas</string>
+
+    <!-- Contenido de notas -->
+    <string name="note_title_hint">Título de la nota</string>
+    <string name="note_content_hint">Escribe tu nota aquí…</string>
+    <string name="note_untitled">Sin título</string>
+    <string name="add_list_item">Añadir elemento</string>
+    <string name="delete_item">Eliminar elemento</string>
+    <string name="content">Contenido</string>
+    <string name="list_items">Listado de ítems</string>
+    <string name="updated_date">Fecha de actualización</string>
+    <string name="note_status">Estado</string>
+    <string name="note_list_preview_format">%1$d/%2$d elementos completados</string>
+
+    <!-- Acciones de notas -->
+    <string name="archive_note">Archivar nota</string>
+    <string name="unarchive_note">Desarchivar nota</string>
+    <string name="favorite_note">Marcar como favorita</string>
+    <string name="unfavorite_note">Quitar de favoritas</string>
+
+    <!-- Empty states de notas -->
+    <string name="no_notes_found_search">No se encontraron notas</string>
+    <string name="no_notes_found_search_message">No hay notas que coincidan con \"%s\"</string>
+    <string name="no_notes_all_title">Sin notas</string>
+    <string name="no_notes_all_message">Crea tu primera nota para empezar</string>
+    <string name="no_notes_active_title">Sin notas activas</string>
+    <string name="no_notes_active_message">Las notas activas aparecerán aquí</string>
+    <string name="no_notes_archived_title">Sin notas archivadas</string>
+    <string name="no_notes_archived_message">Las notas archivadas aparecerán aquí</string>
+    <string name="no_notes_favorites_title">Sin notas favoritas</string>
+    <string name="no_notes_favorites_message">Marca tus notas como favoritas para verlas aquí</string>
+    <string name="create_first_note">Crear mi primera nota</string>
+
+    <!-- Diálogos de notas -->
+    <string name="delete_note_title">Eliminar nota</string>
+    <string name="delete_note_message">¿Estás seguro de que quieres eliminar esta nota? Esta acción no se puede deshacer.</string>
+    <string name="archive_note_title">Archivar nota</string>
+    <string name="archive_note_message">¿Quieres archivar esta nota?</string>
+    <string name="unarchive_note_title">Desarchivar nota</string>
+    <string name="unarchive_note_message">¿Quieres desarchivar esta nota?</string>
+
+    <!-- Errores de notas -->
+    <string name="error_saving_note">Error al guardar la nota</string>
+    <string name="error_loading_note">Error al cargar la nota</string>
+    <string name="error_deleting_note">Error al eliminar la nota</string>
+    <string name="note_not_found">Nota no encontrada</string>
+    <string name="error_archiving_note">Error al archivar la nota</string>
+    <string name="error_updating_note">Error al actualizar la nota</string>
+    <string name="error_updating_note_favorite">Error al actualizar favorito: %1$s</string>
+    <string name="error_invalid_note_id">ID de nota inválido</string>
+    <string name="empty_note_cannot_save">No se puede guardar una nota vacía</string>
+
+    <!-- Errores de tareas -->
+    <string name="error_updating_task_completion">Error al actualizar tarea: %1$s</string>
+    <string name="error_archiving_task">Error al archivar tarea: %1$s</string>
+    <string name="error_deleting_task">Error al eliminar tarea: %1$s</string>
+    <string name="error_invalid_task_id">ID de tarea inválido</string>
+    <string name="task_not_found">Tarea no encontrada</string>
+
+    <!-- Errores de configuración -->
+    <string name="error_current_password_required">La contraseña actual es requerida</string>
+    <string name="error_changing_password">Error al cambiar contraseña: %1$s</string>
+    <string name="error_deleting_account">Error al eliminar cuenta: %1$s</string>
+    <string name="error_updating_profile">Error al actualizar perfil: %1$s</string>
+
+    <!-- Errores de dashboard -->
+    <string name="error_loading_dashboard_generic">Error desconocido al cargar el dashboard</string>
+    <string name="error_loading_dashboard_with_details">Error al cargar dashboard: %1$s</string>
+    <string name="error_updating_habit_dashboard">Error al actualizar hábito: %1$s</string>
+    <string name="error_updating_task_dashboard">Error al actualizar tarea: %1$s</string>
+
+    <!-- ============================================ -->
+    <!-- CONFIGURACIÓN -->
+    <!-- ============================================ -->
+    <string name="settings_title">Configuración</string>
+    <string name="settings_section_account">Cuenta</string>
+    <string name="settings_section_app">Aplicación</string>
+    <string name="settings_section_danger">Zona de peligro</string>
+    <string name="settings_edit_profile">Editar perfil</string>
+    <string name="settings_change_password">Cambiar contraseña</string>
+    <string name="settings_change_password_subtitle">Actualiza tu contraseña de acceso</string>
+    <string name="settings_theme">Tema</string>
+    <string name="settings_language">Idioma</string>
+    <string name="settings_logout">Cerrar sesión</string>
+    <string name="settings_logout_subtitle">Salir de tu cuenta actual</string>
+    <string name="settings_delete_account">Eliminar cuenta</string>
+    <string name="settings_delete_account_subtitle">Eliminar permanentemente tu cuenta y todos tus datos</string>
+
+    <!-- Temas -->
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Oscuro</string>
+    <string name="theme_system">Sistema</string>
+
+    <!-- Editar Perfil -->
+    <string name="edit_profile_instructions">Actualiza tu información personal. Los cambios se guardarán inmediatamente.</string>
+    <string name="profile_updated_success">Perfil actualizado correctamente</string>
+
+    <!-- Cambiar Contraseña -->
+    <string name="change_password_instructions">Introduce tu contraseña actual y la nueva contraseña que deseas usar.</string>
+    <string name="label_current_password">Contraseña actual</string>
+    <string name="label_new_password">Nueva contraseña</string>
+    <string name="label_confirm_password">Confirmar contraseña</string>
+    <string name="change_password">Cambiar contraseña</string>
+    <string name="password_changed_success">Contraseña actualizada correctamente</string>
+    <string name="password_requirements_title">Requisitos de contraseña:</string>
+    <string name="password_requirement_length">Mínimo 6 caracteres</string>
+    <string name="password_requirement_letter">Al menos una letra</string>
+
+    <!-- Idioma -->
+    <string name="language_selection_instructions">Selecciona tu idioma preferido. La aplicación se actualizará automáticamente.</string>
+
+    <!-- Diálogos de configuración -->
+    <string name="dialog_logout_title">¿Cerrar sesión?</string>
+    <string name="dialog_logout_message">¿Estás seguro de que deseas cerrar sesión?</string>
+    <string name="dialog_logout_confirm">Cerrar sesión</string>
+    <string name="dialog_delete_account_title">¿Eliminar cuenta?</string>
+    <string name="dialog_delete_account_message">Esta acción es permanente. Se eliminarán todos tus hábitos, tareas y notas. No podrás recuperar tu cuenta.</string>
+    <string name="dialog_delete_account_confirm">Eliminar cuenta</string>
+
+    <!-- ============================================ -->
+    <!-- BÚSQUEDA Y FILTROS -->
+    <!-- ============================================ -->
+    <string name="search_placeholder">Buscar…</string>
+    <string name="filter">Filtrar</string>
+    <string name="close_search">Cerrar búsqueda</string>
+    <string name="clear_search">Limpiar</string>
+
+    <!-- ============================================ -->
+    <!-- RECORDATORIOS Y NOTIFICACIONES -->
+    <!-- ============================================ -->
+    <string name="in_1_hour">En 1 hora</string>
+    <string name="tomorrow_9am">Mañana 9am</string>
+    <string name="next_week">Próxima semana</string>
+    <string name="in_x_minutes">En %d minutos</string>
+    <string name="in_x_hours">En %d horas</string>
+    <string name="in_x_days">En %d días</string>
+    <string name="in_x_weeks">En %d semanas</string>
+    <string name="snooze_5_min">5 min</string>
+    <string name="snooze_15_min">15 min</string>
+    <string name="reminder_snoozed">Recordatorio pospuesto %d minutos</string>
+
+    <!-- Permisos -->
+    <string name="permissions_needed">Permisos Necesarios</string>
+    <string name="permissions_reminder_description">Para que los recordatorios funcionen correctamente, necesitas habilitar:</string>
+    <string name="permission_exact_alarm">Alarmas exactas</string>
+    <string name="permission_notification">Permisos de notificación</string>
+    <string name="permission_notification_settings">Notificaciones habilitadas</string>
+    <string name="permission_exact_alarm_desc">Para programar recordatorios precisos</string>
+    <string name="permission_notification_desc">Para mostrar notificaciones</string>
+    <string name="permission_notification_settings_desc">Para que aparezcan las notificaciones</string>
+
+    <!-- ============================================ -->
+    <!-- ESTADÍSTICAS E INFORMACIÓN -->
+    <!-- ============================================ -->
+    <string name="stats_info_title">¿Cómo se calculan tus estadísticas?</string>
+    <string name="stats_info_button_description">Información sobre las estadísticas</string>
+    <string name="stats_info_description">Aquí te explicamos cómo funcionan las métricas principales de tu progreso.</string>
+    <string name="stats_info_streak_title">Racha</string>
+    <string name="stats_info_streak_desc_simple">Tu racha aumenta cada día que completas el 100% de los hábitos programados. Si un día fallas, la racha se reinicia a cero. ¡Las tareas no afectan a la racha!</string>
+    <string name="stats_info_score_title">Puntuación de Productividad</string>
+    <string name="stats_info_score_desc_main">Es un indicador de tu rendimiento general del día, de 0 a 100.</string>
+    <string name="stats_info_score_desc_breakdown">Se calcula combinando el porcentaje de hábitos completados (60% del peso) y el estado de tus tareas (40% del peso), con un pequeño bonus por mantener una racha activa.</string>
+
+    <!-- ============================================ -->
+    <!-- COMPONENTES UI -->
+    <!-- ============================================ -->
+
+    <!-- Diálogos generales -->
+    <string name="dialog_confirm_button_text">Confirmar</string>
+    <string name="dialog_cancel_button_text">Cancelar</string>
+    <string name="dialog_ok_button_text">Aceptar</string>
+    <string name="dialog_understood_button_text">Entendido</string>
+    <string name="dialog_great_button_text">Genial</string>
+    <string name="dialog_error_title">Error</string>
+    <string name="dialog_success_title">¡Éxito!</string>
+    <string name="dialog_confirmation_title">Confirmación</string>
+
+    <!-- FAB -->
+    <string name="fab_add_habit_text">Nuevo Hábito</string>
+
+    <!-- Progress -->
+    <string name="progress_default_label">Progreso</string>
+    <string name="progress_percentage_format">%1$d%%</string>
+
+    <!-- Plurals -->
+    <plurals name="dashboard_summary_overdue_tasks">
+        <item quantity="one">Tienes 1 tarea vencida. ¡Es hora de ponerse al día!</item>
+        <item quantity="other">Tienes %d tareas vencidas. ¡Es hora de ponerse al día!</item>
+    </plurals>
+
+    <!-- ============================================ -->
+    <!-- SALUDOS Y MENSAJES -->
+    <!-- ============================================ -->
+    <string name="greeting_morning">Buenos días</string>
+    <string name="greeting_afternoon">Buenas tardes</string>
+    <string name="greeting_evening">Buenas noches</string>
+
+    <!-- ============================================ -->
+    <!-- FECHAS -->
+    <!-- ============================================ -->
+    <string name="date_today">Hoy</string>
+    <string name="date_yesterday">Ayer</string>
+    <string name="date_tomorrow">Mañana</string>
+
+    <!-- Días de la semana -->
+    <string name="weekday_monday">Lunes</string>
+    <string name="weekday_tuesday">Martes</string>
+    <string name="weekday_wednesday">Miércoles</string>
+    <string name="weekday_thursday">Jueves</string>
+    <string name="weekday_friday">Viernes</string>
+    <string name="weekday_saturday">Sábado</string>
+    <string name="weekday_sunday">Domingo</string>
+
+
+    <!-- ============================================ -->
+    <!-- CONTENT DESCRIPTIONS -->
+    <!-- ============================================ -->
     <string name="content_description_email_icon">Icono de email.</string>
     <string name="content_description_lock_icon">Icono de candado.</string>
     <string name="content_description_person_icon">Icono de persona.</string>
@@ -72,722 +613,25 @@
     <string name="content_description_close_icon">Icono de cerrar</string>
     <string name="content_description_edit_icon">Icono de editar</string>
     <string name="content_description_play_icon">Icono de reproducir</string>
-    <string name="content_description_go_to_details">Ir a detalles</string>
-    <string name="content_description_completed_habit">Hábito completado</string>
-
-    <string name="nav_dashboard">Dashboard</string>
-    <string name="nav_habits">Hábitos</string>
-    <string name="nav_tasks">Tareas</string>
-    <string name="nav_notes">Notas</string>
-    <string name="nav_progress">Progreso</string>
-    <string name="nav_achievements">Logros</string>
-    <string name="nav_settings">Configuración</string>
-    <string name="action_save">Guardar</string>
-    <string name="action_cancel">Cancelar</string>
-    <string name="action_delete">Eliminar</string>
-    <string name="action_edit">Editar</string>
-    <string name="action_back">Atrás</string>
-    <string name="action_logout">Cerrar Sesión</string>
-    <string name="action_refresh">Actualizar</string>
-    <string name="action_ok">Aceptar</string> <string name="success_logout">Sesión cerrada exitosamente.</string>
-
-    <string name="loading">Cargando…</string>
-    <string name="processing">Procesando…</string>
-
-    <string name="placeholder_dashboard_title">Dashboard</string>
-    <string name="placeholder_habit_list_title">Lista de Hábitos</string>
-    <string name="placeholder_task_list_title">Lista de Tareas</string>
-    <string name="placeholder_note_list_title">Lista de Notas</string>
-    <string name="placeholder_progress_title">Progreso</string>
-    <string name="placeholder_achievements_title">Logros</string>
-    <string name="placeholder_settings_title">Configuración</string>
-
-    <string name="welcome_onboarding_title">Bienvenida</string>
-    <string name="welcome_onboarding_subtitle">¡Emprende tu viaje hacia hábitos saludables y un estilo de vida más pleno!</string>
-    <string name="value_prop_onboarding_title">Propuesta de Valor</string>
-    <string name="value_prop_onboarding_bullet1">Organiza tus hábitos y tareas diarias de forma sencilla.</string>
-    <string name="value_prop_onboarding_bullet2">Visualiza tu progreso y mantente motivado con rachas y logros.</string>
-    <string name="value_prop_onboarding_bullet3">Personaliza tus recordatorios para nunca perder el ritmo.</string>
-    <string name="onboarding_next_button">Siguiente</string>
-    <string name="onboarding_back_button">Atrás</string>
-    <string name="onboarding_skip_button">Omitir</string>
-
-    <string name="dashboard_greeting">Hola, %1$s!</string>
-    <string name="dashboard_level_xp">Nivel %1$d - %2$d XP</string>
-    <string name="dashboard_daily_summary_title">Resumen Diario</string>
-    <string name="dashboard_habits_progress">Hábitos: %1$d/%2$d</string>
-    <string name="dashboard_tasks_pending">Tareas Pendientes: %1$d</string>
-    <string name="dashboard_daily_habits_title">Hábitos Diarios</string>
-    <string name="dashboard_priority_tasks_title">Tareas Prioritarias</string>
-    <string name="dashboard_view_all_cta">Ver todas</string>
-    <string name="dashboard_streak_title">Racha Actual</string>
-    <string name="dashboard_productive_days_title">Días Productivos este mes</string>
-    <string name="dashboard_recent_achievements_title">Logros Recientes</string>
-    <string name="dashboard_add_new_fab_content_description">Añadir nuevo hábito, tarea o nota</string>
-
-    <string name="create_habit_title">Crear Hábito</string>
-    <string name="edit_habit_title">Editar Hábito</string>
-    <string name="habit_name_label">Nombre del Hábito</string>
-    <string name="habit_icon_selector_label">Icono del Hábito</string>
-    <string name="habit_category_label">Categoría</string>
-    <string name="habit_description_label">Descripción (Opcional)</string>
-    <string name="habit_daily_target_label">Meta Diaria (opcional)</string> <string name="habit_step1_title">Información Básica</string>
-    <string name="habit_step2_title">Configuración</string>
-    <string name="habit_type_label">Tipo de Hábito</string>
-    <string name="habit_type_yes_no">Sí/No</string>
-    <string name="habit_type_quantitative">Cuantitativo</string>
-    <string name="habit_type_timer">Temporizador</string>
-    <string name="habit_type_do_once">Una Sola Vez</string>
-    <string name="habit_goal_label">Meta</string>
-    <string name="habit_frequency_label">Frecuencia</string>
-    <string name="habit_frequency_daily">Diario</string>
-    <string name="habit_frequency_weekly">Semanal</string>
-    <string name="habit_frequency_custom">Personalizado</string>
-    <string name="habit_days_of_week_label">Días de la semana</string>
-    <string name="habit_frequency_days_label">Días de la Semana</string>
-    <string name="habit_step3_title">Recordatorios</string>
-    <string name="habit_enable_reminders_toggle">Habilitar recordatorios</string>
-    <string name="habit_add_time_label">Añadir hora</string>
-    <string name="habit_custom_message_label">Mensaje personalizado (Opcional)</string>
-    <string name="habit_repeat_label">Repetición</string>
-    <string name="habit_preview_title">Vista Previa</string>
-    <string name="select_habit_type">Seleccionar Tipo de Hábito</string>
-    <string name="select_habit_frequency">Seleccionar Frecuencia del Hábito</string>
-    <string name="select_frequency_days">Seleccionar Días</string>
-    <string name="weekday_monday">Lunes</string>
-    <string name="weekday_tuesday">Martes</string>
-    <string name="weekday_wednesday">Miércoles</string>
-    <string name="weekday_thursday">Jueves</string>
-    <string name="weekday_friday">Viernes</string>
-    <string name="weekday_saturday">Sábado</string>
-    <string name="weekday_sunday">Domingo</string>
-    <string name="habit_saved_success_title">¡Hábito Guardado!</string>
-    <string name="habit_saved_success_message">Tu hábito se ha guardado exitosamente.</string>
-
     <string name="content_description_habit_name_icon">Icono de nombre del hábito</string>
     <string name="content_description_habit_description_icon">Icono de descripción del hábito</string>
-    <string name="content_description_habit_type_selector">Selector de tipo de hábito</string>
-    <string name="content_description_habit_frequency_selector">Selector de frecuencia de hábito</string>
-    <string name="content_description_habit_daily_target_icon">Icono de meta diaria</string> <string name="content_description_habit_frequency_days_selector">Selecciona los días en que ocurrirá tu hábito</string>
+    <string name="content_description_habit_daily_target_icon">Icono de meta diaria</string>
     <string name="content_description_habit_icon">Icono del hábito %1$s</string>
-
-
-    <string name="dialog_confirm_button_text">Confirmar</string>
-    <string name="dialog_cancel_button_text">Cancelar</string>
-    <string name="dialog_ok_button_text">Aceptar</string>
-    <string name="dialog_understood_button_text">Entendido</string>
-    <string name="dialog_great_button_text">Genial</string>
-    <string name="dialog_error_title">Error</string>
-    <string name="dialog_success_title">¡Éxito!</string>
-    <string name="dialog_confirmation_title">Confirmación</string>
-    <string name="dialog_delete_confirmation_message">¿Estás seguro de que quieres eliminar este elemento de forma permanente?</string>
-    <string name="dialog_info_title">Información</string>
-    <string name="dialog_info_message">Este es un mensaje informativo para el usuario.</string>
-    <string name="dialog_error_default_message">No se pudo completar la operación. Por favor, inténtalo de nuevo más tarde.</string>
-    <string name="dialog_success_default_message">Tu acción se ha realizado correctamente. ¡Bien hecho!</string>
-
-    <string name="fab_add_habit_text">Nuevo Hábito</string>
-    <string name="fab_edit_text">Editar</string>
     <string name="content_description_add_habit_fab">Añadir nuevo hábito</string>
     <string name="content_description_open_quick_action_fab">Abrir acciones rápidas</string>
     <string name="content_description_close_quick_action_fab">Cerrar acciones rápidas</string>
     <string name="content_description_start_habit_fab">Iniciar hábito</string>
     <string name="content_description_edit_fab">Editar elemento</string>
-    <string name="content_description_add_default_fab">Botón de añadir</string>
-    <string name="content_description_add_small_fab">Botón pequeño de añadir</string>
-    <string name="content_description_add_large_fab">Botón grande de añadir</string>
-    <string name="specialized_fabs_title">FABs Especializados</string>
-    <string name="content_description_edit_habit_fab">Editar hábito</string>
-    <string name="fab_add_new_habit">Nuevo Hábito</string>
-
-    <string name="progress_default_label">Progreso</string>
-    <string name="progress_percentage_format">%1$d%%</string>
-    <string name="habit_streak_progress_label">Racha: %1$d / %2$d días</string>
-    <string name="weekly_goal_progress_label">%1$d/%2$d</string>
-    <string name="linear_progress_example_label">Hábitos completados hoy</string>
-    <string name="circular_progress_example_label_90">90%</string>
-    <string name="mini_progress_habit_label">Hábito %1$d</string>
-
-    <string name="item_task_title_1">Mi primera tarea del día</string>
-    <string name="item_task_subtitle_1">Fecha límite: 25 May</string>
-    <string name="content_description_task_icon">Icono de tarea</string>
-    <string name="item_task_title_2">Revisar email</string>
-    <string name="item_task_title_3">Comprar víveres</string>
-    <string name="item_task_title_disabled">Hábito Completado</string>
-    <string name="item_task_subtitle_disabled">Marcado el 24 de Mayo</string>
-    <string name="item_task_title_urgent">Tarea Urgente</string>
-    <string name="item_task_subtitle_urgent">Prioridad alta</string>
-    <string name="habit_card_water_title">Beber Agua</string>
-    <string name="habit_card_water_description">8 vasos al día para mantenerte hidratado y sano. ¡Vamos!</string>
-    <string name="content_description_water_habit_icon">Icono de hábito de beber agua</string>
-    <string name="habit_card_read_title">Leer 10min</string>
-    <string name="habit_card_read_description">Dedica un tiempo a la lectura cada día.</string>
-    <string name="content_description_read_habit_icon">Icono de hábito de lectura</string>
-
-    <string name="habit_list_screen_title">Mis Hábitos</string> <string name="habit_list_all_habits_title">Todos los Hábitos Activos</string> <string name="habit_list_no_all_habits">No se encontraron hábitos activos. ¡Crea uno!</string> <string name="habit_list_no_habits_today">¡No tienes hábitos programados para hoy! Tómate un descanso o crea uno nuevo.</string>
-    <string name="habit_list_show_today_only">Mostrar solo hábitos de hoy</string>
-    <string name="habit_list_today_habits_title">Hábitos de Hoy</string>
-
-    <string name="habit_detail_title">Detalles del Hábito</string>
-    <string name="habit_detail_section_info">Información General</string>
-    <string name="habit_detail_section_progress">Progreso</string>
-    <string name="habit_detail_section_history">Historial de Registros</string>
-    <string name="habit_detail_completion_rate">Completado: %1$d de %2$d</string>
-    <string name="habit_detail_no_history">No hay registros de este hábito aún.</string>
-    <string name="habit_start_date">Fecha de Inicio</string>
-    <string name="habit_end_date">Fecha de Fin</string>
-    <string name="log_status_completed">Completado</string>
-    <string name="log_status_skipped">Saltado</string>
-    <string name="log_status_pending">Pendiente</string>
-    <string name="log_status_missed">Perdido</string>
-
-    <string name="preview_today_habits_title">Hábitos de Hoy</string>
-    <string name="preview_water_habit_name">Beber Agua</string>
-    <string name="preview_water_habit_description">Beber 8 vasos de agua al día</string>
-    <string name="preview_read_habit_name">Leer un Libro</string>
-    <string name="preview_read_habit_description">Leer 20 páginas de un libro</string>
-    <string name="preview_all_habits_title">Todos los Hábitos</string>
-    <string name="preview_meditation_habit_name">Meditación Diaria</string>
-    <string name="preview_meditation_habit_description">10 minutos de atención plena</string>
-    <string name="content_description_meditation_habit_icon">Icono de hábito de meditación</string>
-
-    <!-- Error messages -->
-    <string name="error_loading_habit">Error al cargar el hábito</string>
-    <string name="error_daily_target_required">El objetivo diario es requerido para este tipo de hábito</string>
-    <string name="error_frequency_days_required">Los días de la semana son requeridos para esta frecuencia</string>
-
-    <!-- Labels for daily target -->
-    <string name="habit_daily_target_quantity_label">Objetivo diario (cantidad)</string>
-    <string name="habit_daily_target_time_label">Objetivo diario (minutos)</string>
-
-    <!-- Frequency options -->
-    <string name="frequency_daily">Diario</string>
-    <string name="frequency_weekly">Semanal</string>
-    <string name="frequency_custom">Personalizado</string>
-
-    <!-- Placeholder -->
-    <string name="select_days_placeholder">Seleccionar días</string>
     <string name="content_description_completed">Completada!</string>
-    <string name="action_decrease">Bajar</string>
-    <string name="action_increase">Aumentar</string>
-    <string name="action_undo">Deshacer</string>
-    <string name="action_complete">Completar</string>
-    <string name="action_skip">Saltar</string>
-    <string name="error_updating_habit">Error al actualizar el hábito</string>
-    <string name="habit_progress_text">Progeso del hábito</string>
-    <string name="log_status_partial">Parcial</string>
-    <string name="action_undo_skip">Deshacer saltar</string>
     <string name="content_description_skipped">Saltada</string>
-    <string name="habit_card_complete">Completada</string>
-    <string name="action_unarchive_habit">Desarchivar hábito</string>
-    <string name="action_archive_habit">Archivar hábito</string>
-    <string name="error_archiving_habit">Error al archivar el hábito</string>
-    <string name="log_status_not_completed">Sin completar</string>
-    <string name="action_confirm">Confirmar</string>
-    <string name="action_clear_date">Quitar fecha</string>
-    <string name="content_description_end_date_picker">Selector de fechas</string>
-    <string name="habit_end_date_label">Fecha de fin</string>
-    <string name="content_description_start_date_picker">Fecha de inicio</string>
-    <string name="habit_start_date_label">Fecha de inicio</string>
-    <string name="error_marking_habit_skipped">Error al marcar saltar</string>
-    <string name="error_updating_habit_progress">Errpr al actualixar el progreso</string>
-    <string name="error_processing_missed_habits">Error al procesar los hábitos perdidos</string>
     <string name="content_description_missed">Perdida</string>
-    <string name="error_undoing_skip">Error al deshacer el salto</string>
-
-    <string name="habit_status_label">Estado</string>
-    <string name="habit_status_active">Activo</string>
-    <string name="habit_status_archived">Archivado</string>
-
-    <string name="habit_detail_today_progress">Progreso de hoy</string>
-    <string name="habit_detail_overall_progress">Progreso general</string>
-    <string name="status_completed">Completado</string>
-    <string name="status_partial">Parcial (%1$d)</string>
-    <string name="status_not_completed">No completado</string>
-    <string name="status_not_started">Sin iniciar</string>
-
-    <!-- Strings básicos de Task -->
-    <string name="tasks">Tareas</string>
-    <string name="create_task">Crear Tarea</string>
-    <string name="edit_task">Editar Tarea</string>
-    <string name="task_details">Detalles de Tarea</string>
-    <string name="update_task">Actualizar Tarea</string>
-    <string name="delete_task">Eliminar Tarea</string>
-    <string name="archive_task">Archivar Tarea</string>
-    <string name="unarchive_task">Desarchivar Tarea</string>
-
-    <!-- Formularios -->
-    <string name="task_title">Título de la tarea</string>
-    <string name="task_title_placeholder">Ingresa el título de la tarea</string>
-    <string name="task_description">Descripción</string>
-    <string name="task_description_placeholder">Describe la tarea (opcional)</string>
-    <string name="due_date">Fecha de vencimiento</string>
-    <string name="select_date">Seleccionar fecha</string>
-    <string name="clear_date">Limpiar fecha</string>
-
-    <!-- Prioridades -->
-    <string name="priority">Prioridad</string>
-    <string name="select_priority">Seleccionar prioridad</string>
-    <string name="priority_high">Alta</string>
-    <string name="priority_medium">Media</string>
-    <string name="priority_low">Baja</string>
-    <string name="no_priority">Sin prioridad</string>
-    <string name="clear_priority">Limpiar prioridad</string>
-
-    <!-- Recordatorios -->
-    <string name="reminder">Recordatorio</string>
-    <string name="select_reminder_time">Seleccionar hora</string>
-    <string name="clear_reminder">Limpiar recordatorio</string>
-
-    <!-- Filtros -->
-    <string name="filter_active">Activas</string>
-    <string name="filter_completed">Completadas</string>
-    <string name="filter_archived">Archivadas</string>
-    <string name="filter_overdue">Vencidas</string>
-
-    <!-- Estados vacíos -->
-    <string name="no_active_tasks">No hay tareas activas</string>
-    <string name="no_completed_tasks">No hay tareas completadas</string>
-    <string name="no_archived_tasks">No hay tareas archivadas</string>
-    <string name="no_overdue_tasks">No hay tareas vencidas</string>
-    <string name="no_active_tasks_subtitle">Crea tu primera tarea para empezar</string>
-    <string name="no_completed_tasks_subtitle">Las tareas completadas aparecerán aquí</string>
-    <string name="no_archived_tasks_subtitle">Las tareas archivadas aparecerán aquí</string>
-    <string name="no_overdue_tasks_subtitle">¡Genial! No tienes tareas vencidas</string>
-    <string name="create_first_task">Crear primera tarea</string>
-
-    <!-- Acciones -->
-    <string name="add_task">Añadir tarea</string>
-    <string name="search_tasks">Buscar tareas</string>
-    <string name="more_options">Más opciones</string>
-    <string name="navigate_back">Volver</string>
-    <string name="save">Guardar</string>
-    <string name="ok">OK</string>
-    <string name="cancel">Cancelar</string>
-    <string name="delete">Eliminar</string>
-    <string name="archive">Archivar</string>
-    <string name="unarchive">Desarchivar</string>
-
-    <!-- Estados -->
-    <string name="task_overdue">Vencida</string>
-    <string name="description">Descripción</string>
-    <string name="dates">Fechas</string>
-    <string name="completion_date">Fecha de finalización</string>
-    <string name="created_date">Fecha de creación</string>
-    <string name="task_status">Estado de la tarea</string>
-    <string name="status">Estado</string>
-    <string name="active">Activa</string>
-    <string name="completed">Completada</string>
-    <string name="archived">Archivada</string>
-
-    <!-- Diálogos -->
-    <string name="delete_task_title">¿Eliminar tarea?</string>
-    <string name="delete_task_message">Esta acción no se puede deshacer.</string>
-    <string name="archive_task_title">¿Archivar tarea?</string>
-    <string name="archive_task_message">La tarea se moverá al archivo.</string>
-    <string name="unarchive_task_title">¿Desarchivar tarea?</string>
-    <string name="unarchive_task_message">La tarea se moverá a activas.</string>
-
-    <!-- DateTime picker strings -->
-    <string name="select_time">Seleccionar hora</string>
-    <string name="select_date_and_time">Seleccionar fecha y hora</string>
-
-    <!-- Debugging strings -->
-    <string name="error_creating_task">Error al crear la tarea</string>
-    <string name="task_created_successfully">Tarea creada exitosamente</string>
-    <string name="task_updated_successfully">Tarea actualizada exitosamente</string>
-    <string name="filter_all">Todas</string>
-    <string name="no_tasks">Todavía no has creado ninguna tarea :D</string>
-    <string name="no_tasks_subtitle">No se han creado tareas</string>
-
-    <!-- Filters -->
-    <string name="filter_by">Filtrar por</string>
-
-    <!-- Search -->
-    <string name="search_tasks_placeholder">Buscar tareas…</string>
-    <string name="close_search">Cerrar búsqueda</string>
-    <string name="clear_search">Limpiar</string>
-
-    <!-- Date/Time -->
-    <string name="date_label">Fecha</string>
-    <string name="time_label">Hora</string>
-
-    <!-- Permissions -->
-    <string name="permissions_needed">Permisos Necesarios</string>
-    <string name="permissions_reminder_description">Para que los recordatorios funcionen correctamente, necesitas habilitar:</string>
-    <string name="permission_exact_alarm">Alarmas exactas</string>
-    <string name="permission_notification">Permisos de notificación</string>
-    <string name="permission_notification_settings">Notificaciones habilitadas</string>
-    <string name="permission_exact_alarm_desc">Para programar recordatorios precisos</string>
-    <string name="permission_notification_desc">Para mostrar notificaciones</string>
-    <string name="permission_notification_settings_desc">Para que aparezcan las notificaciones</string>
-    <string name="go_to_settings">Ir a Configuración</string>
-
-    <!-- Notifications -->
-    <string name="task_reminders_channel">Recordatorios de Tareas</string>
-    <string name="task_reminders_channel_desc">Notificaciones para recordatorios de tareas</string>
-    <string name="task_reminder_title">Recordatorio de Tarea</string>
-    <string name="task_reminder_default">Recordatorio de tarea</string>
-    <string name="task_reminder_text">Recordatorio: %1$s a las %2$s</string>
-    <string name="complete_action">Completar</string>
-    <string name="task_completed">Tarea completada</string>
-    <string name="error_completing_task">Error al completar tarea</string>
-
-    <!-- Form validation -->
-    <string name="title_required">El título es obligatorio</string>
-    <string name="user_not_found">Usuario no encontrado</string>
-    <string name="permissions_needed_for_reminders">Se necesitan permisos para programar recordatorios</string>
-    <string name="task_saved_reminder_error">Tarea guardada, pero no se pudo programar el recordatorio: %1$s</string>
-    <string name="unknown_error">Error desconocido</string>
-
-
-    <!-- Notes feature -->
-    <string name="notes">Notas</string>
-    <string name="add_note">Agregar nota</string>
-    <string name="edit_note">Editar nota</string>
-    <string name="note_details">Detalles de nota</string>
-    <string name="create_note">Crear nota</string>
-    <string name="save_note">Guardar nota</string>
-    <string name="delete_note">Eliminar nota</string>
-
-    <!-- Note types -->
-    <string name="note_type_text">Texto libre</string>
-    <string name="note_type_list">Lista de tareas</string>
-
-    <!-- Note filters -->
-    <string name="filter_notes_all">Todas</string>
-    <string name="filter_notes_active">Activas</string>
-    <string name="filter_notes_archived">Archivadas</string>
-    <string name="filter_notes_favorites">Favoritas</string>
-
-    <!-- Note content -->
-    <string name="note_title_hint">Título de la nota</string>
-    <string name="note_content_hint">Escribe tu nota aquí…</string>
-    <string name="note_untitled">Sin título</string>
-    <string name="list_item_hint">Escribe aquí…</string>
-    <string name="add_list_item">Añadir elemento</string>
-
-    <!-- Note actions -->
-    <string name="archive_note">Archivar nota</string>
-    <string name="unarchive_note">Desarchivar nota</string>
-    <string name="favorite_note">Marcar como favorita</string>
-    <string name="unfavorite_note">Quitar de favoritas</string>
-    <string name="share_note">Compartir nota</string>
-    <string name="duplicate_note">Duplicar nota</string>
-
-    <!-- Note stats -->
-    <string name="note_word_count">%1$d palabras</string>
-    <string name="list_completion">%1$d/%2$d completados</string>
-    <string name="list_completion_percentage">%1$d%% completado</string>
-    <string name="notes_statistics">Estadísticas</string>
-    <string name="total_notes">Total de notas</string>
-    <string name="total_words">Total de palabras</string>
-
-    <!-- Search -->
-    <string name="search_notes">Buscar notas</string>
-    <string name="search_notes_hint">Buscar en títulos y contenido…</string>
-    <string name="no_notes_found">No se encontraron notas</string>
-
-    <!-- Empty states -->
-    <string name="empty_notes_title">¡Empieza a escribir!</string>
-    <string name="empty_notes_description">Crea tu primera nota para organizar tus ideas</string>
-    <string name="empty_archived_notes">No hay notas archivadas</string>
-    <string name="empty_favorite_notes">No hay notas favoritas</string>
-    <string name="empty_search_results">No se encontraron resultados</string>
-
-    <!-- Dialogs -->
-    <string name="delete_note_title">Eliminar nota</string>
-    <string name="delete_note_message">¿Estás seguro de que quieres eliminar esta nota? Esta acción no se puede deshacer.</string>
-    <string name="archive_note_title">Archivar nota</string>
-    <string name="archive_note_message">¿Quieres archivar esta nota?</string>
-    <string name="unarchive_note_title">Desarchivar nota</string>
-    <string name="unarchive_note_message">¿Quieres desarchivar esta nota?</string>
-
-    <!-- Indentation -->
-    <string name="increase_indent">Aumentar indentación</string>
-    <string name="decrease_indent">Reducir indentación</string>
-
-    <!-- Errors -->
-    <string name="error_saving_note">Error al guardar la nota</string>
-    <string name="error_loading_note">Error al cargar la nota</string>
-    <string name="error_deleting_note">Error al eliminar la nota</string>
-    <string name="note_not_found">Nota no encontrada</string>
-
-    <!-- Auto-save and validation -->
-    <string name="empty_note_cannot_save">No se puede guardar una nota vacía</string>
-    <string name="auto_saved">Guardado automáticamente</string>
-    <string name="unsaved_changes">Cambios sin guardar</string>
-
-    <!-- Drag and drop -->
-    <string name="drag_to_reorder">Arrastra para reordenar</string>
-    <string name="reorder_items">Reordenar elementos</string>
-
-    <!-- Error messages -->
-    <string name="error_archiving_note">Error al archivar la nota</string>
-    <string name="error_updating_note">Error al actualizar la nota</string>
-
-    <string name="filter_notes_by">Filtrar por</string>
-    <string name="delete_item">Eliminar elemento</string>
-    <string name="and_more_items">… y %1$d más</string>
-    <string name="unsaved_changes_dialog_message">Tienes cambios sin guardar. ¿Quieres descartarlos?</string>
-    <string name="discard_changes">Descartar cambios</string>
-    <string name="try_different_search">Prueba con otros términos de búsqueda</string>
-    <string name="archived_notes_appear_here">Las notas archivadas aparecerán aquí</string>
-    <string name="favorite_notes_appear_here">Las notas favoritas aparecerán aquí</string>
-    <string name="create_first_note">Crear mi primera nota</string>
-
-    <string name="navigate_to_habits">Ir a Hábitos</string>
-    <string name="navigate_to_tasks">Ir a Tareas</string>
-    <string name="navigate_to_notes">Ir a Notas</string>
-    <string name="back_to_dashboard">Volver al Dashboard</string>
-    <string name="logout">Cerrar Sesión</string>
-
-    <!-- Dashboard -->
-    <string name="dashboard_title">HabitJourney Dashboard</string>
-    <string name="habits_section">Hábitos</string>
-    <string name="tasks_section">Tareas</string>
-    <string name="notes_section">Notas</string>
-    <string name="note_type_label">Tipo de nota</string>
-    <string name="discard">Descartar</string>
-    <string name="keep_editing">Continuar editando</string>
-    <string name="error_updating_task">Error al actualizar la tarea</string>
-
-    <string name="dashboard_create_first_habit">Crear primer hábito</string>
-    <string name="dashboard_new_habit">Nuevo Hábito</string>
-    <string name="dashboard_new_task">Nueva Tarea</string>
-    <string name="dashboard_new_note">Nueva Nota</string>
-    <string name="dashboard_no_title">Sin título</string>
-    <string name="dashboard_words_count">%d palabras</string>
-    <string name="dashboard_streak_days">🔥 Racha de %d días</string>
-    <string name="dashboard_error_update_habit">Error al actualizar el hábito: %s</string>
-    <string name="dashboard_error_update_task">Error al actualizar la tarea: %s</string>
-    <string name="dashboard_error_loading">Error al cargar el dashboard</string>
-
-    <!-- Dashboard motivational messages -->
-    <string name="dashboard_msg_empty">¡Comienza tu viaje creando tus primeros hábitos y tareas!</string>
-    <string name="dashboard_msg_all_completed">¡Excelente día! Has completado todos tus hábitos%s.</string>
-    <string name="dashboard_msg_streak_addon"> y mantienes una racha de %d días</string>
-    <string name="dashboard_msg_good_progress">¡Muy buen progreso! Has completado el %d%% de tus hábitos.</string>
-    <string name="dashboard_msg_overdue_tasks">Tienes %d tarea%s vencida%s. ¡Es hora de ponerse al día!</string>
-    <string name="dashboard_msg_halfway">Buen avance del día. ¡Sigue así para completar todos tus hábitos!</string>
-    <string name="dashboard_msg_start_day">¡Aún queda mucho día por delante! Es momento de trabajar en tus hábitos.</string>
-
-    <!-- Dashboard quotes -->
-    <string name="dashboard_quote_unstoppable">¡Eres imparable! Tu constancia está dando frutos.</string>
-    <string name="dashboard_quote_excellent">¡Excelente trabajo! Cada día es un paso hacia tus metas.</string>
-    <string name="dashboard_quote_keep_going">¡Sigue adelante! El progreso es progreso, sin importar lo pequeño.</string>
-    <string name="dashboard_quote_new_opportunity">Cada nuevo día es una oportunidad para mejorar. ¡Tú puedes!</string>
-
-
-    <!-- Settings -->
-    <string name="settings_title">Configuración</string>
-    <string name="settings_section_account">Cuenta</string>
-    <string name="settings_section_app">Aplicación</string>
-    <string name="settings_section_danger">Zona de peligro</string>
-    <string name="settings_edit_profile">Editar perfil</string>
-    <string name="settings_change_password">Cambiar contraseña</string>
-    <string name="settings_change_password_subtitle">Actualiza tu contraseña de acceso</string>
-    <string name="settings_theme">Tema</string>
-    <string name="settings_language">Idioma</string>
-    <string name="settings_logout">Cerrar sesión</string>
-    <string name="settings_logout_subtitle">Salir de tu cuenta actual</string>
-    <string name="settings_delete_account">Eliminar cuenta</string>
-    <string name="settings_delete_account_subtitle">Eliminar permanentemente tu cuenta y todos tus datos</string>
-
-    <!-- Theme -->
-    <string name="theme_light">Claro</string>
-    <string name="theme_dark">Oscuro</string>
-    <string name="theme_system">Sistema</string>
-
-    <!-- Edit Profile -->
-    <string name="edit_profile_instructions">Actualiza tu información personal. Los cambios se guardarán inmediatamente.</string>
-    <string name="profile_updated_success">Perfil actualizado correctamente</string>
-    <string name="save_changes">Guardar cambios</string>
-
-    <!-- Change Password -->
-    <string name="change_password_instructions">Introduce tu contraseña actual y la nueva contraseña que deseas usar.</string>
-    <string name="label_current_password">Contraseña actual</string>
-    <string name="label_new_password">Nueva contraseña</string>
-    <string name="label_confirm_password">Confirmar contraseña</string>
-    <string name="change_password">Cambiar contraseña</string>
-    <string name="password_changed_success">Contraseña actualizada correctamente</string>
-    <string name="password_requirements_title">Requisitos de contraseña:</string>
-    <string name="password_requirement_length">Mínimo 6 caracteres</string>
-    <string name="password_requirement_letter">Al menos una letra</string>
-
-    <!-- Language -->
-    <string name="language_selection_instructions">Selecciona tu idioma preferido. La aplicación se actualizará automáticamente.</string>
-    <string name="language_changed_message">Idioma actualizado correctamente</string>
-
-    <!-- Dialogs -->
-    <string name="dialog_logout_title">¿Cerrar sesión?</string>
-    <string name="dialog_logout_message">¿Estás seguro de que deseas cerrar sesión?</string>
-    <string name="dialog_logout_confirm">Cerrar sesión</string>
-    <string name="dialog_delete_account_title">¿Eliminar cuenta?</string>
-    <string name="dialog_delete_account_message">Esta acción es permanente. Se eliminarán todos tus hábitos, tareas y notas. No podrás recuperar tu cuenta.</string>
-    <string name="dialog_delete_account_confirm">Eliminar cuenta</string>
-    <string name="close">Cerrar</string>
-    <string name="select_date_placeholder">Seleccionar fecha</string>
-
-
-    !-- Habit Filter -->
-    <string name="filter_habits_today">Para hoy</string>
-    <string name="filter_habits_all">Todos</string>
-    <string name="filter_habits_archived">Archivados</string>
-    <string name="filter_habits_completed">Completados</string>
-    <string name="filter_habits_pending">Pendientes</string>
-    <string name="search_habits_hint">Buscar hábitos</string>
-
-    <!-- Habit Search -->
-    <string name="search_habits">Buscar hábitos</string>
-
-    <!-- Habit List Titles -->
-    <string name="habit_list_archived_habits_title">Hábitos archivados</string>
-    <string name="habit_list_completed_habits_title">Hábitos completados hoy</string>
-    <string name="habit_list_pending_habits_title">Hábitos pendientes hoy</string>
-
-    <!-- Empty States -->
-    <string name="no_habits_found_search">No se encontraron hábitos</string>
-    <string name="no_habits_found_search_message">No hay hábitos que coincidan con \"%s\"</string>
-    <string name="no_habits_today_title">Sin hábitos para hoy</string>
-    <string name="no_habits_today_message">No tienes hábitos programados para hoy</string>
-    <string name="no_habits_all_title">Sin hábitos creados</string>
-    <string name="no_habits_all_message">Crea tu primer hábito para comenzar tu viaje</string>
-    <string name="no_habits_archived_title">Sin hábitos archivados</string>
-    <string name="no_habits_archived_message">Los hábitos archivados aparecerán aquí</string>
-    <string name="no_habits_completed_title">Sin hábitos completados</string>
-    <string name="no_habits_completed_message">Completa tus hábitos para verlos aquí</string>
-    <string name="no_habits_pending_title">Sin hábitos pendientes</string>
-    <string name="no_habits_pending_message">¡Genial! Has completado todos tus hábitos de hoy</string>
-    <string name="create_first_habit">Crear mi primer hábito</string>
+    <string name="content_description_partial">Parcial</string>
     <string name="add_habit_content_description">Añadir contenido</string>
 
-    <string name="search_placeholder">Buscar…</string>
-    <string name="search">Buscar</string>
-    <string name="filter">Filtrar</string>
-
-    <string name="no_notes_found_search">No se encontraron notas</string>
-    <string name="no_notes_found_search_message">No hay notas que coincidan con \"%s\"</string>
-    <string name="no_notes_all_title">Sin notas</string>
-    <string name="no_notes_all_message">Crea tu primera nota para empezar</string>
-    <string name="no_notes_active_title">Sin notas activas</string>
-    <string name="no_notes_active_message">Las notas activas aparecerán aquí</string>
-    <string name="no_notes_archived_title">Sin notas archivadas</string>
-    <string name="no_notes_archived_message">Las notas archivadas aparecerán aquí</string>
-    <string name="no_notes_favorites_title">Sin notas favoritas</string>
-    <string name="no_notes_favorites_message">Marca tus notas como favoritas para verlas aquí</string>
-    <string name="habit_completed_today">✓ Completado</string>
-    <string name="habit_pending_today">⏸ Pendiente</string>
-    <string name="content_description_partial">Parcial</string>
-    <string name="content">Contenido</string>
-    <string name="list_items">Listado de ítems</string>
-    <string name="updated_date">Fecha de actualización</string>
-    <string name="note_status">Estado</string>
-    <string name="yes">Sí</string>
-    <string name="no">No</string>
-
-
-    <!-- Dashboard General -->
-    <string name="dashboard_current_date">%1$d de %2$s de %3$d</string>
-
-    <!-- Dashboard Sections -->
-    <string name="dashboard_daily_summary">Resumen del Día</string>
-    <string name="dashboard_todays_habits">Hábitos de Hoy</string>
-    <string name="dashboard_pending_tasks">Tareas Pendientes</string>
-    <string name="dashboard_recent_notes">Notas Recientes</string>
-    <string name="dashboard_view_all">Ver todos</string>
-
-    <!-- Dashboard Stats -->
-    <string name="dashboard_habits_fraction">%1$d/%2$d</string>
-    <string name="dashboard_habits_label">Hábitos</string>
-    <string name="dashboard_tasks_label">Tareas</string>
-    <string name="dashboard_streak_label">Racha</string>
-    <string name="dashboard_score_label">Score</string>
-    <string name="dashboard_score_percentage">%1$d%%</string>
-
-    <!-- Dashboard Cards -->
-    <string name="dashboard_habit_progress">%1$d/%2$d</string>
-    <string name="dashboard_note_word_count">%1$d palabras</string>
-    <string name="dashboard_excellent_progress">¡Excelente progreso!</string>
-
-    <!-- Empty State -->
-    <string name="dashboard_welcome_title">¡Bienvenido a HabitJourney!</string>
-    <string name="dashboard_welcome_subtitle">Comienza tu viaje creando tu primer hábito</string>
-
-    <!-- FAB Labels -->
-    <string name="dashboard_fab_new_note">Nueva Nota</string>
-    <string name="dashboard_fab_new_task">Nueva Tarea</string>
-    <string name="dashboard_fab_new_habit">Nuevo Hábito</string>
-    <string name="dashboard_fab_close">Cerrar</string>
-    <string name="dashboard_fab_create_new">Crear nuevo</string>
-
-    <string name="dashboard_summary_start">¡Comienza tu viaje creando tus primeros hábitos y tareas!</string>
-    <string name="dashboard_summary_all_habits_completed_no_streak">¡Excelente día! Has completado todos tus hábitos.</string>
-    <string name="dashboard_summary_all_habits_completed_with_streak">¡Excelente día! Has completado todos tus hábitos y mantienes una racha de %d días.</string>
-    <string name="dashboard_summary_good_progress">¡Muy buen progreso! Has completado el %d%% de tus hábitos.</string>
-    <string name="dashboard_summary_decent_progress">Buen avance del día. ¡Sigue así para completar todos tus hábitos!</string>
-    <string name="dashboard_summary_keep_going">¡Aún queda mucho día por delante! Es momento de trabajar en tus hábitos.</string>
-
-    <plurals name="dashboard_summary_overdue_tasks">
-        <item quantity="one">Tienes 1 tarea vencida. ¡Es hora de ponerse al día!</item>
-        <item quantity="other">Tienes %d tareas vencidas. ¡Es hora de ponerse al día!</item>
-    </plurals>
-
-    <string name="dashboard_quote_great">¡Excelente trabajo! Cada día es un paso hacia tus metas.</string>
-    <string name="dashboard_quote_good">¡Sigue adelante! El progreso es progreso, sin importar lo pequeño.</string>
-    <string name="dashboard_quote_default">Cada nuevo día es una oportunidad para mejorar. ¡Tú puedes!</string>
-
-    <string name="greeting_morning">Buenos días</string>
-    <string name="greeting_afternoon">Buenas tardes</string>
-    <string name="greeting_evening">Buenas noches</string>
-
-    <string name="app_logo_content_description" translatable="false">Logo de Habit Journey</string>
-    <string name="title_archive_habit">¿Quieres archivar el hábito?</string>
-    <string name="title_unarchive_habit">Desarchivar hábito</string>
-
-    <string name="reminder_label">Recordatorio</string>
-    <string name="reminder_description">Te notificaremos cuando sea el momento</string>
-    <string name="in_1_hour">En 1 hora</string>
-    <string name="tomorrow_9am">Mañana 9am</string>
-    <string name="next_week">Próxima semana</string>
-    <string name="today">Hoy</string>
-    <string name="tomorrow">Mañana</string>
-    <string name="in_x_minutes">En %d minutos</string>
-    <string name="in_x_hours">En %d horas</string>
-    <string name="in_x_days">En %d días</string>
-    <string name="in_x_weeks">En %d semanas</string>
-
-    <string name="snooze_5_min">5 min</string>
-    <string name="snooze_15_min">15 min</string>
-    <string name="snooze_30_min">30 min</string>
-    <string name="snooze_default">Posponer</string>
-    <string name="reminder_snoozed">Recordatorio pospuesto %d minutos</string>
-
-    <!-- Stats Info Dialog -->
-    <string name="stats_info_title">¿Cómo se calculan tus estadísticas?</string>
-    <string name="stats_info_button_description">Información sobre las estadísticas</string>
-
-    <!-- Streak section -->
-    <string name="stats_info_streak_title">Racha</string>
-    <string name="stats_info_streak_description">Tu racha aumenta cada día que completes el mínimo requerido:</string>
-    <string name="stats_info_streak_rule_1">Completa el 100%</string>
-    <string name="stats_info_streak_rule_2">Completa al menos 50% (1 de 2)</string>
-    <string name="stats_info_streak_rule_3">Completa al menos 66% (2 de 3 o más)</string>
-
-    <!-- Score section -->
-    <string name="stats_info_score_title">Puntuación de Productividad</string>
-    <string name="stats_info_score_description">Tu puntuación se calcula combinando:</string>
-    <string name="stats_info_score_habits">Hábitos completados</string>
-    <string name="stats_info_score_tasks">Tareas gestionadas</string>
-    <string name="stats_info_score_streak_bonus">Bonus por racha</string>
-
-    <string name="action_understood">Entendido</string>
-
-
-    <string name="stats_info_description">Aquí te explicamos cómo funcionan las métricas principales de tu progreso.</string>
-    <string name="stats_info_streak_desc_simple">Tu racha aumenta cada día que completas el 100% de los hábitos programados. Si un día fallas, la racha se reinicia a cero. ¡Las tareas no afectan a la racha!</string>
-    <string name="stats_info_score_desc_main">Es un indicador de tu rendimiento general del día, de 0 a 100.</string>
-    <string name="stats_info_score_desc_breakdown">Se calcula combinando el porcentaje de hábitos completados (60% del peso) y el estado de tus tareas (40% del peso), con un pequeño bonus por mantener una racha activa.</string>
-
+    <!-- ============================================ -->
+    <!-- NAVEGACIÓN Y ACCIONES -->
+    <!-- ============================================ -->
+    <string name="more_options">Más opciones</string>
+    <string name="navigate_back">Volver</string>
 
 </resources>

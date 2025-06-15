@@ -75,7 +75,7 @@ object NavigationRoutes {
         Screen.CreateTask.route,
         Screen.EditTask.route,
         Screen.NoteList.route,
-        Screen.NoteDetail.route, // AÑADIDO
+        Screen.NoteDetail.route,
         Screen.CreateNote.route,
         Screen.EditNote.route,
         Screen.Settings.route,

@@ -9,15 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -30,7 +26,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.alejandro.habitjourney.R
@@ -38,17 +33,27 @@ import com.alejandro.habitjourney.core.presentation.ui.theme.AcentoInformativo
 import com.alejandro.habitjourney.core.presentation.ui.theme.AcentoUrgente
 import com.alejandro.habitjourney.core.presentation.ui.theme.Error
 import com.alejandro.habitjourney.core.presentation.ui.theme.Dimensions
-import com.alejandro.habitjourney.core.presentation.ui.theme.HabitJourneyTheme
 import com.alejandro.habitjourney.core.presentation.ui.theme.Exito
 
 enum class HabitJourneyDialogType {
-    INFO,           // Información general
-    WARNING,        // Advertencias
-    ERROR,          // Errores
-    SUCCESS,        // Confirmaciones exitosas
-    CONFIRMATION    // Confirmación de acciones
+    INFO,
+    WARNING,
+    ERROR,
+    SUCCESS,
+    CONFIRMATION
 }
 
+/**
+ * Dialog personalizado con cinco tipos predefinidos y soporte para contenido custom.
+ * Incluye iconos temáticos, botones configurables y animaciones.
+ *
+ * @param title Título del diálogo
+ * @param message Mensaje principal
+ * @param dialogType Tipo que determina colores e iconos
+ * @param confirmButtonText Texto del botón principal
+ * @param dismissButtonText Texto del botón secundario (opcional)
+ * @param content Contenido adicional personalizado entre mensaje y botones
+ */
 @Composable
 fun HabitJourneyDialog(
     onDismissRequest: () -> Unit,
@@ -225,7 +230,7 @@ fun ErrorDialog(
         message = message,
         dialogType = HabitJourneyDialogType.ERROR,
         icon = icon,
-        confirmButtonText = stringResource(R.string.dialog_understood_button_text) // Usa stringResource
+        confirmButtonText = stringResource(R.string.dialog_understood_button_text)
     )
 }
 
@@ -242,58 +247,6 @@ fun SuccessDialog(
         message = message,
         dialogType = HabitJourneyDialogType.SUCCESS,
         icon = icon,
-        confirmButtonText = stringResource(R.string.dialog_great_button_text) // Usa stringResource
+        confirmButtonText = stringResource(R.string.dialog_great_button_text)
     )
-}
-
-// --- PREVIEWS ---
-@Preview(showBackground = true)
-@Composable
-fun PreviewInfoDialog() {
-    HabitJourneyTheme {
-        HabitJourneyDialog(
-            onDismissRequest = { /* Dismiss */ },
-            title = stringResource(R.string.dialog_info_title),
-            message = stringResource(R.string.dialog_info_message),
-            dialogType = HabitJourneyDialogType.INFO,
-            icon = Icons.Default.Info,
-            confirmButtonText = stringResource(R.string.dialog_understood_button_text)
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewConfirmationDialog() {
-    HabitJourneyTheme {
-        ConfirmationDialog(
-            onDismissRequest = { /* Dismiss */ },
-            title = stringResource(R.string.dialog_confirmation_title),
-            message = stringResource(R.string.dialog_delete_confirmation_message),
-            onConfirm = { /* Confirm action */ },
-            icon = Icons.Default.Warning
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewErrorDialog() {
-    HabitJourneyTheme {
-        ErrorDialog(
-            onDismissRequest = { /* Dismiss */ },
-            message = stringResource(R.string.dialog_error_default_message)
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewSuccessDialog() {
-    HabitJourneyTheme {
-        SuccessDialog(
-            onDismissRequest = { /* Dismiss */ },
-            message = stringResource(R.string.dialog_success_default_message)
-        )
-    }
 }

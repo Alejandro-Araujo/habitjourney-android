@@ -9,31 +9,31 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Task
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.alejandro.habitjourney.R
 import com.alejandro.habitjourney.core.presentation.ui.theme.Dimensions
-import com.alejandro.habitjourney.core.presentation.ui.theme.HabitJourneyTheme
 
+/**
+ * Componente base para items de lista con layout leading-content-trailing.
+ * Clickeable opcional y soporte para estados disabled.
+ *
+ * @param title Texto principal del item
+ * @param subtitle Texto secundario opcional
+ * @param leadingContent Composable al inicio (ej: checkbox, avatar)
+ * @param trailingContent Composable al final (ej: flecha, botón)
+ * @param onClick Callback para hacer el item clickeable
+ * @param isEnabled Si el item está habilitado visualmente
+ */
 @Composable
 fun HabitJourneyItem(
     modifier: Modifier = Modifier,
@@ -107,89 +107,6 @@ fun HabitJourneyItem(
                 Spacer(modifier = Modifier.width(Dimensions.SpacingSmall))
                 trailingContent.invoke()
             }
-        }
-    }
-}
-
-// --- PREVIEWS ---
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewHabitJourneyItem() {
-    HabitJourneyTheme {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(Dimensions.SpacingMedium),
-            verticalArrangement = Arrangement.spacedBy(Dimensions.SpacingSmall)
-        ) {
-            // Item Básico
-            HabitJourneyItem(
-                title = stringResource(R.string.item_task_title_1),
-                subtitle = stringResource(R.string.item_task_subtitle_1),
-                leadingContent = {
-                    Icon(
-                        imageVector = Icons.Default.Task,
-                        contentDescription = stringResource(R.string.content_description_task_icon),
-                        modifier = Modifier.size(Dimensions.IconSizeNormal),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                },
-                onClick = { /* Handle click */ }
-            )
-
-            // Item con solo título y trailing icon
-            HabitJourneyItem(
-                title = stringResource(R.string.item_task_title_2),
-                trailingContent = {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = stringResource(R.string.content_description_go_to_details),
-                        modifier = Modifier.size(Dimensions.IconSizeNormal),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                },
-                onClick = { /* Handle click */ }
-            )
-
-            // Item con solo título
-            HabitJourneyItem(
-                title = stringResource(R.string.item_task_title_3),
-                onClick = { /* Handle click */ }
-            )
-
-            // Item deshabilitado
-            HabitJourneyItem(
-                title = stringResource(R.string.item_task_title_disabled),
-                subtitle = stringResource(R.string.item_task_subtitle_disabled),
-                leadingContent = {
-                    Icon(
-                        imageVector = Icons.Default.Info,
-                        contentDescription = stringResource(R.string.content_description_completed_habit),
-                        modifier = Modifier.size(Dimensions.IconSizeNormal),
-                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                    )
-                },
-                isEnabled = false,
-                onClick = { /* No debería ser clickeable */ }
-            )
-
-            // Item con borde (ejemplo)
-            HabitJourneyItem(
-                title = stringResource(R.string.item_task_title_urgent),
-                subtitle = stringResource(R.string.item_task_subtitle_urgent),
-                leadingContent = {
-                    Icon(
-                        imageVector = Icons.Default.Warning,
-                        contentDescription = stringResource(R.string.content_description_warning_icon),
-                        modifier = Modifier.size(Dimensions.IconSizeNormal),
-                        tint = MaterialTheme.colorScheme.tertiary
-                    )
-                },
-                borderColor = MaterialTheme.colorScheme.tertiary,
-                borderWidth = Dimensions.BorderWidth,
-                onClick = { /* Handle click */ }
-            )
         }
     }
 }

@@ -5,19 +5,35 @@ import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 import androidx.annotation.OptIn
-import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.alejandro.habitjourney.R
+import com.alejandro.habitjourney.core.utils.logging.AppLogger
 import com.alejandro.habitjourney.features.task.data.worker.CompleteTaskWorker
 import com.alejandro.habitjourney.features.task.data.worker.SnoozeTaskWorker
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * [BroadcastReceiver] que maneja acciones disparadas desde las notificaciones de tareas,
+ * como completar o posponer una tarea.
+ *
+ * Delega la lógica de negocio a [WorkManager] para que las operaciones se realicen en segundo plano.
+ *
+ * @see CompleteTaskWorker
+ * @see SnoozeTaskWorker
+ */
 @AndroidEntryPoint
 class TaskActionReceiver : BroadcastReceiver() {
 
+    /**
+     * Se invoca cuando el sistema envía una transmisión, específicamente para acciones de tarea.
+     * Identifica la acción (`COMPLETE_TASK` o `SNOOZE_TASK`) y encola el Worker correspondiente.
+     *
+     * @param context El [Context] en el que se ejecuta el receptor.
+     * @param intent El [Intent] que se ha transmitido, conteniendo el ID de la tarea y la acción.
+     */
     @OptIn(UnstableApi::class)
     override fun onReceive(context: Context, intent: Intent) {
         val taskId = intent.getLongExtra("taskId", -1)
@@ -33,12 +49,11 @@ class TaskActionReceiver : BroadcastReceiver() {
                         val workManager = WorkManager.getInstance(context)
                         workManager.enqueue(workRequest)
 
-                        // Observar el estado del trabajo para debug
                         workManager.getWorkInfoByIdLiveData(workRequest.id)
                             .observeForever { workInfo ->
-                                Log.d("TaskActionReceiver", "Work state: ${workInfo?.state}")
+                                AppLogger.d("TaskActionReceiver", "Work state: ${workInfo?.state}")
                                 if (workInfo?.state?.isFinished == true) {
-                                    Log.d(
+                                    AppLogger.d(
                                         "TaskActionReceiver",
                                         "Work output: ${workInfo.outputData}"
                                     )
@@ -51,7 +66,7 @@ class TaskActionReceiver : BroadcastReceiver() {
                             Toast.LENGTH_SHORT
                         ).show()
                     } catch (e: Exception) {
-                        Log.e("TaskActionReceiver", "Error enqueueing work", e)
+                        AppLogger.e("TaskActionReceiver", "Error al encolar el trabajo de completar tarea", e)
                     }
                 }
             }
@@ -78,9 +93,9 @@ class TaskActionReceiver : BroadcastReceiver() {
                             Toast.LENGTH_SHORT
                         ).show()
 
-                        Log.d("TaskActionReceiver", "Snooze enqueued for task $taskId, $snoozeMinutes minutes")
+                        AppLogger.d("TaskActionReceiver", "Snooze encolado para tarea $taskId, $snoozeMinutes minutos")
                     } catch (e: Exception) {
-                        Log.e("TaskActionReceiver", "Error enqueueing snooze work", e)
+                        AppLogger.e("TaskActionReceiver", "Error al encolar el trabajo de posponer tarea", e)
                     }
                 }
             }

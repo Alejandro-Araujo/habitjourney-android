@@ -1,10 +1,9 @@
 package com.alejandro.habitjourney.features.habit.presentation.viewmodel
 
-import android.annotation.SuppressLint
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alejandro.habitjourney.R
+import com.alejandro.habitjourney.core.utils.resources.ResourceProvider
 import com.alejandro.habitjourney.features.habit.domain.usecase.*
 import com.alejandro.habitjourney.features.habit.presentation.screen.HabitIconMapper
 import com.alejandro.habitjourney.features.habit.presentation.state.HabitFilterType
@@ -12,7 +11,6 @@ import com.alejandro.habitjourney.features.habit.presentation.state.HabitListUiS
 import com.alejandro.habitjourney.features.habit.presentation.state.HabitsData
 import com.alejandro.habitjourney.features.user.data.local.preferences.UserPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -24,7 +22,23 @@ import kotlinx.datetime.minus
 import kotlinx.datetime.todayIn
 import javax.inject.Inject
 
-@SuppressLint("StringFormatInvalid")
+/**
+ * ViewModel para la pantalla de lista de hábitos.
+ *
+ * Gestiona el estado de la UI ([HabitListUiState]), incluyendo la carga de datos,
+ * el filtrado, la búsqueda y el manejo de todas las interacciones del usuario con la lista.
+ * Utiliza un enfoque reactivo con Flows para mantener la UI actualizada automáticamente.
+ *
+ * @param getAllUserHabitsUseCase Caso de uso para obtener todos los hábitos del usuario.
+ * @param getHabitsDueTodayWithCompletionCountUseCase Caso de uso para obtener los hábitos de hoy con su progreso.
+ * @param updateHabitProgressValueUseCase Caso de uso para actualizar el progreso numérico de un hábito.
+ * @param markHabitAsSkippedUseCase Caso de uso para marcar un hábito como omitido.
+ * @param getLogForDateUseCase Caso de uso para obtener el registro de un hábito en una fecha concreta.
+ * @param markHabitAsNotCompletedUseCase Caso de uso para marcar un hábito como no completado.
+ * @param toggleHabitArchivedUseCase Caso de uso para archivar o desarchivar un hábito.
+ * @param markMissedHabitsUseCase Caso de uso para procesar hábitos no completados del día anterior.
+ * @param userPreferences Preferencias para obtener el ID del usuario actual.
+ */
 @HiltViewModel
 class HabitListViewModel @Inject constructor(
     private val getAllUserHabitsUseCase: GetAllUserHabitsUseCase,
@@ -32,21 +46,26 @@ class HabitListViewModel @Inject constructor(
     private val updateHabitProgressValueUseCase: UpdateHabitProgressValueUseCase,
     private val markHabitAsSkippedUseCase: MarkHabitAsSkippedUseCase,
     private val getLogForDateUseCase: GetLogForDateUseCase,
-    private val updateHabitUseCase: UpdateHabitUseCase,
     private val markHabitAsNotCompletedUseCase: MarkHabitAsNotCompletedUseCase,
     private val toggleHabitArchivedUseCase: ToggleHabitArchivedUseCase,
     private val markMissedHabitsUseCase: MarkMissedHabitsUseCase,
     private val userPreferences: UserPreferences,
-    @ApplicationContext private val context: Context
+    private val resourceProvider: ResourceProvider,
 ) : ViewModel() {
 
+    // --- Flujos de estado privados que controlan la UI ---
     private val _isLoading = MutableStateFlow(false)
     private val _error = MutableStateFlow<String?>(null)
     private val _currentFilter = MutableStateFlow(HabitFilterType.TODAY)
     private val _searchQuery = MutableStateFlow("")
     private val _isSearchActive = MutableStateFlow(false)
+    /** Un disparador para forzar la recarga de los datos. */
     private val _refreshTrigger = MutableStateFlow(0L)
 
+    /**
+     * Flujo reactivo que obtiene los datos maestros de los hábitos (todos y los de hoy)
+     * cada vez que cambia el ID de usuario o se dispara una actualización.
+     */
     @OptIn(ExperimentalCoroutinesApi::class)
     private val habitsDataFlow = combine(
         userPreferences.userIdFlow,
@@ -61,12 +80,14 @@ class HabitListViewModel @Inject constructor(
             val today = getCurrentLocalDate()
             val weekdayIndex = today.dayOfWeek.isoDayNumber
 
+            // Combina los flujos de "todos los hábitos" y "hábitos de hoy"
             combine(
                 getAllUserHabitsUseCase(userId),
                 getHabitsDueTodayWithCompletionCountUseCase(userId, today, weekdayIndex)
             ) { allUserHabits, todayHabitsWithCounts ->
                 _isLoading.value = false
 
+                // Mapea cada hábito a un modelo de UI reactivo que observa su log de hoy
                 val habitsWithReactiveLogs = allUserHabits.map { habit ->
                     getLogForDateUseCase(habit.id, today).map { todayLog ->
                         val todayCompletionCount = todayHabitsWithCounts
@@ -80,6 +101,7 @@ class HabitListViewModel @Inject constructor(
                     }
                 }
 
+                // Combina los resultados de los modelos de UI reactivos en una lista final
                 combine(habitsWithReactiveLogs) { habitUiModels ->
                     val todayHabitsWithCounts = todayHabitsWithCounts.map { it.first.id }.toSet()
 
@@ -92,12 +114,12 @@ class HabitListViewModel @Inject constructor(
                 }
             }.flatMapLatest { it }
                 .catch { exception ->
-                    _error.value = exception.message ?: context.getString(R.string.error_unknown)
+                    _error.value = exception.message ?: resourceProvider.getString(R.string.error_unknown)
                     _isLoading.value = false
                     emit(HabitsData(emptyList(), emptyList()))
                 }
         } else {
-            _error.value = context.getString(R.string.error_user_not_logged_in)
+            _error.value = resourceProvider.getString(R.string.error_user_not_logged_in)
             _isLoading.value = false
             flowOf(HabitsData(emptyList(), emptyList()))
         }
@@ -107,6 +129,10 @@ class HabitListViewModel @Inject constructor(
         initialValue = HabitsData(emptyList(), emptyList())
     )
 
+    /**
+     * El estado final de la UI que la vista observa.
+     * Combina los datos de los hábitos con los estados de filtro, búsqueda y carga.
+     */
     val uiState: StateFlow<HabitListUiState> = combine(
         habitsDataFlow,
         _isLoading,
@@ -158,6 +184,7 @@ class HabitListViewModel @Inject constructor(
         initialValue = HabitListUiState()
     )
 
+    // Al iniciar el ViewModel, comprueba y marca los hábitos perdidos del día anterior.
     init {
         viewModelScope.launch {
             userPreferences.userIdFlow.firstOrNull()?.let { userId ->
@@ -167,7 +194,7 @@ class HabitListViewModel @Inject constructor(
                 try {
                     markMissedHabitsUseCase(userId, yesterday)
                 } catch (e: Exception) {
-                    _error.value = context.getString(R.string.error_processing_missed_habits, e.message ?: "")
+                    _error.value = resourceProvider.getString(R.string.error_processing_missed_habits, e.message ?: "")
                 }
             }
         }
@@ -179,14 +206,17 @@ class HabitListViewModel @Inject constructor(
         _refreshTrigger.value = System.currentTimeMillis()
     }
 
+    /** Establece el filtro actual para la lista de hábitos. */
     fun setFilter(filter: HabitFilterType) {
         _currentFilter.value = filter
     }
 
+    /** Actualiza el término de búsqueda. */
     fun setSearchQuery(query: String) {
         _searchQuery.value = query
     }
 
+    /** Activa o desactiva el modo de búsqueda. */
     fun toggleSearch() {
         _isSearchActive.value = !_isSearchActive.value
         if (!_isSearchActive.value) {
@@ -194,62 +224,59 @@ class HabitListViewModel @Inject constructor(
         }
     }
 
-    @SuppressLint("StringFormatInvalid")
+    /** Incrementa el progreso de un hábito. */
     fun incrementHabitProgress(habitId: Long, quantity: Float = 1f) {
         viewModelScope.launch {
             try {
                 userPreferences.getUserId()
-                    ?: throw IllegalStateException(context.getString(R.string.error_user_not_logged_in))
+                    ?: throw IllegalStateException(resourceProvider.getString(R.string.error_user_not_logged_in))
 
                 updateHabitProgressValueUseCase(habitId, quantity)
                 triggerRefresh()
             } catch (e: Exception) {
-                _error.value = context.getString(R.string.error_updating_habit_progress, e.message ?: "")
+                _error.value = resourceProvider.getString(R.string.error_updating_habit_progress, e.message ?: "")
             }
         }
     }
 
-    @SuppressLint("StringFormatInvalid")
     fun decrementHabitProgress(habitId: Long, quantity: Float = 1f) {
         viewModelScope.launch {
             try {
                 userPreferences.getUserId()
-                    ?: throw IllegalStateException(context.getString(R.string.error_user_not_logged_in))
+                    ?: throw IllegalStateException(resourceProvider.getString(R.string.error_user_not_logged_in))
 
                 updateHabitProgressValueUseCase(habitId, -quantity)
                 triggerRefresh()
             } catch (e: Exception) {
-                _error.value = context.getString(R.string.error_updating_habit_progress, e.message ?: "")
+                _error.value = resourceProvider.getString(R.string.error_updating_habit_progress, e.message ?: "")
             }
         }
     }
 
-    @SuppressLint("StringFormatInvalid")
     fun markHabitAsSkipped(habitId: Long) {
         viewModelScope.launch {
             try {
                 userPreferences.getUserId()
-                    ?: throw IllegalStateException(context.getString(R.string.error_user_not_logged_in))
+                    ?: throw IllegalStateException(resourceProvider.getString(R.string.error_user_not_logged_in))
 
                 markHabitAsSkippedUseCase(habitId)
                 triggerRefresh()
             } catch (e: Exception) {
-                _error.value = context.getString(R.string.error_marking_habit_skipped, e.message ?: "")
+                _error.value = resourceProvider.getString(R.string.error_marking_habit_skipped, e.message ?: "")
             }
         }
     }
 
-    @SuppressLint("StringFormatInvalid")
     fun toggleHabitArchived(habitId: Long, archive: Boolean) {
         viewModelScope.launch {
             try {
                 userPreferences.getUserId()
-                    ?: throw IllegalStateException(context.getString(R.string.error_user_not_logged_in))
+                    ?: throw IllegalStateException(resourceProvider.getString(R.string.error_user_not_logged_in))
 
                 toggleHabitArchivedUseCase(habitId, archive)
                 triggerRefresh()
             } catch (e: Exception) {
-                _error.value = context.getString(R.string.error_archiving_habit, e.message ?: "")
+                _error.value = resourceProvider.getString(R.string.error_archiving_habit, e.message ?: "")
             }
         }
     }
@@ -258,12 +285,12 @@ class HabitListViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 userPreferences.getUserId()
-                    ?: throw IllegalStateException(context.getString(R.string.error_user_not_logged_in))
+                    ?: throw IllegalStateException(resourceProvider.getString(R.string.error_user_not_logged_in))
 
                 markHabitAsNotCompletedUseCase(habitId)
                 triggerRefresh()
             } catch (e: Exception) {
-                _error.value = context.getString(R.string.error_undoing_skip, e.message ?: "")
+                _error.value = resourceProvider.getString(R.string.error_undoing_skip, e.message ?: "")
             }
         }
     }

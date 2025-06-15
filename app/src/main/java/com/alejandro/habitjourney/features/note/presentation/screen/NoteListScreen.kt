@@ -1,30 +1,55 @@
 package com.alejandro.habitjourney.features.note.presentation.screen
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.automirrored.filled.Note
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Archive
+import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alejandro.habitjourney.R
-import com.alejandro.habitjourney.core.presentation.ui.components.*
-import com.alejandro.habitjourney.core.presentation.ui.theme.*
-import com.alejandro.habitjourney.features.note.presentation.components.*
+import com.alejandro.habitjourney.core.presentation.ui.components.FilterOption
+import com.alejandro.habitjourney.core.presentation.ui.components.HabitJourneyEmptyState
+import com.alejandro.habitjourney.core.presentation.ui.components.HabitJourneyFloatingActionButton
+import com.alejandro.habitjourney.core.presentation.ui.components.HabitJourneyLoadingOverlay
+import com.alejandro.habitjourney.core.presentation.ui.components.HabitJourneySearchableTopBar
+import com.alejandro.habitjourney.core.presentation.ui.theme.AcentoInformativo
+import com.alejandro.habitjourney.core.presentation.ui.theme.Dimensions
+import com.alejandro.habitjourney.features.note.presentation.components.NoteCard
 import com.alejandro.habitjourney.features.note.presentation.state.NoteFilterType
 import com.alejandro.habitjourney.features.note.presentation.viewmodel.NoteListViewModel
 
+/**
+ * Pantalla principal que muestra la lista de notas del usuario.
+ *
+ * Permite al usuario ver, buscar y filtrar sus notas. Muestra una lista de [NoteCard]
+ * y gestiona los estados de carga, vacío y error.
+ *
+ * @param onNavigateToCreateNote Callback para navegar a la pantalla de creación de una nueva nota.
+ * @param onNavigateToNoteDetail Callback para navegar a la pantalla de detalle de una nota, pasando su ID.
+ * @param viewModel El [NoteListViewModel] que gestiona el estado y la lógica de esta pantalla.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoteListScreen(
     onNavigateToCreateNote: () -> Unit,
-    onNavigateToEditNote: (Long) -> Unit,
     onNavigateToNoteDetail: (Long) -> Unit,
     viewModel: NoteListViewModel = hiltViewModel()
 ) {
@@ -83,7 +108,7 @@ fun NoteListScreen(
             if (notes.isEmpty() && !uiState.isLoading) {
                 // Estado vacío
                 HabitJourneyEmptyState(
-                    icon = Icons.Default.Note,
+                    icon = Icons.AutoMirrored.Filled.Note,
                     title = getEmptyStateTitle(uiState.currentFilter, uiState.searchQuery),
                     description = getEmptyStateMessage(uiState.currentFilter, uiState.searchQuery),
                     actionButtonText = if (uiState.searchQuery.isBlank() && uiState.currentFilter != NoteFilterType.ARCHIVED) {
@@ -136,6 +161,13 @@ fun NoteListScreen(
     }
 }
 
+/**
+ * Función de utilidad privada que devuelve el título apropiado para el estado vacío.
+ *
+ * @param filter El [NoteFilterType] actualmente activo.
+ * @param searchQuery El término de búsqueda actual.
+ * @return Un [String] con el título localizado para mostrar.
+ */
 @Composable
 private fun getEmptyStateTitle(filter: NoteFilterType, searchQuery: String): String {
     return if (searchQuery.isNotBlank()) {
@@ -150,6 +182,13 @@ private fun getEmptyStateTitle(filter: NoteFilterType, searchQuery: String): Str
     }
 }
 
+/**
+ * Función de utilidad privada que devuelve el mensaje descriptivo para el estado vacío.
+ *
+ * @param filter El [NoteFilterType] actualmente activo.
+ * @param searchQuery El término de búsqueda actual.
+ * @return Un [String] con el mensaje localizado para mostrar.
+ */
 @Composable
 private fun getEmptyStateMessage(filter: NoteFilterType, searchQuery: String): String {
     return if (searchQuery.isNotBlank()) {

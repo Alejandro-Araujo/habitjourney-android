@@ -18,6 +18,17 @@ import com.alejandro.habitjourney.core.presentation.ui.theme.AcentoInformativo
 import com.alejandro.habitjourney.core.presentation.ui.theme.Dimensions
 import com.alejandro.habitjourney.core.presentation.ui.theme.Error
 
+/**
+ * TextField personalizado con styling consistente y helper text.
+ * Colores temáticos y estados de error integrados.
+ *
+ * @param value Valor actual del campo
+ * @param onValueChange Callback cuando cambia el valor
+ * @param label Etiqueta del campo
+ * @param isError Si el campo está en estado de error
+ * @param helperText Texto de ayuda o error mostrado debajo
+ * @param placeholder Texto de placeholder opcional
+ */
 @Composable
 fun HabitJourneyTextField(
     value: String,

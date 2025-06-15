@@ -18,9 +18,13 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
-        resConfigs("es", "en", "de", "fr")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+
+    androidResources {
+        generateLocaleConfig = true
+    }
+
 
     packaging {
         resources.excludes.add("META-INF/LICENSE.md")
@@ -30,28 +34,22 @@ android {
         resources.excludes.add("META-INF/versions/9/OSGI-INF/MANIFEST.MF")
     }
 
-    buildFeatures {
-        buildConfig = true
-    }
-
     buildTypes {
         debug {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-            buildConfigField("String", "API_BASE_URL", "\"http://192.168.0.194:8080/api/\"")
+            buildConfigField("String", "API_BASE_URL", "\"https://habitjourney-backend.onrender.com/api/\"")
         }
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "API_BASE_URL", "\"http://192.168.0.194:8080/api/\"")
+            buildConfigField("String", "API_BASE_URL", "\"https://habitjourney-backend.onrender.com/api/\"")
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -61,7 +59,12 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
+}
+
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 dependencies {

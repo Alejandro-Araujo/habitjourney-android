@@ -12,30 +12,49 @@ import com.alejandro.habitjourney.features.habit.data.entity.HabitWithLogs
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDate
 
+/**
+ * DAO para operaciones CRUD de hábitos con consultas optimizadas para frecuencias.
+ * Incluye filtros por usuario, estado archivado y frecuencias complejas.
+ */
 @Dao
 interface HabitDao {
 
+    /**
+     * Inserta un nuevo hábito. Retorna el ID generado.
+     */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertHabit(habit: HabitEntity): Long
 
     @Update
     suspend fun updateHabit(habit: HabitEntity)
 
+    /**
+     * Archiva un hábito (soft delete) en lugar de eliminarlo.
+     */
     @Query("UPDATE habits SET is_archived = 1 WHERE id = :habitId")
     suspend fun archiveHabit(habitId: Long)
 
     @Query("UPDATE habits SET is_archived = 0 WHERE id = :habitId")
     suspend fun unarchiveHabit(habitId: Long)
 
+    /**
+     * Obtiene un hábito por ID, excluyendo archivados.
+     */
     @Query("""
         SELECT * FROM habits
         WHERE id = :habitId AND is_archived = 0
     """)
     suspend fun getHabitById(habitId: Long): HabitEntity?
 
+    /**
+     * Obtiene un hábito por ID sin filtrar archivados (para admin/recovery).
+     */
     @Query("SELECT * FROM habits WHERE id = :habitId")
     suspend fun getHabitByIdUnfiltered(habitId: Long): HabitEntity?
 
+    /**
+     * Obtiene todos los hábitos de un usuario, incluyendo archivados.
+     */
     @Query("""
         SELECT * FROM habits
         WHERE user_id = :userId
@@ -43,6 +62,9 @@ interface HabitDao {
     """)
     fun getAllHabitsForUser(userId: Long): Flow<List<HabitEntity>>
 
+    /**
+     * Obtiene solo hábitos activos (no archivados) de un usuario.
+     */
     @Query("""
         SELECT * FROM habits
         WHERE user_id = :userId
@@ -51,6 +73,13 @@ interface HabitDao {
     """)
     fun getActiveHabitsForUser(userId: Long): Flow<List<HabitEntity>>
 
+    /**
+     * Consulta compleja para obtener hábitos que deben realizarse en un día específico.
+     * Maneja frecuencias diarias, semanales y personalizadas con validación de fechas.
+     *
+     * @param userId ID del usuario
+     * @param weekdayIndex Día de la semana (0 = Lunes, 6 = Domingo)
+     */
     @Query("""
         SELECT * FROM habits
         WHERE user_id = :userId
@@ -60,29 +89,25 @@ interface HabitDao {
             OR (
                 (frequency = 'weekly' OR frequency = 'custom')
                 AND (
-                    -- Casos para detectar el weekdayIndex en frequency_days:
-                    -- 1. String que contiene solo el número: frequency_days = '1'
                     frequency_days = CAST(:weekdayIndex AS TEXT)
-                    -- 2. String que empieza con el número seguido de coma: frequency_days LIKE '1,%'
                     OR frequency_days LIKE CAST(:weekdayIndex AS TEXT) || ',%'
-                    -- 3. String que termina con coma seguida del número: frequency_days LIKE '%,1'
                     OR frequency_days LIKE '%,' || CAST(:weekdayIndex AS TEXT)
-                    -- 4. String que contiene el número entre comas: frequency_days LIKE '%,1,%'
                     OR frequency_days LIKE '%,' || CAST(:weekdayIndex AS TEXT) || ',%'
                 )
             )
         )
         AND (
-            -- Verificar que el hábito ha comenzado (start_date <= hoy)
             start_date IS NULL OR start_date <= date('now', 'localtime')
         )
         AND (
-            -- Verificar que el hábito no ha terminado (end_date >= hoy o es null)
             end_date IS NULL OR end_date >= date('now', 'localtime')
         )
     """)
     fun getHabitsForDay(userId: Long, weekdayIndex: Int): Flow<List<HabitEntity>>
 
+    /**
+     * Obtiene un hábito con todos sus logs usando relación de Room.
+     */
     @Transaction
     @Query("""
         SELECT * FROM habits
@@ -90,6 +115,10 @@ interface HabitDao {
     """)
     fun getHabitWithLogs(habitId: Long): Flow<HabitWithLogs>
 
+    /**
+     * Consulta optimizada para el dashboard que incluye conteo de completaciones del día.
+     * JOIN con habit_logs para obtener progreso actual en una sola consulta.
+     */
     @Query("""
         SELECT h.*,
                COALESCE(SUM(CASE 
@@ -106,7 +135,6 @@ interface HabitDao {
             OR (
                 (h.frequency = 'weekly' OR h.frequency = 'custom')
                 AND (
-                    -- Misma lógica mejorada para frequency_days
                     h.frequency_days = CAST(:weekdayIndex AS TEXT)
                     OR h.frequency_days LIKE CAST(:weekdayIndex AS TEXT) || ',%'
                     OR h.frequency_days LIKE '%,' || CAST(:weekdayIndex AS TEXT)
@@ -115,7 +143,6 @@ interface HabitDao {
             )
         )
         AND (
-            -- Solo incluir hábitos que deberían estar activos hoy
             h.start_date IS NULL OR h.start_date <= :today
         )
         AND (

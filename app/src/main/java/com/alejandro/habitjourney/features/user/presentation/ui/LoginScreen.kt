@@ -33,17 +33,23 @@ import com.alejandro.habitjourney.R
 import com.alejandro.habitjourney.features.user.presentation.state.LoginState
 import com.alejandro.habitjourney.features.user.presentation.viewmodel.LoginViewModel
 import kotlinx.coroutines.launch
-
-// Importa tus componentes personalizados
 import com.alejandro.habitjourney.core.presentation.ui.components.HabitJourneyButton
 import com.alejandro.habitjourney.core.presentation.ui.components.HabitJourneyButtonType
 import com.alejandro.habitjourney.core.presentation.ui.components.HabitJourneyTextField
 import com.alejandro.habitjourney.core.presentation.ui.components.HabitJourneySnackbarHost
-
-// Importa tus dimensiones y colores personalizados
 import com.alejandro.habitjourney.core.presentation.ui.theme.*
 
-@OptIn(ExperimentalMaterial3Api::class)
+/**
+ * Pantalla de inicio de sesión.
+ *
+ * Permite al usuario introducir sus credenciales (correo electrónico y contraseña)
+ * para iniciar sesión en la aplicación. Muestra el estado del proceso (carga, éxito, error)
+ * y ofrece navegación a la pantalla de registro.
+ *
+ * @param onNavigateToRegister Lambda que se invoca para navegar a la pantalla de registro.
+ * @param onLoginSuccess Lambda que se invoca tras un inicio de sesión exitoso, típicamente para navegar a la pantalla principal.
+ * @param viewModel La instancia de [LoginViewModel] inyectada por Hilt.
+ */
 @Composable
 fun LoginScreen(
     onNavigateToRegister: () -> Unit,

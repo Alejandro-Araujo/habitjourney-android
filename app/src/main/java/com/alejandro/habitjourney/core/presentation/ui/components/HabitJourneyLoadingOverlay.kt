@@ -11,10 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.alejandro.habitjourney.core.presentation.ui.theme.HabitJourneyTheme
 
+/**
+ * Overlay de loading que cubre toda la pantalla con background semi-transparente.
+ * Spinner centrado con colores personalizables.
+ */
 @Composable
 fun HabitJourneyLoadingOverlay(
     modifier: Modifier = Modifier,
@@ -32,13 +34,5 @@ fun HabitJourneyLoadingOverlay(
             color = indicatorColor,
             strokeWidth = 4.dp
         )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewLoadingOverlay() {
-    HabitJourneyTheme {
-        HabitJourneyLoadingOverlay()
     }
 }

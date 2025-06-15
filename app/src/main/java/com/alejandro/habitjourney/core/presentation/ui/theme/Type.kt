@@ -8,7 +8,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.Font
 import com.alejandro.habitjourney.R
 
-
 val Roboto = FontFamily(
     Font(R.font.roboto_bold, FontWeight.Bold)
 )

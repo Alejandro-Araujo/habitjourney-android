@@ -20,12 +20,18 @@ import com.alejandro.habitjourney.R
 import com.alejandro.habitjourney.core.presentation.ui.components.HabitJourneyDialog
 import com.alejandro.habitjourney.core.presentation.ui.theme.*
 
+/**
+ * Dialog informativo que explica cómo se calculan las estadísticas del dashboard.
+ * Incluye información sobre rachas y puntuación de productividad.
+ *
+ * @param onDismiss Callback cuando se cierra el dialog
+ */
 @Composable
 fun CalculationInfoDialog(onDismiss: () -> Unit) {
     HabitJourneyDialog(
         onDismissRequest = onDismiss,
         title = stringResource(R.string.stats_info_title),
-        message = stringResource(R.string.stats_info_description), // Mensaje general
+        message = stringResource(R.string.stats_info_description),
         icon = Icons.Default.Info,
         confirmButtonText = stringResource(R.string.action_understood),
         onConfirm = onDismiss
@@ -40,7 +46,7 @@ fun CalculationInfoDialog(onDismiss: () -> Unit) {
             ) {
                 Text(
                     text = stringResource(R.string.stats_info_streak_desc_simple), // Nuevo string
-                    style = MaterialTheme.typography.bodyMedium
+                    style = Typography.bodyMedium
                 )
             }
 
@@ -54,12 +60,12 @@ fun CalculationInfoDialog(onDismiss: () -> Unit) {
             ) {
                 Text(
                     text = stringResource(R.string.stats_info_score_desc_main), // Nuevo string
-                    style = MaterialTheme.typography.bodyMedium
+                    style = Typography.bodyMedium
                 )
                 Spacer(modifier = Modifier.height(Dimensions.SpacingSmall))
                 Text(
                     text = stringResource(R.string.stats_info_score_desc_breakdown), // Nuevo string
-                    style = MaterialTheme.typography.bodySmall,
+                    style = Typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -67,6 +73,9 @@ fun CalculationInfoDialog(onDismiss: () -> Unit) {
     }
 }
 
+/**
+ * Sección informativa reutilizable con icono, título y contenido personalizado.
+ */
 @Composable
 private fun InfoSection(
     icon: ImageVector,
@@ -87,7 +96,7 @@ private fun InfoSection(
             )
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleLarge,
+                style = Typography.titleLarge,
                 fontWeight = FontWeight.Medium,
                 color = color
             )

@@ -2,8 +2,11 @@ package com.alejandro.habitjourney.core.di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.alejandro.habitjourney.BuildConfig
 import com.alejandro.habitjourney.core.data.local.database.AppDatabase
+import com.alejandro.habitjourney.core.data.local.database.AppDatabase.Companion.DATABASE_NAME
 import com.alejandro.habitjourney.core.data.remote.exception.ErrorHandler
 import com.alejandro.habitjourney.core.data.remote.interceptor.AuthInterceptor
 import com.alejandro.habitjourney.core.data.remote.interceptor.ErrorInterceptor
@@ -11,13 +14,9 @@ import com.alejandro.habitjourney.core.data.remote.interceptor.NetworkConnection
 import com.alejandro.habitjourney.core.data.remote.network.RetrofitClient
 import com.alejandro.habitjourney.core.utils.resources.ResourceProvider
 import com.alejandro.habitjourney.core.utils.resources.ResourceProviderImpl
-import com.alejandro.habitjourney.features.achievement.data.dao.AchievementDefinitionDao
-import com.alejandro.habitjourney.features.achievement.data.dao.UserAchievementDao
 import com.alejandro.habitjourney.features.habit.data.dao.HabitDao
 import com.alejandro.habitjourney.features.habit.data.dao.HabitLogDao
 import com.alejandro.habitjourney.features.note.data.dao.NoteDao
-import com.alejandro.habitjourney.features.progress.data.dao.ProgressDao
-import com.alejandro.habitjourney.features.reward.data.dao.RewardDao
 import com.alejandro.habitjourney.features.task.data.dao.TaskDao
 import com.alejandro.habitjourney.features.user.data.local.dao.UserDao
 import com.alejandro.habitjourney.features.user.data.local.preferences.UserPreferences
@@ -35,27 +34,46 @@ import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
+/**
+ * Módulo principal de Dagger/Hilt que configura dependencias globales de la aplicación.
+ *
+ * Proporciona:
+ * - Base de datos Room con DAOs
+ * - Cliente HTTP con interceptors configurados
+ * - Repositorios y servicios de red
+ * - Utilidades globales (ResourceProvider, ErrorHandler)
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    // Coroutine Scope para operaciones a nivel de aplicación
+    /**
+     * CoroutineScope para operaciones a nivel de aplicación.
+     * Usa SupervisorJob para que fallos de hijos no cancelen el scope.
+     */
     @Provides
     @Singleton
     fun provideApplicationScope(): CoroutineScope {
         return CoroutineScope(SupervisorJob())
     }
 
-    // Room Database
+    /**
+     * Base de datos Room configurada con foreign keys habilitadas.
+     */
     @Provides
     @Singleton
     fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
         return Room.databaseBuilder(
             context,
             AppDatabase::class.java,
-            "habitjourney_db"
+            DATABASE_NAME
         )
-            .fallbackToDestructiveMigration(true)
+            .addCallback(object : RoomDatabase.Callback() {
+                override fun onOpen(db: SupportSQLiteDatabase) {
+                    super.onOpen(db)
+                    db.execSQL("PRAGMA foreign_keys=ON")
+                }
+            })
             .build()
     }
 
@@ -104,7 +122,13 @@ object AppModule {
         }
     }
 
-    // Retrofit
+    /**
+     * Cliente HTTP configurado con todos los interceptors en orden:
+     * 1. NetworkConnection - Verifica conectividad
+     * 2. Auth - Añade token de autorización
+     * 3. Error - Convierte errores HTTP en excepciones
+     * 4. Logging - Solo en debug builds
+     */
     @Provides
     @Singleton
     fun provideOkHttpClient(
@@ -166,25 +190,6 @@ object AppModule {
     @Provides
     @Singleton
     fun provideNoteDao(database: AppDatabase): NoteDao = database.noteDao()
-
-    @Provides
-    @Singleton
-    fun provideProgressDao(database: AppDatabase): ProgressDao = database.progressDao()
-
-    @Provides
-    @Singleton
-    fun provideAchievementDefinitionDao(database: AppDatabase): AchievementDefinitionDao =
-        database.achievementDefinitionDao()
-
-    @Provides
-    @Singleton
-    fun provideUserAchievementDao(database: AppDatabase): UserAchievementDao =
-        database.userAchievementDao()
-
-    @Provides
-    @Singleton
-    fun provideRewardDao(database: AppDatabase): RewardDao = database.rewardDao()
-
 
     @Provides
     @Singleton

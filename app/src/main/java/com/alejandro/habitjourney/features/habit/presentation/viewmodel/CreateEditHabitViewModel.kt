@@ -1,11 +1,10 @@
 package com.alejandro.habitjourney.features.habit.presentation.viewmodel
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alejandro.habitjourney.R
-import com.alejandro.habitjourney.core.data.local.enums.HabitType
 import com.alejandro.habitjourney.core.data.local.enums.Weekday
+import com.alejandro.habitjourney.core.utils.resources.ResourceProvider
 import com.alejandro.habitjourney.features.habit.domain.model.Habit
 import com.alejandro.habitjourney.features.habit.domain.usecase.CreateHabitUseCase
 import com.alejandro.habitjourney.features.habit.domain.usecase.GetHabitByIdUseCase
@@ -13,7 +12,6 @@ import com.alejandro.habitjourney.features.habit.domain.usecase.UpdateHabitUseCa
 import com.alejandro.habitjourney.features.habit.presentation.state.CreateEditHabitUiState
 import com.alejandro.habitjourney.features.user.data.local.preferences.UserPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,54 +21,74 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import javax.inject.Inject
 
+
+/**
+ * ViewModel para la pantalla de creación y edición de hábitos.
+ *
+ * Gestiona el estado de la UI ([CreateEditHabitUiState]), maneja la lógica del formulario,
+ * valida las entradas del usuario y se comunica con los casos de uso para
+ * crear o actualizar un hábito en la base de datos.
+ *
+ * @property createHabitUseCase Caso de uso para crear un nuevo hábito.
+ * @property updateHabitUseCase Caso de uso para actualizar un hábito existente.
+ * @property getHabitByIdUseCase Caso de uso para obtener los datos de un hábito por su ID.
+ * @property userPreferences Preferencias para obtener el ID del usuario actual.
+ */
 @HiltViewModel
 class CreateEditHabitViewModel @Inject constructor(
     private val createHabitUseCase: CreateHabitUseCase,
     private val updateHabitUseCase: UpdateHabitUseCase,
     private val getHabitByIdUseCase: GetHabitByIdUseCase,
     private val userPreferences: UserPreferences,
-    @ApplicationContext private val context: Context
+    private val resourceProvider: ResourceProvider,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CreateEditHabitUiState())
     val uiState: StateFlow<CreateEditHabitUiState> = _uiState.asStateFlow()
 
+    /** Actualiza el nombre del hábito en el estado de la UI. */
     fun updateName(name: String) {
         _uiState.value = _uiState.value.copy(name = name)
     }
 
+    /** Actualiza la descripción del hábito en el estado de la UI. */
     fun updateDescription(description: String) {
         _uiState.value = _uiState.value.copy(description = description)
     }
 
-    fun updateType(type: HabitType) {
-        _uiState.value = _uiState.value.copy(type = type)
-    }
-
+    /** Actualiza la frecuencia. Si no es semanal, limpia los días de la semana seleccionados. */
     fun updateFrequency(frequency: String) {
         _uiState.value = _uiState.value.copy(frequency = frequency)
-        // Limpiar días de frecuencia si no es weekly
         if (frequency != "weekly") {
             _uiState.value = _uiState.value.copy(frequencyDays = emptyList())
         }
     }
 
+    /** Actualiza la lista de días de la semana seleccionados. */
     fun updateFrequencyDays(days: List<Weekday>) {
         _uiState.value = _uiState.value.copy(frequencyDays = days)
     }
 
+    /** Actualiza el objetivo diario. */
     fun updateDailyTarget(target: Int?) {
         _uiState.value = _uiState.value.copy(dailyTarget = target)
     }
 
+    /** Actualiza la fecha de inicio. */
     fun updateStartDate(date: LocalDate?) {
         _uiState.value = _uiState.value.copy(startDate = date)
     }
 
+    /** Actualiza la fecha de fin. */
     fun updateEndDate(date: LocalDate?) {
         _uiState.value = _uiState.value.copy(endDate = date)
     }
 
+    /**
+     * Carga los datos de un hábito existente por su ID y actualiza el estado de la UI
+     * para entrar en modo de edición.
+     * @param habitId El ID del hábito a cargar.
+     */
     fun loadHabitById(habitId: Long) {
         viewModelScope.launch {
             try {
@@ -83,12 +101,16 @@ class CreateEditHabitViewModel @Inject constructor(
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    error = e.message ?: context.getString(R.string.error_loading_habit)
+                    error = e.message ?: resourceProvider.getString(R.string.error_loading_habit)
                 )
             }
         }
     }
 
+    /**
+     * Guarda el hábito actual. Realiza validaciones y decide si crear o actualizar.
+     * @param onSuccess Callback que se ejecuta si el guardado es exitoso, usualmente para navegar hacia atrás.
+     */
     fun saveHabit(onSuccess: () -> Unit) {
         viewModelScope.launch {
             try {
@@ -99,36 +121,34 @@ class CreateEditHabitViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             isSaving = false,
-                            error = context.getString(R.string.error_habit_name_empty)
+                            error = resourceProvider.getString(R.string.error_habit_name_empty)
                         )
                     }
                     return@launch
                 }
 
-                // DailyTarget es siempre obligatorio y debe ser > 0
                 if (_uiState.value.dailyTarget == null || _uiState.value.dailyTarget!! <= 0) {
                     _uiState.update {
                         it.copy(
                             isSaving = false,
-                            error = context.getString(R.string.error_daily_target_required)
+                            error = resourceProvider.getString(R.string.error_daily_target_required)
                         )
                     }
                     return@launch
                 }
 
-                // Validar días de frecuencia para weekly
                 if (_uiState.value.frequency == "weekly" && _uiState.value.frequencyDays.isEmpty()) {
                     _uiState.update {
                         it.copy(
                             isSaving = false,
-                            error = context.getString(R.string.error_frequency_days_required)
+                            error = resourceProvider.getString(R.string.error_frequency_days_required)
                         )
                     }
                     return@launch
                 }
 
                 val userId = userPreferences.getUserId()
-                    ?: throw IllegalStateException(context.getString(R.string.error_user_not_logged_in))
+                    ?: throw IllegalStateException(resourceProvider.getString(R.string.error_user_not_logged_in))
 
                 val habit = Habit(
                     id = _uiState.value.habitId,
@@ -152,19 +172,23 @@ class CreateEditHabitViewModel @Inject constructor(
                 }
 
                 _uiState.update { it.copy(isSaving = false, isSaved = true) }
-                onSuccess()
+                onSuccess() // se llama desde la UI al cerrar el diálogo de éxito
 
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(
                         isSaving = false,
-                        error = e.message ?: context.getString(R.string.error_saving_habit)
+                        error = e.message ?: resourceProvider.getString(R.string.error_saving_habit)
                     )
                 }
             }
         }
     }
 
+    /**
+     * Prepara el estado de la UI con los datos de un hábito para su edición.
+     * @param habit El hábito a editar.
+     */
     fun loadHabitForEdit(habit: Habit) {
         _uiState.value = CreateEditHabitUiState(
             habitId = habit.id,
@@ -182,10 +206,12 @@ class CreateEditHabitViewModel @Inject constructor(
         )
     }
 
+    /** Limpia el mensaje de error del estado de la UI. */
     fun clearError() {
         _uiState.value = _uiState.value.copy(error = null)
     }
 
+    /** Resetea el estado de guardado, usualmente después de que el diálogo de éxito es cerrado. */
     fun resetSaveState() {
         _uiState.value = _uiState.value.copy(isSaved = false)
     }

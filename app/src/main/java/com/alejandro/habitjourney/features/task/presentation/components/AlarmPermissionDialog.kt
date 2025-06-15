@@ -22,7 +22,18 @@ import androidx.compose.ui.text.font.FontWeight
 import com.alejandro.habitjourney.R
 import com.alejandro.habitjourney.features.task.data.local.PermissionType
 
-
+/**
+ * Un diálogo Composable que informa al usuario sobre los permisos de alarma y notificación necesarios
+ * y le permite navegar a la configuración para concederlos.
+ *
+ * Muestra una lista de permisos faltantes y un botón de "Cancelar" para cerrar el diálogo.
+ * Cada permiso se presenta en una tarjeta clicable que puede llevar a la configuración relevante.
+ *
+ * @param missingPermissions Una lista de [PermissionType] que indican los permisos que faltan.
+ * @param onPermissionSelected Lambda que se invoca cuando el usuario selecciona un permiso de la lista.
+ * Recibe el [PermissionType] del permiso seleccionado.
+ * @param onDismiss Lambda que se invoca cuando el diálogo se cierra (por ejemplo, haciendo clic en el botón "Cancelar" o fuera del diálogo).
+ */
 @Composable
 fun AlarmPermissionDialog(
     missingPermissions: List<PermissionType>,

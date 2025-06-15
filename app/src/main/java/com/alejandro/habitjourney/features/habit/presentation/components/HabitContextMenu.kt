@@ -13,6 +13,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.alejandro.habitjourney.R
 
+
+/**
+ * Menú contextual para la tarjeta de hábito.
+ *
+ * Muestra opciones relevantes como archivar/desarchivar y omitir/deshacer omisión,
+ * basándose en el estado actual del hábito.
+ *
+ * @param expanded `true` si el menú debe estar visible.
+ * @param onDismiss Callback para cuando se solicita cerrar el menú.
+ * @param isArchived `true` si el hábito está actualmente archivado.
+ * @param isSkippedToday `true` si el hábito está marcado como omitido hoy.
+ * @param isCompletedToday `true` si el hábito está completado hoy.
+ * @param canToggleSkipped `true` si la opción de omitir debe estar habilitada.
+ * @param onArchiveHabit Callback para la acción de archivar.
+ * @param onUnarchiveHabit Callback para la acción de desarchivar.
+ * @param onMarkSkipped Callback para la acción de omitir.
+ * @param onUndoSkipped Callback para la acción de deshacer la omisión.
+ */
 @Composable
 fun HabitContextMenu(
     expanded: Boolean,

@@ -5,145 +5,114 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
-import kotlinx.datetime.plus
-import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 
-
+/**
+ * Clase contenedora que asocia un [Habit] con su lista de registros ([HabitLog]).
+ *
+ * Proporciona propiedades computadas para acceder fácilmente a datos derivados
+ * como el estado de completitud de hoy, el progreso actual y la racha,
+ * optimizando el rendimiento mediante cálculos perezosos (lazy).
+ *
+ * @property habit El modelo de dominio del hábito.
+ * @property logs La lista de todos los registros de seguimiento asociados a este hábito.
+ */
 data class HabitWithLogs(
     val habit: Habit,
-    val logs: List<HabitLog> // Esta lista puede ser completa o parcial según el contexto
+    val logs: List<HabitLog>
 ) {
-
-    // --- Propiedades específicas para "HOY" (optimizadas con by lazy) ---
-    // Estas son las que usarás principalmente para los items en DashboardData.todayHabits
-
     /**
-     * El log específico para el día de hoy, calculado una sola vez por instancia.
-     * Es transient para que los serializadores (como Gson/Moshi) lo ignoren si esta clase se serializa.
+     * El log específico para el día de hoy.
+     * Se calcula de forma perezosa (una sola vez por instancia) para mayor eficiencia.
+     * Es transient para que los serializadores (como Gson/Moshi) lo ignoren.
+     * @return El [HabitLog] de hoy, o null si no existe.
      */
     @delegate:Transient
     val todayLog: HabitLog? by lazy {
-        // Obtenemos la fecha actual una sola vez para las propiedades lazy dependientes.
         val todayDate: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
         logs.find { it.date == todayDate }
     }
 
     /**
-     * Progreso actual del hábito para el día de hoy (ej. contador de veces, minutos).
-     * Calculado una sola vez por instancia.
+     * Progreso numérico actual del hábito para hoy (ej: contador de veces, minutos).
+     * Devuelve 0 si no hay registro o si el valor es nulo.
+     * @return El progreso de hoy como [Int].
      */
     @delegate:Transient
-    val todayProgress: Int by lazy { // O Float si necesitas decimales
+    val todayProgress: Int by lazy {
         todayLog?.value?.toInt() ?: 0
     }
 
     /**
      * Indica si el hábito se considera completado para el día de hoy.
-     * Calculado una sola vez por instancia.
+     * Para hábitos contables, verifica si el progreso alcanza el objetivo.
+     * Para hábitos de SÍ/NO, verifica si el estado es [LogStatus.COMPLETED].
+     * @return `true` si el hábito está completado hoy, `false` en caso contrario.
      */
     @delegate:Transient
     val isCompletedToday: Boolean by lazy {
-        val log = todayLog ?: return@lazy false // Si no hay log de hoy, no está completado
+        val log = todayLog ?: return@lazy false
 
         return@lazy when {
-            // Para hábitos de sí/no o sin objetivo numérico específico,
-            // consideramos completado si el estado es COMPLETED.
+            // Si no hay objetivo, se considera completado si el estado es COMPLETED.
             habit.dailyTarget == null || habit.dailyTarget <= 0 -> log.status == LogStatus.COMPLETED
-            // Para hábitos con objetivo numérico.
-            else -> log.value!! >= habit.dailyTarget
+            // Si hay objetivo, se comprueba si el valor lo alcanza o supera.
+            else -> log.value != null && log.value >= habit.dailyTarget
         }
     }
 
     /**
-     * Porcentaje de completitud del hábito para el día de hoy.
-     * Calculado una sola vez por instancia.
+     * Porcentaje de completitud del hábito para el día de hoy (de 0 a 100).
+     * @return Un [Float] que representa el porcentaje.
      */
     @delegate:Transient
     val completionPercentageToday: Float by lazy {
-        return@lazy when {
-            habit.dailyTarget == null || habit.dailyTarget <= 0 -> if (isCompletedToday) 100f else 0f
-            habit.dailyTarget > 0 -> {
-                val progress = (todayProgress.toFloat() / habit.dailyTarget) * 100f
-                progress.coerceIn(0f, 100f) // Asegura que esté entre 0 y 100
-            }
-            else -> 0f
+        if (habit.dailyTarget != null && habit.dailyTarget > 0) {
+            val progress = (todayProgress.toFloat() / habit.dailyTarget) * 100f
+            return@lazy progress.coerceIn(0f, 100f)
+        } else {
+            return@lazy if (isCompletedToday) 100f else 0f
         }
     }
 
-    // --- Funciones generales (operan sobre la lista 'logs' proporcionada) ---
-    // Estas funciones pueden permanecer, pero recuerda que en el contexto de DashboardData.todayHabits,
-    // 'logs' solo contendrá los registros de hoy, por lo que estas funciones darán resultados
-    // basados solo en esa información (ej. racha de 0 o 1 si se completó hoy).
-
-    val currentStreak: Int // Tu implementación actual
+    /**
+     * La racha actual de días consecutivos en los que el hábito se ha completado.
+     * @return El número de días seguidos como [Int].
+     */
+    val currentStreak: Int
         get() = calculateCurrentStreak()
 
-    val bestStreak: Int // Tu implementación actual
-        get() = calculateBestStreak()
-
-    val completionRate: Float // Tu implementación actual
-        get() = calculateCompletionRate()
-
+    /**
+     * Calcula la racha actual basándose en los registros.
+     * Un registro saltado o no completado rompe la racha.
+     */
     private fun calculateCurrentStreak(): Int {
-        // Tu lógica actual: opera sobre la lista 'logs' disponible en esta instancia.
-        // Si 'logs' solo tiene los de hoy, esta racha será 0 o 1.
         if (logs.isEmpty()) return 0
         val sortedLogs = logs.sortedByDescending { it.date }
+
         var streak = 0
-        // Asumiendo que para la racha "actual" del hábito, te refieres a días consecutivos terminando en el log más reciente.
-        // Si los logs son solo de hoy, y está completado, la racha es 1.
-        // Esta lógica es más para una racha histórica del hábito si 'logs' es completo.
-        var currentDateExpected = sortedLogs.firstOrNull()?.date ?: return 0
+        var expectedDate: LocalDate? = null
+
         for (log in sortedLogs) {
-            if (log.date == currentDateExpected && log.status == LogStatus.COMPLETED) {
+            // Para el primer log completado que encontramos, inicializamos la racha.
+            if (expectedDate == null) {
+                if (log.status == LogStatus.COMPLETED) {
+                    streak = 1
+                    expectedDate = log.date.minus(1, kotlinx.datetime.DateTimeUnit.DAY)
+                }
+                continue // Pasamos al siguiente log
+            }
+
+            // Si el log actual es del día esperado y está completado, continuamos la racha.
+            if (log.date == expectedDate && log.status == LogStatus.COMPLETED) {
                 streak++
-                currentDateExpected = currentDateExpected.minus(1, kotlinx.datetime.DateTimeUnit.DAY)
-            } else if (log.date < currentDateExpected) { // Se saltó un día o más
-                break
-            } else if (log.date == currentDateExpected && log.status != LogStatus.COMPLETED) { // Día esperado pero no completado
+                expectedDate = expectedDate.minus(1, kotlinx.datetime.DateTimeUnit.DAY)
+            } else if (log.date < expectedDate) {
+                // Si encontramos un hueco en las fechas, la racha se ha roto antes.
                 break
             }
-            // Si hay múltiples logs para el mismo día, esta lógica simple podría necesitar ajuste
-            // si el orden dentro del mismo día importa o si solo debe contar una vez por día.
+            // Si log.date == expectedDate pero no está completado, se rompe la racha (handled by the next loop iteration).
         }
         return streak
-    }
-
-    private fun calculateBestStreak(): Int {
-        // Tu lógica actual: opera sobre la lista 'logs' disponible en esta instancia.
-        if (logs.isEmpty()) return 0
-        val sortedLogsByDate = logs
-            .filter { it.status == LogStatus.COMPLETED } // Solo considerar logs completados
-            .distinctBy { it.date } // Asegurar un log por día para el cálculo de racha
-            .sortedBy { it.date }
-
-        if (sortedLogsByDate.isEmpty()) return 0
-
-        var maxStreak = 0
-        var currentStreak = 0
-        var expectedDate = sortedLogsByDate.first().date.minus(1, kotlinx.datetime.DateTimeUnit.DAY) // Para empezar la primera comparación
-
-        for (log in sortedLogsByDate) {
-            if (log.date == expectedDate.plus(1, kotlinx.datetime.DateTimeUnit.DAY)) {
-                currentStreak++
-            } else {
-                // Se rompió la racha (o es el primer elemento después de una ruptura)
-                currentStreak = 1 // Inicia nueva racha
-            }
-            maxStreak = maxOf(maxStreak, currentStreak)
-            expectedDate = log.date
-        }
-        return maxStreak
-    }
-
-    private fun calculateCompletionRate(): Float {
-        // Tu lógica actual: opera sobre la lista 'logs' disponible en esta instancia.
-        if (logs.isEmpty()) return 0f
-        val completedCount = logs.count { it.status == LogStatus.COMPLETED }
-        // Aquí, 'logs.size' podría ser 1 si solo tienes el log de hoy.
-        // Si quieres una tasa de completitud histórica, 'logs' debe ser la lista completa.
-        // Si es para hoy: ¿(completado hoy ? 100 : 0) / (hábitos esperados hoy=1)?
-        return (completedCount.toFloat() / logs.size) * 100f
     }
 }

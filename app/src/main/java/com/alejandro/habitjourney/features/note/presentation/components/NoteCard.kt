@@ -1,6 +1,5 @@
 package com.alejandro.habitjourney.features.note.presentation.components
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -21,7 +20,21 @@ import com.alejandro.habitjourney.core.presentation.ui.theme.*
 import com.alejandro.habitjourney.features.note.domain.model.Note
 import com.alejandro.habitjourney.features.note.domain.model.NoteListItem
 
-@OptIn(ExperimentalFoundationApi::class)
+/**
+ * Componente de tarjeta reutilizable para mostrar una nota individual.
+ *
+ * Muestra el título, tipo, contenido (texto o lista) y estado (favorito, archivado) de una nota.
+ * Gestiona las interacciones del usuario, como clics y menús contextuales, para
+ * ejecutar acciones como archivar, eliminar o marcar como favorito.
+ *
+ * @param note El objeto [Note] que contiene todos los datos a mostrar.
+ * @param onNoteClick Callback invocado con un clic normal, usualmente para navegar a la pantalla de edición.
+ * @param onArchiveNote Callback para la acción de archivar la nota.
+ * @param onUnarchiveNote Callback para la acción de desarchivar la nota.
+ * @param onToggleFavorite Callback para cambiar el estado de favorito de la nota.
+ * @param onDeleteNote Callback para la acción de eliminar permanentemente la nota.
+ * @param modifier Modificador para personalizar el layout de la tarjeta.
+ */
 @Composable
 fun NoteCard(
     note: Note,
@@ -117,7 +130,10 @@ fun NoteCard(
                             showArchiveDialog = true
                             showMenu = false
                         },
-                        onUnarchiveNote = { showArchiveDialog = true },
+                        onUnarchiveNote = {
+                            showArchiveDialog = true
+                            showMenu = false
+                        },
                         onToggleFavorite = {
                             onToggleFavorite()
                             showMenu = false
@@ -208,7 +224,12 @@ fun NoteCard(
     }
 }
 
-// Componente para mostrar todos los items de la lista
+/**
+ * Componente privado que renderiza la lista completa de ítems de una nota de tipo CHECKLIST.
+ *
+ * @param items La lista de [NoteListItem] a mostrar.
+ * @param modifier Modificador para personalizar el layout de la columna.
+ */
 @Composable
 private fun NoteListComplete(
     items: List<NoteListItem>,

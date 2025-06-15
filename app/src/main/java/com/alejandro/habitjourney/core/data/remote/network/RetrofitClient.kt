@@ -10,12 +10,19 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+/**
+ * Factory para crear Retrofit configurado con Gson y cliente HTTP.
+ * Singleton para reutilizar la instancia.
+ */
 @Singleton
 class RetrofitClient @Inject constructor(
     private val okHttpClient: OkHttpClient
 ){
     private val BASE_URL = BuildConfig.API_BASE_URL
 
+    /**
+     * Crea Retrofit con Gson configurado para snake_case y fechas ISO 8601.
+     */
     fun create(): Retrofit {
         val gson = GsonBuilder()
             .setStrictness(Strictness.LENIENT)

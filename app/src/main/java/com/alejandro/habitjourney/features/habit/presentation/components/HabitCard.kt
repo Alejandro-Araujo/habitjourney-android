@@ -21,6 +21,39 @@ import com.alejandro.habitjourney.core.presentation.ui.theme.*
 import com.alejandro.habitjourney.core.data.local.enums.LogStatus
 import com.alejandro.habitjourney.core.presentation.ui.components.ConfirmationDialog
 
+
+/**
+ * Componente de tarjeta reutilizable para mostrar un hábito individual.
+ *
+ * Muestra el nombre, descripción, progreso y estado de un hábito. Ofrece acciones
+ * contextuales como completar, incrementar/decrementar progreso y un menú de opciones
+ * para archivar u omitir.
+ *
+ * @param modifier Modificador para personalizar el layout de la tarjeta.
+ * @param habitName El nombre del hábito.
+ * @param habitDescription Descripción opcional del hábito.
+ * @param icon El [ImageVector] que representa visualmente al hábito.
+ * @param iconContentDescription Descripción del icono para accesibilidad.
+ * @param completionProgressPercentage Porcentaje de completitud (0-100f) para la barra de progreso.
+ * @param onClick Callback invocado con un clic normal, usualmente para navegar al detalle.
+ * @param accentColor Color principal utilizado para el icono y la barra de progreso.
+ * @param logStatus El [LogStatus] actual del hábito para hoy, usado para mostrar el icono de estado.
+ * @param isCompletedToday `true` si el hábito se considera completado hoy.
+ * @param isSkippedToday `true` si el hábito ha sido marcado como omitido hoy.
+ * @param isArchived `true` si el hábito está archivado, afectando a su apariencia y acciones.
+ * @param dailyTarget Objetivo numérico para hábitos contables. Es nulo si no aplica.
+ * @param currentCompletionCount Progreso numérico actual del hábito para hoy.
+ * @param showTodayActions `true` para mostrar los controles de acción de hoy (checkbox, botones +/-).
+ * @param onIncrementProgress Callback para incrementar el progreso del hábito.
+ * @param onDecrementProgress Callback para decrementar el progreso del hábito.
+ * @param onUndoSkipped Callback para deshacer el estado de "omitido".
+ * @param onMarkSkipped Callback para marcar el hábito como "omitido".
+ * @param onArchiveHabit Callback para archivar el hábito.
+ * @param onUnarchiveHabit Callback para desarchivar el hábito.
+ * @param canIncrementProgress `true` si el botón de incrementar debe estar habilitado.
+ * @param canDecrementProgress `true` si el botón de decrementar debe estar habilitado.
+ * @param canToggleSkipped `true` si las opciones de omitir/deshacer omisión deben estar habilitadas.
+ */
 @Composable
 fun HabitCard(
     modifier: Modifier = Modifier,
@@ -32,13 +65,9 @@ fun HabitCard(
     onClick: () -> Unit,
     accentColor: Color,
 
-    // Parámetros de estado del UI Model
     logStatus: LogStatus,
     isCompletedToday: Boolean,
     isSkippedToday: Boolean,
-    isPartialToday: Boolean,
-    isMissedToday: Boolean,
-    isNotCompletedToday: Boolean,
     isArchived: Boolean,
 
     dailyTarget: Int?,
@@ -328,7 +357,7 @@ fun HabitCard(
                             )
                         }
                     } else {
-                        // Para hábitos simples (dailyTarget = null o 1)
+                        // Para hábitos simples (dailyTarget = 1)
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
                                 text = stringResource(R.string.habit_card_complete),
@@ -345,7 +374,7 @@ fun HabitCard(
                                         onDecrementProgress?.invoke(1f)
                                     }
                                 },
-                                enabled = !isArchived && !isSkippedToday,
+                                enabled = !isSkippedToday,
                                 colors = CheckboxDefaults.colors(
                                     checkedColor = AcentoPositivo,
                                     uncheckedColor = InactivoDeshabilitado

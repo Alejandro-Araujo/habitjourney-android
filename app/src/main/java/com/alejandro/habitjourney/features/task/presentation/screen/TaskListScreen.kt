@@ -26,11 +26,21 @@ import com.alejandro.habitjourney.features.task.presentation.components.TaskCard
 import com.alejandro.habitjourney.features.task.presentation.state.TaskFilterType
 import com.alejandro.habitjourney.features.task.presentation.viewmodel.TaskListViewModel
 
+
+/**
+ * Pantalla principal que muestra la lista de tareas.
+ *
+ * Permite al usuario ver, buscar y filtrar tareas, así como navegar a la creación o detalle de una tarea.
+ * Muestra diferentes estados de la UI (carga, lista de tareas, estado vacío).
+ *
+ * @param onNavigateToCreateTask Lambda que se invoca para navegar a la pantalla de creación de tareas.
+ * @param onNavigateToTaskDetail Lambda que se invoca para navegar a la pantalla de detalles de una tarea específica, pasando su ID.
+ * @param viewModel La instancia de [TaskListViewModel] inyectada por Hilt.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskListScreen(
     onNavigateToCreateTask: () -> Unit,
-    onNavigateToEditTask: (Long) -> Unit,
     onNavigateToTaskDetail: (Long) -> Unit,
     viewModel: TaskListViewModel = hiltViewModel()
 ) {
@@ -57,6 +67,7 @@ fun TaskListScreen(
             }
         )
     }
+
     LaunchedEffect(uiState.error) {
         uiState.error?.let {
             viewModel.clearError()
@@ -153,6 +164,13 @@ fun TaskListScreen(
     }
 }
 
+/**
+ * Obtiene el título para el estado vacío de la lista de tareas, basado en el filtro actual y la consulta de búsqueda.
+ *
+ * @param filter El tipo de filtro de tareas aplicado actualmente.
+ * @param searchQuery La consulta de búsqueda actual.
+ * @return El [String] del título para el estado vacío.
+ */
 @Composable
 private fun getTaskEmptyStateTitle(filter: TaskFilterType, searchQuery: String): String {
     return if (searchQuery.isNotBlank()) {
@@ -168,6 +186,12 @@ private fun getTaskEmptyStateTitle(filter: TaskFilterType, searchQuery: String):
     }
 }
 
+/**
+ * Obtiene el mensaje descriptivo para el estado vacío de la lista de tareas, basado en el filtro actual.
+ *
+ * @param filter El tipo de filtro de tareas aplicado actualmente.
+ * @return El [String] del mensaje para el estado vacío.
+ */
 @Composable
 private fun getTaskEmptyStateMessage(filter: TaskFilterType): String {
     return when (filter) {
@@ -179,6 +203,12 @@ private fun getTaskEmptyStateMessage(filter: TaskFilterType): String {
     }
 }
 
+/**
+ * Obtiene el icono apropiado para el estado vacío de la lista de tareas, basado en el filtro actual.
+ *
+ * @param filter El tipo de filtro de tareas aplicado actualmente.
+ * @return El [ImageVector] del icono para el estado vacío.
+ */
 @Composable
 private fun getTaskEmptyStateIcon(filter: TaskFilterType): ImageVector {
     return when (filter) {

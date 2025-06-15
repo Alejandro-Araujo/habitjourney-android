@@ -10,23 +10,34 @@ import com.alejandro.habitjourney.features.habit.data.entity.HabitLogEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDate
 
+/**
+ * DAO para logs de hábitos con consultas optimizadas para cálculos de rachas y estadísticas.
+ */
 @Dao
 interface HabitLogDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLog(log: HabitLogEntity)
 
-    // Insertar múltiples logs en una transacción
+    /**
+     * Inserta múltiples logs en una transacción para operaciones batch.
+     */
     @Transaction
     suspend fun insertMultipleLogs(logs: List<HabitLogEntity>) {
         logs.forEach { insertLog(it) }
     }
 
+    /**
+     * Obtiene el log de un hábito para una fecha específica.
+     * Flow reactivo para observar cambios en tiempo real.
+     */
     @Query("SELECT * FROM habit_logs WHERE habit_id = :habitId AND date = :date")
     fun getHabitLogForDate(habitId: Long, date: LocalDate): Flow<HabitLogEntity?>
 
-
-    // Obtener logs de un hábito en un rango de fechas
+    /**
+     * Obtiene logs en un rango de fechas ordenados por fecha descendente.
+     * Útil para gráficos y análisis de tendencias.
+     */
     @Query("""
         SELECT * FROM habit_logs 
         WHERE habit_id = :habitId 
@@ -39,6 +50,10 @@ interface HabitLogDao {
         endDate: LocalDate
     ): Flow<List<HabitLogEntity>>
 
+    /**
+     * Consulta optimizada para cálculo de rachas.
+     * Obtiene logs desde el pasado hasta la fecha actual ordenados para análisis secuencial.
+     */
     @Query("""
         SELECT id, habit_id, date, status, value, created_at
         FROM habit_logs
@@ -51,7 +66,10 @@ interface HabitLogDao {
         currentDate: LocalDate
     ): List<HabitLogEntity>
 
-    // Estadísticas: Tasa de completado en un período
+    /**
+     * Calcula porcentaje de completación en un rango de fechas.
+     * Usa CASE para contar solo logs completados.
+     */
     @Query("""
         SELECT 
             COUNT(CASE WHEN status = 'COMPLETED' THEN 1 END) * 100.0 / COUNT(*) AS completion_rate
@@ -61,7 +79,6 @@ interface HabitLogDao {
     """)
     suspend fun getCompletionRate(habitId: Long, startDate: LocalDate, endDate: LocalDate): Float
 
-    // Actualizar un log existente
     @Update
     suspend fun updateLog(log: HabitLogEntity)
 }

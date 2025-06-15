@@ -1,6 +1,5 @@
 package com.alejandro.habitjourney.features.settings.presentation.screen
 
-
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,7 +12,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -22,8 +22,24 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alejandro.habitjourney.R
 import com.alejandro.habitjourney.core.presentation.ui.components.*
 import com.alejandro.habitjourney.core.presentation.ui.theme.*
+import com.alejandro.habitjourney.features.settings.presentation.state.ThemeMode
 import com.alejandro.habitjourney.features.settings.presentation.viewmodel.SettingsViewModel
+import com.alejandro.habitjourney.features.user.domain.model.User
 
+/**
+ * Pantalla principal de Configuración de la aplicación.
+ *
+ * Muestra las opciones de perfil, cuenta y apariencia. Permite al usuario
+ * navegar a otras pantallas de configuración, cambiar el tema, cerrar sesión
+ * y eliminar su cuenta.
+ *
+ * @param onNavigateBack Callback para navegar a la pantalla anterior.
+ * @param onNavigateToEditProfile Callback para navegar a la pantalla de edición de perfil.
+ * @param onNavigateToChangePassword Callback para navegar a la pantalla de cambio de contraseña.
+ * @param onNavigateToLanguage Callback para navegar a la pantalla de selección de idioma.
+ * @param onNavigateToAuth Callback para navegar a la pantalla de autenticación, típicamente después de cerrar sesión.
+ * @param viewModel El [SettingsViewModel] que gestiona el estado y la lógica de esta pantalla.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
@@ -35,10 +51,9 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // Dialogs
+    // Estados para los diálogos
     var showThemeDialog by remember { mutableStateOf(false) }
     var showDeleteAccountDialog by remember { mutableStateOf(false) }
     var showLogoutDialog by remember { mutableStateOf(false) }
@@ -49,7 +64,7 @@ fun SettingsScreen(
                 title = {
                     Text(
                         text = stringResource(R.string.settings_title),
-                        style = MaterialTheme.typography.headlineMedium
+                        style = Typography.headlineMedium
                     )
                 },
                 navigationIcon = {
@@ -224,9 +239,15 @@ fun SettingsScreen(
     }
 }
 
+/**
+ * Muestra una sección con la información del perfil del usuario y un botón para editarlo.
+ * @param user El objeto [User] a mostrar, o null.
+ * @param onEditProfile Callback para navegar a la pantalla de edición de perfil.
+ * @param modifier Modificador para el layout.
+ */
 @Composable
 private fun ProfileSection(
-    user: com.alejandro.habitjourney.features.user.domain.model.User?,
+    user: User?,
     onEditProfile: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -240,7 +261,7 @@ private fun ProfileSection(
             // Avatar
             Surface(
                 modifier = Modifier
-                    .size(80.dp)
+                    .size(Dimensions.IconSizeExtraLarge)
                     .clip(CircleShape),
                 color = AcentoInformativo
             ) {
@@ -249,7 +270,7 @@ private fun ProfileSection(
                 ) {
                     Text(
                         text = user?.name?.firstOrNull()?.uppercase() ?: "U",
-                        style = MaterialTheme.typography.headlineLarge,
+                        style = Typography.headlineLarge,
                         color = MaterialTheme.colorScheme.onPrimary,
                         fontWeight = FontWeight.Bold
                     )
@@ -261,14 +282,14 @@ private fun ProfileSection(
             // Name
             Text(
                 text = user?.name ?: "Usuario",
-                style = MaterialTheme.typography.headlineSmall,
+                style = Typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
 
             // Email
             Text(
                 text = user?.email ?: "",
-                style = MaterialTheme.typography.bodyMedium,
+                style = Typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
@@ -286,17 +307,24 @@ private fun ProfileSection(
     }
 }
 
+/**
+ * Componente genérico para crear una sección de configuración con un título.
+ * @param title El título de la sección.
+ * @param titleColor El color del título.
+ * @param content El contenido Composable de la sección.
+ * @param modifier Modificador para el layout.
+ */
 @Composable
 private fun SettingsSection(
     modifier: Modifier = Modifier,
     title: String,
-    titleColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurface,
+    titleColor: Color = MaterialTheme.colorScheme.onSurface,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column(modifier = modifier) {
         Text(
             text = title,
-            style = MaterialTheme.typography.titleMedium,
+            style = Typography.titleMedium,
             fontWeight = FontWeight.Bold,
             color = titleColor,
             modifier = Modifier.padding(
@@ -315,13 +343,22 @@ private fun SettingsSection(
     }
 }
 
+/**
+ * Un ítem de menú individual para una pantalla de configuración.
+ * @param icon El icono a mostrar a la izquierda.
+ * @param title El título principal del ítem.
+ * @param subtitle Un subtítulo opcional para dar más contexto.
+ * @param titleColor El color a aplicar al título.
+ * @param onClick Callback que se invoca al pulsar el ítem.
+ * @param modifier Modificador para el layout.
+ */
 @Composable
 private fun SettingsItem(
     modifier: Modifier = Modifier,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    icon: ImageVector,
     title: String,
     subtitle: String? = null,
-    titleColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurface,
+    titleColor: Color = MaterialTheme.colorScheme.onSurface,
     onClick: () -> Unit,
 ) {
     Row(
@@ -349,14 +386,14 @@ private fun SettingsItem(
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.bodyLarge,
+                style = Typography.bodyLarge,
                 fontWeight = FontWeight.Medium,
                 color = titleColor
             )
             subtitle?.let {
                 Text(
                     text = it,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = Typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -366,11 +403,17 @@ private fun SettingsItem(
             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier.size(Dimensions.IconSizeButton)
         )
     }
 }
 
+/**
+ * Diálogo para la selección de tema (Claro, Oscuro, Sistema).
+ * @param currentTheme El tema actualmente seleccionado.
+ * @param onThemeSelected Callback invocado cuando se selecciona un nuevo tema.
+ * @param onDismiss Callback invocado para cerrar el diálogo.
+ */
 @Composable
 private fun ThemeSelectionDialog(
     currentTheme: ThemeMode,
@@ -382,7 +425,7 @@ private fun ThemeSelectionDialog(
         title = {
             Text(
                 text = stringResource(R.string.settings_theme),
-                style = MaterialTheme.typography.headlineSmall
+                style = Typography.headlineSmall
             )
         },
         text = {
@@ -420,6 +463,10 @@ private fun ThemeSelectionDialog(
     )
 }
 
+/**
+ * Muestra información de la aplicación, como el nombre y la versión.
+ * @param modifier Modificador para el layout.
+ */
 @Composable
 private fun AppInfoSection(
     modifier: Modifier = Modifier
@@ -429,24 +476,34 @@ private fun AppInfoSection(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "HabitJourney",
-            style = MaterialTheme.typography.titleMedium,
+            text = stringResource(R.string.app_name),
+            style = Typography.titleMedium,
             fontWeight = FontWeight.Bold
         )
         Text(
-            text = "v1.0.0",
-            style = MaterialTheme.typography.bodySmall,
+            text = stringResource(R.string.app_version),
+            style = Typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(modifier = Modifier.height(Dimensions.SpacingSmall))
         Text(
-            text = "© 2024 Alejandro",
-            style = MaterialTheme.typography.bodySmall,
+            text = stringResource(R.string.app_author),
+            style = Typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
 
+/**
+ * Diálogo de confirmación genérico para acciones peligrosas o importantes.
+ * @param title Título del diálogo.
+ * @param message Mensaje del cuerpo del diálogo.
+ * @param confirmText Texto del botón de confirmación.
+ * @param dismissText Texto del botón de cancelación.
+ * @param onConfirm Callback para la acción de confirmación.
+ * @param onDismiss Callback para la acción de cancelación o para cerrar el diálogo.
+ * @param isDangerous `true` si la acción es destructiva, para colorear el botón de confirmación en rojo.
+ */
 @Composable
 private fun ConfirmationDialog(
     title: String,
@@ -462,14 +519,14 @@ private fun ConfirmationDialog(
         title = {
             Text(
                 text = title,
-                style = MaterialTheme.typography.headlineSmall,
+                style = Typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
         },
         text = {
             Text(
                 text = message,
-                style = MaterialTheme.typography.bodyMedium
+                style = Typography.bodyMedium
             )
         },
         confirmButton = {
@@ -493,12 +550,3 @@ private fun ConfirmationDialog(
         }
     )
 }
-
-enum class ThemeMode {
-    LIGHT, DARK, SYSTEM
-}
-
-data class Language(
-    val code: String,
-    val displayName: String
-)

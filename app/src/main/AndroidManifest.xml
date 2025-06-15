@@ -14,7 +14,7 @@
 
     <application
         android:name=".HabitJourneyApplication"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:enableOnBackInvokedCallback="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -24,7 +24,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HabitJourney"
         android:usesCleartextTraffic="true"
-        android:localeConfig="@xml/locales_config"
         tools:targetApi="tiramisu">
 
         <activity

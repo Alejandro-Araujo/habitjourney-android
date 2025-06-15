@@ -1,5 +1,6 @@
 package com.alejandro.habitjourney.features.task.presentation.screen
 
+import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -10,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
@@ -26,7 +28,21 @@ import com.alejandro.habitjourney.features.task.domain.model.Task
 import com.alejandro.habitjourney.features.task.presentation.components.*
 import com.alejandro.habitjourney.features.task.presentation.viewmodel.TaskDetailsViewModel
 import kotlinx.datetime.*
+import com.alejandro.habitjourney.core.utils.formatter.DateTimeFormatters
 
+
+/**
+ * Pantalla de detalles de la tarea.
+ *
+ * Muestra la información completa de una tarea específica, incluyendo su título, descripción,
+ * fechas, prioridad, recordatorio y estado. Permite al usuario alternar el estado de completado,
+ * editar la tarea, archivarla/desarchivarla y eliminarla.
+ *
+ * @param taskId El ID de la tarea a mostrar.
+ * @param onNavigateBack Lambda para navegar de vuelta a la pantalla anterior.
+ * @param onNavigateToEdit Lambda para navegar a la pantalla de edición de la tarea, pasando el ID de la tarea.
+ * @param viewModel La instancia de [TaskDetailsViewModel] inyectada por Hilt.
+ */
 @androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,17 +54,19 @@ fun TaskDetailsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val task by viewModel.task.collectAsStateWithLifecycle()
+    val context = LocalContext.current // Obtener el contexto para el formateador
 
-    // Inicializar el ViewModel
+    // Inicializar el ViewModel con el ID de la tarea cuando el componente se compone por primera vez.
     LaunchedEffect(taskId) {
         viewModel.initializeWithTaskId(taskId)
     }
 
-    // Estados para diálogos de confirmación
+    // Estados para controlar la visibilidad de los diálogos de confirmación y el menú desplegable.
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showArchiveDialog by remember { mutableStateOf(false) }
     var showMenuDropdown by remember { mutableStateOf(false) }
 
+    // Efecto para navegar hacia atrás si la tarea no existe o hay un error de carga.
     LaunchedEffect(uiState.isLoading, uiState.taskExists) {
         if (!uiState.isLoading && !uiState.taskExists && uiState.error != null) {
             onNavigateBack()
@@ -61,7 +79,7 @@ fun TaskDetailsScreen(
                 title = {
                     Text(
                         text = stringResource(R.string.task_details),
-                        style = MaterialTheme.typography.headlineMedium
+                        style = Typography.headlineMedium
                     )
                 },
                 navigationIcon = {
@@ -73,8 +91,9 @@ fun TaskDetailsScreen(
                     }
                 },
                 actions = {
+                    // Muestra las acciones de editar y menú solo si la tarea se ha cargado y existe.
                     if (task != null && !uiState.isLoading) {
-                        // Botón de editar
+                        // Botón para navegar a la pantalla de edición de la tarea.
                         IconButton(
                             onClick = { onNavigateToEdit(taskId) }
                         ) {
@@ -84,7 +103,7 @@ fun TaskDetailsScreen(
                             )
                         }
 
-                        // Menú con más opciones
+                        // Menú desplegable con opciones adicionales (archivar/desarchivar, eliminar).
                         Box {
                             IconButton(
                                 onClick = { showMenuDropdown = true }
@@ -100,6 +119,7 @@ fun TaskDetailsScreen(
                                 onDismissRequest = { showMenuDropdown = false }
                             ) {
                                 task?.let { currentTask ->
+                                    // Opción para archivar o desarchivar la tarea.
                                     if (!currentTask.isArchived) {
                                         DropdownMenuItem(
                                             text = { Text(stringResource(R.string.archive_task)) },
@@ -132,6 +152,7 @@ fun TaskDetailsScreen(
 
                                     HorizontalDivider()
 
+                                    // Opción para eliminar la tarea.
                                     DropdownMenuItem(
                                         text = {
                                             Text(
@@ -160,6 +181,7 @@ fun TaskDetailsScreen(
         }
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize()) {
+            // Contenido principal de los detalles de la tarea.
             task?.let { currentTask ->
                 TaskDetailsContent(
                     task = currentTask,
@@ -167,18 +189,19 @@ fun TaskDetailsScreen(
                     isProcessing = uiState.isProcessing,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(paddingValues)
+                        .padding(paddingValues),
+                    context = context // Pasar el contexto al contenido para los formateadores
                 )
             }
 
-            // Overlay de carga
+            // Muestra un overlay de carga mientras los datos se están obteniendo o procesando.
             if (uiState.isLoading) {
                 HabitJourneyLoadingOverlay()
             }
         }
     }
 
-    // Diálogos de confirmación
+    // Diálogo de confirmación para eliminar la tarea.
     if (showDeleteDialog) {
         ConfirmationDialog(
             onDismissRequest = { showDeleteDialog = false },
@@ -194,6 +217,7 @@ fun TaskDetailsScreen(
         )
     }
 
+    // Diálogo de confirmación para archivar/desarchivar la tarea.
     if (showArchiveDialog) {
         task?.let { currentTask ->
             ConfirmationDialog(
@@ -224,13 +248,25 @@ fun TaskDetailsScreen(
     }
 }
 
+/**
+ * Contenido principal de la pantalla de detalles de la tarea.
+ * Organiza la información de la tarea en secciones desplazables.
+ *
+ * @param task La [Task] a mostrar.
+ * @param onToggleCompletion Lambda para alternar el estado de completado de la tarea.
+ * @param isProcessing Indica si hay una operación de completado/incompletado en curso.
+ * @param context El contexto para formatear fechas y horas.
+ * @param modifier Modificador para aplicar al diseño.
+ */
 @Composable
 private fun TaskDetailsContent(
     task: Task,
     onToggleCompletion: () -> Unit,
     isProcessing: Boolean,
+    context: Context,
     modifier: Modifier = Modifier
 ) {
+    // Obtiene la fecha actual para determinar si la tarea está vencida.
     val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
     val isOverdue = task.dueDate?.let { it < now } == true && !task.isCompleted
 
@@ -240,7 +276,7 @@ private fun TaskDetailsContent(
             .padding(Dimensions.SpacingMedium),
         verticalArrangement = Arrangement.spacedBy(Dimensions.SpacingLarge)
     ) {
-        // Sección principal
+        // Sección de encabezado que muestra el título y el checkbox de completado.
         TaskHeaderSection(
             task = task,
             onToggleCompletion = onToggleCompletion,
@@ -248,32 +284,47 @@ private fun TaskDetailsContent(
             isOverdue = isOverdue
         )
 
-        // Descripción si existe
+        // Sección de descripción, solo visible si la descripción no está vacía.
         if (!task.description.isNullOrBlank()) {
             TaskDescriptionSection(description = task.description)
         }
 
-        // Información de fechas
+        // Sección que muestra las fechas relevantes de la tarea (vencimiento, completado, creación).
         TaskDatesSection(
             task = task,
-            isOverdue = isOverdue
+            isOverdue = isOverdue,
+            context = context
         )
 
-        // Prioridad si existe
+        // Sección de prioridad, solo visible si la tarea tiene una prioridad asignada.
         task.priority?.let { priority ->
             TaskPrioritySection(priority = priority)
         }
 
-        // Recordatorio si existe
+        // Sección de recordatorio, solo visible si un recordatorio está establecido.
         if (task.isReminderSet && task.reminderDateTime != null) {
-            TaskReminderSection(reminderDateTime = task.reminderDateTime)
+            TaskReminderSection(
+                reminderDateTime = task.reminderDateTime,
+                context = context
+            )
         }
 
-        // Estado de la tarea
+        // Sección que muestra el estado actual de la tarea (activo, completado, archivado).
         TaskStatusSection(task = task)
     }
 }
 
+/**
+ * Sección del encabezado para la pantalla de detalles de la tarea.
+ * Muestra el título de la tarea y un checkbox para alternar su estado de completado.
+ * También indica si la tarea está vencida.
+ *
+ * @param task La [Task] a mostrar.
+ * @param onToggleCompletion Lambda a ejecutar cuando se alterna el checkbox de completado.
+ * @param isProcessing Indica si una operación de completado/incompletado está en curso.
+ * @param isOverdue Indica si la tarea está vencida.
+ * @param modifier Modificador para aplicar al diseño.
+ */
 @Composable
 private fun TaskHeaderSection(
     task: Task,
@@ -291,7 +342,7 @@ private fun TaskHeaderSection(
                 modifier = Modifier.size(24.dp),
                 contentAlignment = Alignment.Center
             ) {
-                // Checkbox con indicador de carga
+                // Muestra un CircularProgressIndicator si la operación está en curso, de lo contrario, el Checkbox.
                 if (isProcessing) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(20.dp),
@@ -319,7 +370,7 @@ private fun TaskHeaderSection(
             ) {
                 Text(
                     text = task.title,
-                    style = MaterialTheme.typography.headlineSmall.copy(
+                    style = Typography.headlineSmall.copy(
                         fontWeight = FontWeight.Bold,
                         textDecoration = if (task.isCompleted) TextDecoration.LineThrough else null,
                         lineHeight = 28.sp
@@ -332,6 +383,7 @@ private fun TaskHeaderSection(
                     modifier = Modifier.fillMaxWidth()
                 )
 
+                // Muestra un indicador visual si la tarea está vencida.
                 if (isOverdue) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Row(
@@ -347,7 +399,7 @@ private fun TaskHeaderSection(
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = stringResource(R.string.task_overdue),
-                            style = MaterialTheme.typography.bodySmall.copy(
+                            style = Typography.bodySmall.copy(
                                 lineHeight = 16.sp
                             ),
                             color = Error
@@ -359,6 +411,13 @@ private fun TaskHeaderSection(
     }
 }
 
+/**
+ * Sección para mostrar la descripción de la tarea.
+ * Solo se muestra si la tarea tiene una descripción no nula o no vacía.
+ *
+ * @param description La descripción de la tarea.
+ * @param modifier Modificador para aplicar al diseño.
+ */
 @Composable
 private fun TaskDescriptionSection(
     description: String,
@@ -375,7 +434,7 @@ private fun TaskDescriptionSection(
             Spacer(modifier = Modifier.width(Dimensions.SpacingSmall))
             Text(
                 text = stringResource(R.string.description),
-                style = MaterialTheme.typography.headlineSmall.copy(
+                style = Typography.headlineSmall.copy(
                     fontWeight = FontWeight.Medium
                 )
             )
@@ -385,16 +444,26 @@ private fun TaskDescriptionSection(
 
         Text(
             text = description,
-            style = MaterialTheme.typography.bodyLarge,
+            style = Typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurface
         )
     }
 }
 
+/**
+ * Sección para mostrar las fechas relevantes de la tarea.
+ * Incluye la fecha de vencimiento, la fecha de finalización (si aplica) y la fecha de creación.
+ *
+ * @param task La [Task] de la cual se obtendrán las fechas.
+ * @param isOverdue Indica si la tarea está vencida para resaltar la fecha de vencimiento.
+ * @param context El contexto para formatear las fechas.
+ * @param modifier Modificador para aplicar al diseño.
+ */
 @Composable
 private fun TaskDatesSection(
     task: Task,
     isOverdue: Boolean,
+    context: Context,
     modifier: Modifier = Modifier
 ) {
     HabitJourneyCard(modifier = modifier) {
@@ -408,7 +477,7 @@ private fun TaskDatesSection(
             Spacer(modifier = Modifier.width(Dimensions.SpacingSmall))
             Text(
                 text = stringResource(R.string.dates),
-                style = MaterialTheme.typography.headlineSmall.copy(
+                style = Typography.headlineSmall.copy(
                     fontWeight = FontWeight.Medium
                 )
             )
@@ -416,35 +485,43 @@ private fun TaskDatesSection(
 
         Spacer(modifier = Modifier.height(Dimensions.SpacingMedium))
 
-        // Fecha de vencimiento
+        // Fila de información para la fecha de vencimiento.
         task.dueDate?.let { dueDate ->
             DateInfoRow(
                 label = stringResource(R.string.due_date),
-                date = TaskDateUtils.formatDateForDisplay(dueDate),
+                date = DateTimeFormatters.formatDateRelatively(dueDate, context),
                 isError = isOverdue
             )
         }
 
-        // Fecha de finalización
+        // Fila de información para la fecha de finalización
         task.completionDate?.let { completionDate ->
             DateInfoRow(
                 label = stringResource(R.string.completion_date),
-                date = TaskDateUtils.formatDateForDisplay(completionDate),
+                date = DateTimeFormatters.formatDateRelatively(completionDate, context),
                 isError = false
             )
         }
 
-        // Fecha de creación
+        // Fila de información para la fecha de creación.
         val createdDate = Instant.fromEpochMilliseconds(task.createdAt)
             .toLocalDateTime(TimeZone.currentSystemDefault()).date
         DateInfoRow(
             label = stringResource(R.string.created_date),
-            date = TaskDateUtils.formatDateForDisplay(createdDate),
+            date = DateTimeFormatters.formatDateRelatively(createdDate, context),
             isError = false
         )
     }
 }
 
+/**
+ * Fila de Composable reutilizable para mostrar un par etiqueta-fecha.
+ *
+ * @param label La etiqueta descriptiva de la fecha (ej. "Fecha de vencimiento").
+ * @param date La fecha formateada como String para mostrar.
+ * @param isError Indica si la fecha debe mostrarse con un color de error.
+ * @param modifier Modificador para aplicar al diseño.
+ */
 @Composable
 private fun DateInfoRow(
     label: String,
@@ -459,12 +536,12 @@ private fun DateInfoRow(
     ) {
         Text(
             text = label,
-            style = MaterialTheme.typography.bodyMedium,
+            style = Typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Text(
             text = date,
-            style = MaterialTheme.typography.bodyMedium.copy(
+            style = Typography.bodyMedium.copy(
                 fontWeight = FontWeight.Medium
             ),
             color = if (isError) Error else MaterialTheme.colorScheme.onSurface
@@ -472,6 +549,13 @@ private fun DateInfoRow(
     }
 }
 
+/**
+ * Sección para mostrar la prioridad de la tarea.
+ * Incluye un icono, la etiqueta "Prioridad" y el valor de la prioridad con su indicador visual.
+ *
+ * @param priority La [Priority] de la tarea.
+ * @param modifier Modificador para aplicar al diseño.
+ */
 @Composable
 private fun TaskPrioritySection(
     priority: Priority,
@@ -486,7 +570,7 @@ private fun TaskPrioritySection(
             Spacer(modifier = Modifier.width(Dimensions.SpacingSmall))
             Text(
                 text = stringResource(R.string.priority),
-                style = MaterialTheme.typography.headlineSmall.copy(
+                style = Typography.headlineSmall.copy(
                     fontWeight = FontWeight.Medium
                 )
             )
@@ -503,7 +587,7 @@ private fun TaskPrioritySection(
                         Priority.MEDIUM -> stringResource(R.string.priority_medium)
                         Priority.LOW -> stringResource(R.string.priority_low)
                     },
-                    style = MaterialTheme.typography.bodyMedium.copy(
+                    style = Typography.bodyMedium.copy(
                         fontWeight = FontWeight.Medium
                     )
                 )
@@ -512,9 +596,18 @@ private fun TaskPrioritySection(
     }
 }
 
+/**
+ * Sección para mostrar la información del recordatorio de la tarea.
+ * Solo se muestra si hay un recordatorio establecido.
+ *
+ * @param reminderDateTime La [LocalDateTime] del recordatorio.
+ * @param context El contexto para formatear la fecha y hora.
+ * @param modifier Modificador para aplicar al diseño.
+ */
 @Composable
 private fun TaskReminderSection(
     reminderDateTime: LocalDateTime,
+    context: Context,
     modifier: Modifier = Modifier
 ) {
     HabitJourneyCard(modifier = modifier) {
@@ -531,14 +624,14 @@ private fun TaskReminderSection(
             Spacer(modifier = Modifier.width(Dimensions.SpacingSmall))
             Text(
                 text = stringResource(R.string.reminder),
-                style = MaterialTheme.typography.headlineSmall.copy(
+                style = Typography.headlineSmall.copy(
                     fontWeight = FontWeight.Medium
                 )
             )
             Spacer(modifier = Modifier.weight(1f))
             Text(
-                text = TaskDateUtils.formatDateTimeForDisplay(reminderDateTime),
-                style = MaterialTheme.typography.bodyMedium.copy(
+                text = DateTimeFormatters.formatDateTimeLocalized(reminderDateTime),
+                style = Typography.bodyMedium.copy(
                     fontWeight = FontWeight.Medium
                 )
             )
@@ -546,6 +639,12 @@ private fun TaskReminderSection(
     }
 }
 
+/**
+ * Sección para mostrar el estado general de la tarea (Activa, Completada, Archivada).
+ *
+ * @param task La [Task] cuyo estado se va a mostrar.
+ * @param modifier Modificador para aplicar al diseño.
+ */
 @Composable
 private fun TaskStatusSection(
     task: Task,
@@ -562,7 +661,7 @@ private fun TaskStatusSection(
             Spacer(modifier = Modifier.width(Dimensions.SpacingSmall))
             Text(
                 text = stringResource(R.string.task_status),
-                style = MaterialTheme.typography.headlineSmall.copy(
+                style = Typography.headlineSmall.copy(
                     fontWeight = FontWeight.Medium
                 )
             )
@@ -570,6 +669,7 @@ private fun TaskStatusSection(
 
         Spacer(modifier = Modifier.height(Dimensions.SpacingMedium))
 
+        // Fila de información que muestra el estado de la tarea con un color indicativo.
         StatusInfoRow(
             label = stringResource(R.string.status),
             value = when {
@@ -586,6 +686,14 @@ private fun TaskStatusSection(
     }
 }
 
+/**
+ * Fila de Composable reutilizable para mostrar un par etiqueta-valor de estado.
+ *
+ * @param label La etiqueta descriptiva del estado (ej. "Estado").
+ * @param value El valor del estado como String (ej. "Activa", "Completada").
+ * @param color El color con el que se mostrará el valor del estado.
+ * @param modifier Modificador para aplicar al diseño.
+ */
 @Composable
 private fun StatusInfoRow(
     label: String,
@@ -600,12 +708,12 @@ private fun StatusInfoRow(
     ) {
         Text(
             text = label,
-            style = MaterialTheme.typography.bodyMedium,
+            style = Typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Text(
             text = value,
-            style = MaterialTheme.typography.bodyMedium.copy(
+            style = Typography.bodyMedium.copy(
                 fontWeight = FontWeight.Medium
             ),
             color = color
@@ -613,7 +721,18 @@ private fun StatusInfoRow(
     }
 }
 
-// Diálogo de confirmación
+/**
+ * Diálogo de confirmación genérico para acciones que requieren verificación del usuario.
+ * Utiliza el componente [HabitJourneyDialog] para su estructura.
+ *
+ * @param onDismissRequest Lambda a ejecutar cuando el diálogo se descarta (ej. clic fuera o botón de cancelar).
+ * @param title El título del diálogo.
+ * @param message El mensaje principal del diálogo que explica la acción.
+ * @param onConfirm Lambda a ejecutar cuando el usuario confirma la acción.
+ * @param confirmText El texto para el botón de confirmación.
+ * @param cancelText El texto para el botón de cancelar.
+ * @param icon El icono a mostrar en el diálogo.
+ */
 @Composable
 private fun ConfirmationDialog(
     onDismissRequest: () -> Unit,

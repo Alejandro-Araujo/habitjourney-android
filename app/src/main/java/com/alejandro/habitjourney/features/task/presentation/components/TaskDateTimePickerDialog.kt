@@ -10,11 +10,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.alejandro.habitjourney.BuildConfig
 import com.alejandro.habitjourney.R
 import com.alejandro.habitjourney.core.presentation.ui.theme.*
 import kotlinx.datetime.*
 
+
+/**
+ * Un diálogo Composable que permite al usuario seleccionar una fecha y una hora.
+ *
+ * Combina un [DatePicker] y un [TimePicker] de Material Design 3,
+ * permitiendo al usuario alternar entre la selección de fecha y hora.
+ * La selección inicial puede ser proporcionada, y los resultados finales se devuelven al confirmar.
+ *
+ * @param onDateTimeSelected Lambda que se invoca cuando el usuario confirma la fecha y hora seleccionadas.
+ * Recibe un objeto [LocalDateTime] con la fecha y hora combinadas.
+ * @param onDismiss Lambda que se invoca cuando el diálogo se descarta sin confirmar una selección.
+ * @param initialDateTime La [LocalDateTime] inicial a mostrar en los selectores. Por defecto, es la fecha y hora actual del sistema.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskDateTimePickerDialog(
@@ -22,7 +34,6 @@ fun TaskDateTimePickerDialog(
     onDismiss: () -> Unit,
     initialDateTime: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 ) {
-    // Asegurar que la fecha inicial sea correcta
     val timeZone = TimeZone.currentSystemDefault()
     val initialDate = initialDateTime.date
     val initialTime = initialDateTime.time
@@ -31,18 +42,15 @@ fun TaskDateTimePickerDialog(
     var selectedTime by remember { mutableStateOf(initialTime) }
     var showingDatePicker by remember { mutableStateOf(true) }
 
-    // Calcular los milisegundos correctamente para la fecha inicial
-    // IMPORTANTE: DatePicker espera milisegundos en UTC
+
     val initialMillis = remember(initialDate) {
-        // Convertir la fecha local a UTC medianoche
-        val localStartOfDay = initialDate.atStartOfDayIn(timeZone)
+        initialDate.atStartOfDayIn(timeZone)
         val utcStartOfDay = initialDate.atStartOfDayIn(TimeZone.UTC)
         utcStartOfDay.toEpochMilliseconds()
     }
 
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = initialMillis,
-        // Establecer el primer día visible para asegurar que se muestre el mes correcto
         initialDisplayedMonthMillis = initialMillis
     )
 
@@ -73,7 +81,6 @@ fun TaskDateTimePickerDialog(
                     modifier = Modifier.padding(horizontal = Dimensions.SpacingLarge),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Título del diálogo
                     Text(
                         text = stringResource(R.string.select_date_and_time),
                         style = Typography.headlineSmall,
@@ -84,7 +91,6 @@ fun TaskDateTimePickerDialog(
                         )
                     )
 
-                    // Selector de fecha/hora con chips
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(Dimensions.SpacingSmall)
@@ -168,19 +174,14 @@ fun TaskDateTimePickerDialog(
 
                     TextButton(
                         onClick = {
-                            // Actualizar la fecha seleccionada desde el picker
                             datePickerState.selectedDateMillis?.let { millis ->
-                                // IMPORTANTE: DatePicker devuelve milisegundos en UTC
                                 val instant = Instant.fromEpochMilliseconds(millis)
-                                // Interpretar como fecha UTC y luego convertir a LocalDate
                                 val utcDateTime = instant.toLocalDateTime(TimeZone.UTC)
                                 selectedDate = utcDateTime.date
                             }
 
-                            // Actualizar la hora seleccionada
                             selectedTime = LocalTime(timePickerState.hour, timePickerState.minute)
 
-                            // Combinar fecha y hora
                             val finalDateTime = LocalDateTime(selectedDate, selectedTime)
                             onDateTimeSelected(finalDateTime)
                             onDismiss()
@@ -193,19 +194,6 @@ fun TaskDateTimePickerDialog(
                     }
                 }
             }
-        }
-    }
-}
-
-// Función de debug para verificar fechas (opcional, puedes eliminarla en producción)
-@Composable
-private fun DebugDateInfo(date: LocalDate, millis: Long) {
-    if (BuildConfig.DEBUG) {
-        Column {
-            Text("Date: $date", style = Typography.bodySmall)
-            Text("Millis: $millis", style = Typography.bodySmall)
-            Text("Converted back: ${Instant.fromEpochMilliseconds(millis).toLocalDateTime(TimeZone.currentSystemDefault()).date}",
-                style = Typography.bodySmall)
         }
     }
 }

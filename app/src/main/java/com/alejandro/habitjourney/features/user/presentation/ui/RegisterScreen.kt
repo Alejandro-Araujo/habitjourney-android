@@ -31,16 +31,23 @@ import com.alejandro.habitjourney.features.user.presentation.state.RegisterState
 import com.alejandro.habitjourney.features.user.presentation.viewmodel.RegisterViewModel
 import kotlinx.coroutines.launch
 
-// Importa tus componentes personalizados
 import com.alejandro.habitjourney.core.presentation.ui.components.HabitJourneyButton
 import com.alejandro.habitjourney.core.presentation.ui.components.HabitJourneyButtonType
 import com.alejandro.habitjourney.core.presentation.ui.components.HabitJourneyTextField
 import com.alejandro.habitjourney.core.presentation.ui.components.HabitJourneySnackbarHost
-
-// Importa tus dimensiones y colores personalizados
 import com.alejandro.habitjourney.core.presentation.ui.theme.*
 
-@OptIn(ExperimentalMaterial3Api::class)
+/**
+ * Pantalla de registro de usuario.
+ *
+ * Permite al usuario introducir sus datos (nombre, correo electrónico, contraseña y confirmación de contraseña)
+ * para crear una nueva cuenta en la aplicación. Muestra el estado del proceso (carga, éxito, error)
+ * y ofrece navegación a la pantalla de inicio de sesión.
+ *
+ * @param onNavigateToLogin Lambda que se invoca para navegar a la pantalla de inicio de sesión.
+ * @param onRegisterSuccess Lambda que se invoca tras un registro exitoso, típicamente para navegar a la pantalla principal o de inicio de sesión.
+ * @param viewModel La instancia de [RegisterViewModel] inyectada por Hilt.
+ */
 @Composable
 fun RegisterScreen(
     onNavigateToLogin: () -> Unit,
@@ -60,18 +67,21 @@ fun RegisterScreen(
     val confirmPasswordError by viewModel.confirmPasswordError.collectAsState()
     val focusManager = LocalFocusManager.current
 
-    // Snackbar host state
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    // Manejo del estado
+    val successfulAccountCreationMessage = stringResource(R.string.successful_account_creation)
+    val dialogSuccessTitle = stringResource(R.string.dialog_success_title)
+    val dialogErrorTitle = stringResource(R.string.dialog_error_title)
+
+
     LaunchedEffect(registerState) {
         when (registerState) {
             is RegisterState.Success -> {
                 scope.launch {
                     snackbarHostState.showSnackbar(
-                        message = "¡Cuenta creada con éxito!",
-                        actionLabel = "SUCCESS",
+                        message = successfulAccountCreationMessage,
+                        actionLabel = dialogSuccessTitle,
                         duration = SnackbarDuration.Short
                     )
                 }
@@ -82,7 +92,7 @@ fun RegisterScreen(
                 scope.launch {
                     snackbarHostState.showSnackbar(
                         message = (registerState as RegisterState.Error).message,
-                        actionLabel = "ERROR",
+                        actionLabel = dialogErrorTitle,
                         duration = SnackbarDuration.Long
                     )
                 }
@@ -110,7 +120,6 @@ fun RegisterScreen(
         ) {
             Spacer(modifier = Modifier.height(Dimensions.SpacingMedium))
 
-            // Logo de la app
             Image(
                 painter = painterResource(id = R.drawable.logo_habitjourney),
                 contentDescription = stringResource(R.string.app_logo_content_description),
@@ -120,7 +129,6 @@ fun RegisterScreen(
                 contentScale = ContentScale.Fit
             )
 
-            // Header
             Text(
                 text = stringResource(R.string.create_account_title),
                 style = MaterialTheme.typography.displayLarge,
@@ -139,7 +147,6 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(Dimensions.SpacingSmall))
 
-            // Formulario
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
@@ -152,7 +159,6 @@ fun RegisterScreen(
                     modifier = Modifier.padding(Dimensions.SpacingLarge),
                     verticalArrangement = Arrangement.spacedBy(Dimensions.SpacingMedium)
                 ) {
-                    // Campo Nombre
                     HabitJourneyTextField(
                         value = name,
                         onValueChange = viewModel::onNameChanged,
@@ -177,7 +183,6 @@ fun RegisterScreen(
                         }
                     )
 
-                    // Campo Email
                     HabitJourneyTextField(
                         value = email,
                         onValueChange = viewModel::onEmailChanged,
@@ -202,7 +207,6 @@ fun RegisterScreen(
                         }
                     )
 
-                    // Campo Contraseña
                     HabitJourneyTextField(
                         value = password,
                         onValueChange = viewModel::onPasswordChanged,
@@ -241,7 +245,6 @@ fun RegisterScreen(
                         }
                     )
 
-                    // Campo Confirmar Contraseña
                     HabitJourneyTextField(
                         value = confirmPassword,
                         onValueChange = viewModel::onConfirmPasswordChanged,
@@ -285,7 +288,6 @@ fun RegisterScreen(
 
                     Spacer(modifier = Modifier.height(Dimensions.SpacingSmall))
 
-                    // Botón de Registro
                     HabitJourneyButton(
                         text = stringResource(R.string.register_button_text),
                         onClick = viewModel::register,
@@ -299,7 +301,6 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(Dimensions.SpacingMedium))
 
-            // Términos y condiciones
             Text(
                 text = stringResource(R.string.terms_and_privacy_text),
                 style = MaterialTheme.typography.bodySmall,
@@ -310,7 +311,6 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(Dimensions.SpacingMedium))
 
-            // Enlace a login
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically

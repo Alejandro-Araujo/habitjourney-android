@@ -1,6 +1,5 @@
 package com.alejandro.habitjourney.core.presentation.ui.components
 
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
@@ -14,6 +13,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.alejandro.habitjourney.core.presentation.ui.theme.*
 
+/**
+ * Estado vacío reutilizable con icono, texto y botón de acción opcional.
+ * Centrado y con espaciado consistente.
+ */
 @Composable
 fun HabitJourneyEmptyState(
     title: String,

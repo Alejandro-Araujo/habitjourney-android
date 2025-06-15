@@ -1,13 +1,9 @@
 package com.alejandro.habitjourney.features.habit.presentation.components
 
-
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.ui.text.style.TextAlign
 import com.alejandro.habitjourney.core.presentation.ui.theme.Dimensions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -15,6 +11,20 @@ import androidx.compose.ui.unit.dp
 import com.alejandro.habitjourney.core.presentation.ui.theme.AcentoInformativo
 import com.alejandro.habitjourney.core.presentation.ui.theme.Typography
 
+
+/**
+ * Un botón de selección reutilizable que muestra una etiqueta, un icono y el valor seleccionado.
+ *
+ * Este componente está diseñado para ser utilizado en formularios donde el usuario necesita
+ * seleccionar un valor de una lista o un diálogo (ej: selector de frecuencia, selector de fecha).
+ *
+ * @param label La etiqueta de texto que se muestra sobre el botón para describir el campo.
+ * @param selectedValue El valor actualmente seleccionado que se muestra dentro del botón.
+ * @param onClick El callback que se invoca cuando el usuario pulsa el botón.
+ * @param icon El [ImageVector] que se muestra a la izquierda del valor seleccionado.
+ * @param enabled Controla si el botón está habilitado y es interactivo.
+ * @param modifier El [Modifier] que se aplicará al componente.
+ */
 @Composable
 fun SelectionButton(
     label: String,
@@ -59,12 +69,6 @@ fun SelectionButton(
                     text = selectedValue,
                     style = MaterialTheme.typography.bodyLarge,
                 )
-
-                // Icono de flecha para indicar que es un selector
-                /*Icon(
-                    imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = null
-                )*/
             }
         }
     }

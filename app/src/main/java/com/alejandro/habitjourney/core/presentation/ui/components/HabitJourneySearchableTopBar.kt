@@ -55,6 +55,18 @@ data class FilterOption<T>(
     val icon: ImageVector? = null
 )
 
+/**
+ * TopAppBar con búsqueda integrada y filtros dropdown.
+ * Transiciones animadas entre modo normal y búsqueda.
+ *
+ * @param T Tipo de datos para las opciones de filtro
+ * @param title Título cuando no está en modo búsqueda
+ * @param isSearchActive Si está en modo búsqueda
+ * @param searchQuery Query actual de búsqueda
+ * @param currentFilter Filtro actualmente seleccionado
+ * @param filterOptions Lista de opciones disponibles para filtrar
+ * @param additionalActions Acciones adicionales en el toolbar
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T> HabitJourneySearchableTopBar(

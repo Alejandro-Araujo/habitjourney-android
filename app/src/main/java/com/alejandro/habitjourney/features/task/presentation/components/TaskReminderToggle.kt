@@ -1,6 +1,7 @@
 package com.alejandro.habitjourney.features.task.presentation.components
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,13 +14,31 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.alejandro.habitjourney.R
 import com.alejandro.habitjourney.core.presentation.ui.theme.*
 import kotlinx.datetime.*
+import com.alejandro.habitjourney.core.utils.formatter.DateTimeFormatters
 
+
+/**
+ * Un componente Composable que permite al usuario alternar la activación de un recordatorio para una tarea
+ * y seleccionar la fecha y hora del mismo.
+ *
+ * Ofrece un interruptor para habilitar/deshabilitar el recordatorio y, si está habilitado,
+ * una interfaz para seleccionar una fecha y hora, junto con chips de sugerencias rápidas.
+ *
+ * @param modifier Modificador para aplicar a este composable.
+ * @param isReminderEnabled El estado actual del interruptor del recordatorio (habilitado o deshabilitado).
+ * @param reminderDateTime La fecha y hora actual seleccionada para el recordatorio, o `null` si no hay ninguna.
+ * @param onReminderEnabledChange Lambda que se invoca cuando el estado del interruptor cambia.
+ * @param onReminderDateTimeChange Lambda que se invoca cuando la fecha y hora del recordatorio cambian.
+ * @param enabled Controla si el componente está habilitado para la interacción del usuario.
+ * @param context El contexto de la aplicación, necesario para acceder a recursos y formatear fechas.
+ */
 @Composable
 fun TaskReminderToggle(
     modifier: Modifier = Modifier,
@@ -28,6 +47,7 @@ fun TaskReminderToggle(
     onReminderEnabledChange: (Boolean) -> Unit,
     onReminderDateTimeChange: (LocalDateTime?) -> Unit,
     enabled: Boolean = true,
+    context: Context = LocalContext.current
 ) {
     var showDateTimePicker by remember { mutableStateOf(false) }
 
@@ -50,7 +70,6 @@ fun TaskReminderToggle(
         Column(
             modifier = Modifier.padding(Dimensions.SpacingMedium)
         ) {
-            // Toggle principal
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -90,7 +109,6 @@ fun TaskReminderToggle(
                 )
             }
 
-            // Sección expandible para seleccionar fecha/hora
             AnimatedVisibility(
                 visible = isReminderEnabled,
                 enter = expandVertically() + fadeIn(),
@@ -104,7 +122,6 @@ fun TaskReminderToggle(
                         color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
                     )
 
-                    // Selector de fecha y hora
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -126,7 +143,7 @@ fun TaskReminderToggle(
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = if (reminderDateTime != null) {
-                                    formatReminderDateTime(reminderDateTime)
+                                    formatReminderDateTime(reminderDateTime, context)
                                 } else {
                                     stringResource(R.string.select_reminder_time)
                                 },
@@ -140,7 +157,7 @@ fun TaskReminderToggle(
 
                             if (reminderDateTime != null) {
                                 Text(
-                                    text = getRelativeTimeString(reminderDateTime),
+                                    text = getRelativeTimeString(reminderDateTime, context),
                                     style = Typography.bodySmall,
                                     color = AcentoInformativo
                                 )
@@ -169,7 +186,6 @@ fun TaskReminderToggle(
                         }
                     }
 
-                    // Sugerencias rápidas
                     if (reminderDateTime == null) {
                         Spacer(modifier = Modifier.height(Dimensions.SpacingSmall))
 
@@ -222,7 +238,6 @@ fun TaskReminderToggle(
         }
     }
 
-    // Diálogo selector de fecha y hora
     if (showDateTimePicker) {
         val initialDateTime = reminderDateTime ?: run {
             val timeZone = TimeZone.currentSystemDefault()
@@ -242,6 +257,13 @@ fun TaskReminderToggle(
     }
 }
 
+/**
+ * Un chip de acción rápida para seleccionar un recordatorio predefinido.
+ *
+ * @param text El texto a mostrar en el chip.
+ * @param onClick Lambda que se invoca cuando se hace clic en el chip.
+ * @param enabled Si `false`, el chip está deshabilitado para la interacción.
+ */
 @Composable
 private fun QuickReminderChip(
     text: String,
@@ -265,32 +287,46 @@ private fun QuickReminderChip(
     )
 }
 
+/**
+ * Formatea una [LocalDateTime] para mostrarla de forma legible.
+ * Utiliza los formateadores definidos en [DateTimeFormatters].
+ *
+ * @param dateTime La [LocalDateTime] a formatear.
+ * @param context El contexto para obtener los recursos de string y formatear fechas.
+ * @return Un [String] con la fecha y hora formateadas.
+ */
 @SuppressLint("DefaultLocale")
 @Composable
-private fun formatReminderDateTime(dateTime: LocalDateTime): String {
-    val dateStr = TaskDateUtils.formatDateForDisplay(dateTime.date)
-    val timeStr = String.format("%02d:%02d", dateTime.hour, dateTime.minute)
-    return "$dateStr $timeStr"
+private fun formatReminderDateTime(dateTime: LocalDateTime, context: Context): String {
+    return DateTimeFormatters.formatDateTimeLocalized(dateTime)
 }
 
+/**
+ * Calcula y devuelve una cadena de tiempo relativo para una [LocalDateTime] dada.
+ * Por ejemplo, "en 5 minutos", "en 2 horas", "en 3 días".
+ *
+ * @param dateTime La [LocalDateTime] objetivo para la cual calcular el tiempo relativo.
+ * @param context El contexto para obtener los strings localizados.
+ * @return Un [String] que representa el tiempo restante de forma relativa.
+ */
 @Composable
-private fun getRelativeTimeString(dateTime: LocalDateTime): String {
+private fun getRelativeTimeString(dateTime: LocalDateTime, context: Context): String {
     val now = Clock.System.now()
     val target = dateTime.toInstant(TimeZone.currentSystemDefault())
     val duration = target - now
 
     return when {
         duration.inWholeMinutes < 60 -> {
-            stringResource(R.string.in_x_minutes, duration.inWholeMinutes.toInt())
+            context.getString(R.string.in_x_minutes, duration.inWholeMinutes.toInt())
         }
         duration.inWholeHours < 24 -> {
-            stringResource(R.string.in_x_hours, duration.inWholeHours.toInt())
+            context.getString(R.string.in_x_hours, duration.inWholeHours.toInt())
         }
         duration.inWholeDays < 7 -> {
-            stringResource(R.string.in_x_days, duration.inWholeDays.toInt())
+            context.getString(R.string.in_x_days, duration.inWholeDays.toInt())
         }
         else -> {
-            stringResource(R.string.in_x_weeks, (duration.inWholeDays / 7).toInt())
+            context.getString(R.string.in_x_weeks, (duration.inWholeDays / 7).toInt())
         }
     }
 }

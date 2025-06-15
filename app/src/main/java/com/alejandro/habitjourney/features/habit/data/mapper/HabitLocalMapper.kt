@@ -6,8 +6,15 @@ import com.alejandro.habitjourney.features.habit.data.entity.HabitLogEntity
 import com.alejandro.habitjourney.features.habit.domain.model.HabitLog
 import javax.inject.Inject
 
+/**
+ * Mapper bidireccional entre entidades de base de datos y modelos de dominio.
+ * Mantiene separación clara entre capas de datos y dominio.
+ */
 class HabitLocalMapper @Inject constructor() {
 
+    /**
+     * Convierte entidad de BD a modelo de dominio.
+     */
     fun habitEntityToDomain(entity: HabitEntity): Habit {
         return Habit(
             id = entity.id,
@@ -25,6 +32,9 @@ class HabitLocalMapper @Inject constructor() {
         )
     }
 
+    /**
+     * Convierte modelo de dominio a entidad de BD.
+     */
     fun habitDomainToEntity(domain: Habit): HabitEntity {
         return HabitEntity(
             id = domain.id,
@@ -42,6 +52,9 @@ class HabitLocalMapper @Inject constructor() {
         )
     }
 
+    /**
+     * Mappers para logs de hábitos.
+     */
     fun habitLogEntityToDomain(entity: HabitLogEntity): HabitLog {
         return HabitLog(
             id = entity.id,
@@ -64,7 +77,9 @@ class HabitLocalMapper @Inject constructor() {
         )
     }
 
-    // Si tienes listas
+    /**
+     * Mappers para listas - útil para operaciones batch.
+     */
     fun habitEntityListToDomain(entities: List<HabitEntity>): List<Habit> {
         return entities.map { habitEntityToDomain(it) }
     }

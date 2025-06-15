@@ -1,6 +1,5 @@
 package com.alejandro.habitjourney.features.habit.presentation.screen
 
-import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,7 +23,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -38,7 +36,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.text.input.KeyboardType
 import com.alejandro.habitjourney.R
-import com.alejandro.habitjourney.core.data.local.enums.HabitType
 import com.alejandro.habitjourney.core.data.local.enums.Weekday
 import com.alejandro.habitjourney.core.presentation.ui.components.ErrorDialog
 import com.alejandro.habitjourney.core.presentation.ui.components.HabitJourneyButton
@@ -58,17 +55,28 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.atStartOfDayIn
-import kotlinx.datetime.toJavaLocalDate
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.DatePickerDefaults
 import com.alejandro.habitjourney.core.presentation.ui.components.HabitJourneyButtonType
+import com.alejandro.habitjourney.core.utils.formatter.DateTimeFormatters
+import com.alejandro.habitjourney.core.utils.formatter.displayName
 import com.alejandro.habitjourney.features.habit.presentation.components.SelectionButton
 import kotlinx.datetime.Clock
 
+
+/**
+ * Pantalla para crear un nuevo hábito o editar uno existente.
+ *
+ * Esta pantalla presenta un formulario con todos los campos necesarios para configurar
+ * un hábito, como nombre, descripción, frecuencia y fechas. Se adapta para mostrar
+ * un título y un botón de guardado diferentes dependiendo de si se está creando o editando.
+ *
+ * @param habitId El ID del hábito a editar. Si es `null` o `0`, la pantalla entra en modo de creación.
+ * @param onNavigateBack Callback para navegar a la pantalla anterior, generalmente después de guardar o cancelar.
+ * @param viewModel El [CreateEditHabitViewModel] que gestiona el estado (UIState) y la lógica del formulario.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateEditHabitScreen(
@@ -225,8 +233,7 @@ fun CreateEditHabitScreen(
                     SelectionButton(
                         modifier = Modifier.weight(1f),
                         label = stringResource(R.string.habit_start_date_label),
-                        selectedValue = uiState.startDate?.toJavaLocalDate()
-                            ?.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))
+                        selectedValue = uiState.startDate?.let { DateTimeFormatters.formatDateLocalized(it) }
                             ?: stringResource(R.string.select_date_placeholder),
                         onClick = { showStartDatePicker = true },
                         icon = Icons.Default.DateRange,
@@ -252,8 +259,7 @@ fun CreateEditHabitScreen(
                     SelectionButton(
                         modifier = Modifier.weight(1f),
                         label = stringResource(R.string.habit_end_date_label),
-                        selectedValue = uiState.endDate?.toJavaLocalDate()
-                            ?.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))
+                        selectedValue = uiState.endDate?.let { DateTimeFormatters.formatDateLocalized(it) }
                             ?: stringResource(R.string.select_date_placeholder),
                         onClick = { showEndDatePicker = true },
                         icon = Icons.Default.DateRange,
@@ -367,13 +373,14 @@ fun CreateEditHabitScreen(
         // DatePicker para Fecha de Inicio
         if (showStartDatePicker) {
             val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
-            val todayMillis =
-                today.atStartOfDayIn(TimeZone.currentSystemDefault()).toEpochMilliseconds()
+            val initialStartDateMillis = uiState.startDate
+                ?.atStartOfDayIn(TimeZone.UTC)
+                ?.toEpochMilliseconds()
+                ?: today.atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
 
             val datePickerState = rememberDatePickerState(
-                initialSelectedDateMillis = uiState.startDate?.atStartOfDayIn(TimeZone.currentSystemDefault())
-                    ?.toEpochMilliseconds()
-                    ?: todayMillis
+                initialSelectedDateMillis = initialStartDateMillis,
+                initialDisplayedMonthMillis = initialStartDateMillis
             )
             DatePickerDialog(
                 onDismissRequest = { showStartDatePicker = false },
@@ -416,13 +423,16 @@ fun CreateEditHabitScreen(
         if (showEndDatePicker) {
             val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
             val minDate = uiState.startDate ?: today
-            val minDateMillis =
-                minDate.atStartOfDayIn(TimeZone.currentSystemDefault()).toEpochMilliseconds()
+            val minDateMillis = minDate.atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
+
+            val initialEndDateMillis = uiState.endDate
+                ?.atStartOfDayIn(TimeZone.UTC)
+                ?.toEpochMilliseconds()
+                ?: minDateMillis
 
             val datePickerState = rememberDatePickerState(
-                initialSelectedDateMillis = uiState.endDate?.atStartOfDayIn(TimeZone.currentSystemDefault())
-                    ?.toEpochMilliseconds()
-                    ?: minDateMillis
+                initialSelectedDateMillis = initialEndDateMillis,
+                initialDisplayedMonthMillis = initialEndDateMillis
             )
             DatePickerDialog(
                 onDismissRequest = { showEndDatePicker = false },
@@ -459,18 +469,5 @@ fun CreateEditHabitScreen(
                 )
             }
         }
-    }
-}
-
-// Función de extensión para obtener el nombre legible de Weekday
-fun Weekday.displayName(context: Context): String {
-    return when (this) {
-        Weekday.MONDAY -> context.getString(R.string.weekday_monday)
-        Weekday.TUESDAY -> context.getString(R.string.weekday_tuesday)
-        Weekday.WEDNESDAY -> context.getString(R.string.weekday_wednesday)
-        Weekday.THURSDAY -> context.getString(R.string.weekday_thursday)
-        Weekday.FRIDAY -> context.getString(R.string.weekday_friday)
-        Weekday.SATURDAY -> context.getString(R.string.weekday_saturday)
-        Weekday.SUNDAY -> context.getString(R.string.weekday_sunday)
     }
 }

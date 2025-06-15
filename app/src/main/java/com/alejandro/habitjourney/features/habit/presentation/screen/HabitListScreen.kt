@@ -17,9 +17,19 @@ import com.alejandro.habitjourney.R
 import com.alejandro.habitjourney.core.presentation.ui.components.*
 import com.alejandro.habitjourney.core.presentation.ui.theme.*
 import com.alejandro.habitjourney.features.habit.presentation.components.HabitCard
-import com.alejandro.habitjourney.features.habit.presentation.viewmodel.HabitListViewModel
 import com.alejandro.habitjourney.features.habit.presentation.state.HabitFilterType
+import com.alejandro.habitjourney.features.habit.presentation.viewmodel.HabitListViewModel
 
+/**
+ * Pantalla principal que muestra la lista de hábitos del usuario.
+ *
+ * Permite al usuario ver, buscar y filtrar sus hábitos. Muestra una lista de [HabitCard]
+ * y gestiona los estados de carga, vacío y error.
+ *
+ * @param onNavigateToCreateHabit Callback para navegar a la pantalla de creación de un nuevo hábito.
+ * @param onNavigateToHabitDetail Callback para navegar a la pantalla de detalle de un hábito, pasando su ID.
+ * @param viewModel El [HabitListViewModel] que gestiona el estado y la lógica de esta pantalla.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HabitListScreen(
@@ -128,9 +138,6 @@ fun HabitListScreen(
                             logStatus = uiHabit.logStatus,
                             isCompletedToday = uiHabit.isCompletedToday,
                             isSkippedToday = uiHabit.isSkippedToday,
-                            isPartialToday = uiHabit.isPartialToday,
-                            isMissedToday = uiHabit.isMissedToday,
-                            isNotCompletedToday = uiHabit.isNotCompletedToday,
                             isArchived = uiHabit.isArchived,
                             dailyTarget = uiHabit.dailyTarget,
                             currentCompletionCount = uiHabit.currentCompletionCount,
@@ -143,11 +150,11 @@ fun HabitListScreen(
                             onDecrementProgress = {
                                 viewModel.decrementHabitProgress(uiHabit.id)
                             },
-                            onMarkSkipped = {
-                                viewModel.markHabitAsSkipped(uiHabit.id)
-                            },
                             onUndoSkipped = {
                                 viewModel.markHabitAsNotCompleted(uiHabit.id)
+                            },
+                            onMarkSkipped = {
+                                viewModel.markHabitAsSkipped(uiHabit.id)
                             },
                             onArchiveHabit = {
                                 viewModel.toggleHabitArchived(uiHabit.id, true)
@@ -179,6 +186,13 @@ fun HabitListScreen(
     }
 }
 
+/**
+ * Función de utilidad privada que devuelve el título apropiado para el estado vacío.
+ *
+ * @param filter El [HabitFilterType] actualmente activo.
+ * @param searchQuery El término de búsqueda actual.
+ * @return Un [String] con el título localizado para mostrar.
+ */
 @Composable
 private fun getEmptyStateTitle(filter: HabitFilterType, searchQuery: String): String {
     return if (searchQuery.isNotBlank()) {
@@ -194,6 +208,13 @@ private fun getEmptyStateTitle(filter: HabitFilterType, searchQuery: String): St
     }
 }
 
+/**
+ * Función de utilidad privada que devuelve el mensaje descriptivo para el estado vacío.
+ *
+ * @param filter El [HabitFilterType] actualmente activo.
+ * @param searchQuery El término de búsqueda actual.
+ * @return Un [String] con el mensaje localizado para mostrar.
+ */
 @Composable
 private fun getEmptyStateMessage(filter: HabitFilterType, searchQuery: String): String {
     return if (searchQuery.isNotBlank()) {

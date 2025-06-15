@@ -16,19 +16,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.*
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.alejandro.habitjourney.core.presentation.ui.theme.*
 
 enum class HabitJourneyCardType {
-    ELEVATED,    // Con elevación (default)
-    OUTLINED,    // Con borde
-    FILLED,      // Con color de fondo diferente
-    TRANSPARENT  // Sin fondo ni elevación
+    ELEVATED,
+    OUTLINED,
+    FILLED,
+    TRANSPARENT
 }
 
+/**
+ * Card personalizada de HabitJourney con cuatro variantes visuales.
+ * Base para todas las cards de la aplicación con estilos consistentes.
+ *
+ * @param onClick Callback opcional para hacer la card clickeable
+ * @param containerColor Color de fondo de la card
+ * @param cardType Variante visual (ELEVATED, OUTLINED, FILLED, TRANSPARENT)
+ * @param content Contenido de la card usando ColumnScope
+ */
 @Composable
 fun HabitJourneyCard(
     modifier: Modifier = Modifier,
@@ -79,48 +87,15 @@ fun HabitJourneyCard(
     }
 }
 
-// Variantes especializadas para casos comunes
-
-@Composable
-fun HabitJourneyCompactCard(
-    modifier: Modifier = Modifier,
-    onClick: (() -> Unit)? = null,
-    containerColor: Color = MaterialTheme.colorScheme.surface,
-    contentColor: Color = MaterialTheme.colorScheme.onSurface,
-    cardType: HabitJourneyCardType = HabitJourneyCardType.ELEVATED,
-    content: @Composable RowScope.() -> Unit
-) {
-    val actualContainerColor = when (cardType) {
-        HabitJourneyCardType.FILLED -> CardStateColors.FilledBackground
-        HabitJourneyCardType.TRANSPARENT -> Color.Transparent
-        else -> containerColor
-    }
-
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(Dimensions.CornerRadius))
-            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
-        shape = RoundedCornerShape(Dimensions.CornerRadius),
-        colors = CardDefaults.cardColors(
-            containerColor = actualContainerColor,
-            contentColor = contentColor
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = if (cardType == HabitJourneyCardType.ELEVATED) Dimensions.ElevationLevel1 else 0.dp
-        )
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(Dimensions.SpacingMedium)
-        ) {
-            content()
-        }
-    }
-}
-
-// Card para mostrar estadísticas
+/**
+ * Card compacta optimizada para mostrar estadísticas.
+ * Layout predefinido: título, valor principal y subtítulo opcional.
+ *
+ * @param title Etiqueta de la estadística
+ * @param value Valor principal a destacar
+ * @param subtitle Información adicional opcional
+ * @param accentColor Color del valor principal
+ */
 @Composable
 fun HabitJourneyStatsCard(
     title: String,

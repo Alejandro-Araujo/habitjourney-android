@@ -1,6 +1,5 @@
 package com.alejandro.habitjourney.core.presentation.ui.theme
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.Color
 
 // Colores Primarios (de tu guía de estilo)
@@ -20,7 +19,7 @@ val Premium = Color(0xFF9F7AEA)   // Morado para elementos premium o avanzados
 // Colores de Estado
 val InactivoDeshabilitado = Color(0xFFA0AEC0) // Gris medio para elementos inactivos
 val Error = Color(0xFFF56565)     // Rojo para mensajes de error
-val Exito = Color(0xFF48BB78)     // Verde para mensajes de éxito (igual que AcentoPositivo, lo cual es coherente)
+val Exito = Color(0xFF48BB78)     // Verde para mensajes de éxito
 
 // Valores de Alpha estándar para Material Design
 object AlphaValues {
@@ -28,15 +27,8 @@ object AlphaValues {
     const val DisabledContentAlpha = 0.38f   // Para contenido/texto deshabilitado
     const val MediumAlpha = 0.6f             // Para énfasis medio
     const val HighAlpha = 0.8f               // Para énfasis alto
-    const val DividerAlpha = 0.12f          // Para divisores
-    const val HoverAlpha = 0.04f            // Para estados hover
-    const val FocusAlpha = 0.12f            // Para estados focus
-    const val PressedAlpha = 0.12f          // Para estados pressed
-    const val DragAlpha = 0.16f             // Para estados drag
-    const val SelectedAlpha = 0.08f         // Para estados selected
 
     // Alphas específicos para containers de cards según estado
-    const val CardArchivedAlpha = 0.5f
     const val CardStateAlpha = 0.3f         // Para completed, skipped, partial, missed
 }
 
@@ -65,14 +57,3 @@ val Purple = Premium
 
 val ListCompletedItem = AcentoPositivo.copy(alpha = AlphaValues.MediumAlpha)
 val NoteTypeIndicator = AcentoInformativo
-
-// Colores para HabitJourneyCard con estados
-object CardStateColors {
-    val Archived = Color(0xFF9E9E9E).copy(alpha = AlphaValues.CardArchivedAlpha)
-    val Completed = AcentoPositivo.copy(alpha = AlphaValues.CardStateAlpha)
-    val Skipped = AcentoUrgente.copy(alpha = AlphaValues.CardStateAlpha)
-    val Partial = AcentoInformativo.copy(alpha = AlphaValues.CardStateAlpha)
-    val Missed = Error.copy(alpha = AlphaValues.CardStateAlpha)
-    val NotCompleted = AcentoInformativo.copy(alpha = AlphaValues.MediumAlpha)
-    val FilledBackground = BaseClara.copy(alpha = 0.95f)
-}

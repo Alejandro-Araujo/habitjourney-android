@@ -10,18 +10,23 @@ import com.alejandro.habitjourney.core.data.local.enums.Weekday
 import com.alejandro.habitjourney.features.user.data.local.entity.UserEntity
 import kotlinx.datetime.LocalDate
 
+ /**
+  * Entidad principal de hábitos con índices optimizados para consultas frecuentes.
+  * Incluye foreign key cascada para eliminar logs al eliminar usuario.
+  */
 @Entity(
     tableName = "habits",
     foreignKeys = [ForeignKey(
         entity = UserEntity::class,
         parentColumns = ["id"],
         childColumns = ["user_id"],
-        onDelete = ForeignKey.NO_ACTION
+        onDelete = ForeignKey.CASCADE
     )],
     indices = [
         Index("user_id"),
         Index("frequency"),
-        Index("is_archived")
+        Index("is_archived"),
+        Index("created_at")
     ]
 )
 data class HabitEntity(

@@ -79,8 +79,7 @@ fun NavGraph(
                     }
                 },
                 onRegisterSuccess = {
-                    authViewModel.onLoginSuccess()
-                    navController.navigate(Screen.Dashboard.route) {
+                    navController.navigate(Screen.Login.route) {
                         popUpTo(Screen.Register.route) { inclusive = true }
                         launchSingleTop = true
                     }
@@ -201,9 +200,6 @@ fun NavGraph(
                 onNavigateToCreateTask = {
                     navController.navigate(Screen.CreateTask.route)
                 },
-                onNavigateToEditTask = { taskId ->
-                    navController.navigate(Screen.EditTask.createRoute(taskId))
-                },
                 onNavigateToTaskDetail = { taskId ->
                     navController.navigate(Screen.TaskDetail.createRoute(taskId))
                 },
@@ -282,9 +278,6 @@ fun NavGraph(
             com.alejandro.habitjourney.features.note.presentation.screen.NoteListScreen(
                 onNavigateToCreateNote = {
                     navController.navigate(Screen.CreateNote.route)
-                },
-                onNavigateToEditNote = { noteId ->
-                    navController.navigate(Screen.EditNote.createRoute(noteId))
                 },
                 onNavigateToNoteDetail = { noteId ->
                     navController.navigate(Screen.NoteDetail.createRoute(noteId))

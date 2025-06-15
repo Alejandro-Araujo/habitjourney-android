@@ -8,6 +8,25 @@ import androidx.room.PrimaryKey
 import com.alejandro.habitjourney.features.user.data.local.entity.UserEntity
 
 
+/**
+ * Representa una nota en la base de datos local.
+ *
+ * Esta entidad está vinculada a un [UserEntity] a través de una clave externa,
+ * asegurando que cada nota pertenezca a un usuario. Incluye índices para optimizar
+ * las consultas comunes de filtrado y ordenación.
+ *
+ * @property id El identificador único autogenerado para la nota.
+ * @property userId El ID del [UserEntity] al que pertenece esta nota.
+ * @property title El título de la nota.
+ * @property content El contenido principal de la nota en formato de texto.
+ * @property noteType El tipo de nota (ej: "TEXT", "CHECKLIST"). Futura implementación.
+ * @property listItems Contenido serializado para notas de tipo lista. Futura implementación.
+ * @property isArchived `true` si la nota está archivada y no debe mostrarse en la lista principal.
+ * @property createdAt Timestamp de la creación de la nota.
+ * @property updatedAt Timestamp de la última modificación de la nota.
+ * @property wordCount El número de palabras en el contenido de la nota, para estadísticas.
+ * @property isFavorite `true` si la nota está marcada como favorita por el usuario.
+ */
 @Entity(
     tableName = "notes",
     foreignKeys = [
@@ -15,14 +34,15 @@ import com.alejandro.habitjourney.features.user.data.local.entity.UserEntity
             entity = UserEntity::class,
             parentColumns = ["id"],
             childColumns = ["user_id"],
-            onDelete = ForeignKey.NO_ACTION
+            onDelete = ForeignKey.CASCADE // Si se borra el usuario, se borran sus notas.
         )
     ],
     indices = [
         Index(value = ["user_id"]),
         Index(value = ["is_archived"]),
         Index(value = ["created_at"]),
-        Index(value = ["updated_at"])
+        Index(value = ["updated_at"]),
+        Index(value = ["is_favorite"])
     ]
 )
 data class NoteEntity(

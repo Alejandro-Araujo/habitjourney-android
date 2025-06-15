@@ -15,7 +15,20 @@ import androidx.compose.ui.res.stringResource
 import com.alejandro.habitjourney.R
 import com.alejandro.habitjourney.features.task.domain.model.Task
 
-
+/**
+ * Un componente Composable que muestra un menú desplegable con acciones contextuales para una [Task].
+ *
+ * Este menú ofrece opciones para archivar/desarchivar y, opcionalmente, eliminar una tarea,
+ * dependiendo de su estado actual y de los callbacks proporcionados.
+ *
+ * @param modifier El [Modifier] a aplicar a este composable.
+ * @param expanded Indica si el menú desplegable está actualmente expandido y visible.
+ * @param onDismiss Lambda que se invoca cuando el menú desplegable se cierra (por ejemplo, haciendo clic fuera).
+ * @param task La [Task] para la cual se muestra el menú contextual.
+ * @param onArchiveTask Lambda que se invoca cuando se hace clic en la opción "Archivar tarea".
+ * @param onUnarchiveTask Lambda que se invoca cuando se hace clic en la opción "Desarchivar tarea". Por defecto, es una lambda vacía.
+ * @param onDeleteTask Lambda opcional que se invoca cuando se hace clic en la opción "Eliminar". Si es `null`, la opción de eliminar no se muestra.
+ */
 @Composable
 fun TaskContextMenu(
     modifier: Modifier = Modifier,
@@ -60,7 +73,6 @@ fun TaskContextMenu(
 
         HorizontalDivider()
 
-        // Eliminar
         if (onDeleteTask != null) {
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.delete)) },

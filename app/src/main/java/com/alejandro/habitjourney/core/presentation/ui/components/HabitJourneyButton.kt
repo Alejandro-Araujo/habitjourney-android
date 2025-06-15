@@ -26,10 +26,24 @@ import androidx.compose.ui.res.stringResource
 import com.alejandro.habitjourney.R
 import com.alejandro.habitjourney.core.presentation.ui.theme.*
 
+
 enum class HabitJourneyButtonType {
     PRIMARY, SECONDARY, TERTIARY
 }
 
+
+/**
+ * Botón personalizado de HabitJourney con tres variantes: Primary, Secondary, Tertiary.
+ * Incluye estados de loading, iconos y animaciones consistentes.
+ *
+ * @param text Texto del botón
+ * @param onClick Callback cuando se presiona
+ * @param type Variante visual del botón
+ * @param enabled Si el botón está habilitado
+ * @param isLoading Muestra spinner en lugar de contenido
+ * @param leadingIcon Icono al inicio del texto
+ * @param trailingIcon Icono al final del texto
+ */
 @Composable
 fun HabitJourneyButton(
     text: String,
