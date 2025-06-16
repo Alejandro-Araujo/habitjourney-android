@@ -1,5 +1,9 @@
 # HabitJourney Android
 
+![Android](https://img.shields.io/badge/Android-8.0+-green?style=for-the-badge&logo=android)
+![Kotlin](https://img.shields.io/badge/Kotlin-1.9.x-purple?style=for-the-badge&logo=kotlin)
+![Compose](https://img.shields.io/badge/Jetpack%20Compose-blue?style=for-the-badge&logo=jetpackcompose)
+
 Aplicación Android de productividad personal que integra gestión de hábitos, tareas y notas, desarrollada con Kotlin y Jetpack Compose.
 
 ## 🚀 Características
