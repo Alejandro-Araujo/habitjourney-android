@@ -27,7 +27,6 @@ import com.alejandro.habitjourney.features.note.presentation.components.*
 import com.alejandro.habitjourney.features.note.presentation.viewmodel.NoteDetailsViewModel
 import kotlinx.datetime.*
 
-
 /**
  * Pantalla que muestra la vista de solo lectura de los detalles de una nota.
  *

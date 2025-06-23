@@ -11,6 +11,7 @@ import com.alejandro.habitjourney.features.note.domain.usecase.*
 import com.alejandro.habitjourney.features.note.presentation.state.NoteDetailsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -75,12 +76,12 @@ class NoteDetailsViewModel @Inject constructor(
         _noteId.value = noteId
         _uiState.value = _uiState.value.copy(
             isLoading = true,
-            noteExists = false,
             error = null
         )
 
         // Observar cambios en la nota
         viewModelScope.launch {
+            delay(100)
             note.collect { noteData ->
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,

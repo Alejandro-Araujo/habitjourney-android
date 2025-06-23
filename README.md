@@ -6,6 +6,8 @@
 
 Aplicación Android de productividad personal que integra gestión de hábitos, tareas y notas, desarrollada con Kotlin y Jetpack Compose.
 
+Proyecto final para el CFGS de Desarrollo de Aplicaciones Multiplataforma (DAM) 2025 en IES Los Albares
+
 ## 🚀 Características
 
 - ✅ **Gestión de Hábitos** con seguimiento de rachas
@@ -133,6 +135,10 @@ Cada feature contiene:
 - Cambio de contraseña
 - Eliminación de cuenta
 
+## Capturas de pantalla
+![img.png](img.png)  ![img_1.png](img_1.png)
+![img_2.png](img_2.png) 
+
 ## 🔐 Permisos Requeridos
 
 ```xml
@@ -211,11 +217,6 @@ Este proyecto está bajo la Licencia MIT - ver [LICENSE](LICENSE) para detalles.
 ## 👥 Autor
 
 - **[Alejandro Araujo Fernández]** - [GitHub](https://github.com/Alejandro-Araujo)
-
-## 🙏 Agradecimientos
-
-- Proyecto final para el CFGS de Desarrollo de Aplicaciones Multiplataforma (DAM) 2025 en IES Los Albares
-- Desarrollado con el objetivo de crear una herramienta unificada de productividad
 
 ## 📞 Contacto
 

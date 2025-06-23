@@ -16,7 +16,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.automirrored.filled.Forward
 import androidx.compose.material.icons.automirrored.filled.Note
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.*
@@ -31,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -101,6 +101,22 @@ fun DashboardScreen(
     viewModel: DashboardViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    // Generar mensajes que se actualizan automáticamente con el idioma
+    val summaryMessage = generateSummaryMessage(
+        isEmpty = uiState.isEmpty,
+        completedHabitsToday = uiState.completedHabitsToday,
+        totalHabitsToday = uiState.totalHabitsToday,
+        overdueTasks = uiState.overdueTasks,
+        currentStreak = uiState.currentStreak,
+        habitCompletionPercentage = uiState.habitCompletionPercentage,
+        hasOverdueTasks = uiState.hasOverdueTasks
+    )
+
+    val motivationalQuote = generateMotivationalQuote(uiState.productivityScore)
+
+    val greetingMessage = generateGreetingMessage()
+
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
 
     // Pull para refresh
@@ -168,7 +184,7 @@ fun DashboardScreen(
                             // Bienvenida
                             WelcomeHeader(
                                 userName = uiState.user?.name ?: "",
-                                greeting = viewModel.greetingMessage
+                                greeting = greetingMessage
                             )
 
                             // Quick Stats
@@ -178,7 +194,7 @@ fun DashboardScreen(
                                 activeTasks = uiState.totalActiveTasks,
                                 currentStreak = uiState.currentStreak,
                                 productivityScore = uiState.productivityScore,
-                                summaryMessage = uiState.summaryMessage,
+                                summaryMessage = summaryMessage,
                                 onShowStatsInfo = { showStatsInfo = true }
 
                             )
@@ -262,8 +278,8 @@ fun DashboardScreen(
                                 item {
                                     DailySummaryCard(
                                         score = uiState.productivityScore,
-                                        summaryMessage = uiState.summaryMessage,
-                                        message = uiState.motivationalQuote,
+                                        summaryMessage = summaryMessage,
+                                        message = motivationalQuote,
                                         streak = uiState.currentStreak,
                                         isExcellentDay = uiState.productivityScore >= 70
                                     )
@@ -1199,5 +1215,63 @@ private fun ExpandableFAB(
                 )
             }
         }
+    }
+}
+
+/**
+ * Genera mensajes dinámicos basados en el estado actual del usuario.
+ *
+ * @return Par de mensajes: (resumen del día, frase motivacional)
+ */
+@Composable
+private fun generateSummaryMessage(
+    isEmpty: Boolean,
+    completedHabitsToday: Int,
+    totalHabitsToday: Int,
+    overdueTasks: Int,
+    currentStreak: Int,
+    habitCompletionPercentage: Float,
+    hasOverdueTasks: Boolean
+): String {
+    return when {
+        isEmpty -> stringResource(R.string.dashboard_summary_start)
+        completedHabitsToday == totalHabitsToday && !hasOverdueTasks -> {
+            if (currentStreak > 1) {
+                stringResource(R.string.dashboard_summary_all_habits_completed_with_streak, currentStreak)
+            } else {
+                stringResource(R.string.dashboard_summary_all_habits_completed_no_streak)
+            }
+        }
+        habitCompletionPercentage >= 0.8f && !hasOverdueTasks -> {
+            val percentage = (habitCompletionPercentage * 100).toInt()
+            stringResource(R.string.dashboard_summary_good_progress, percentage)
+        }
+        hasOverdueTasks -> {
+            pluralStringResource(R.plurals.dashboard_summary_overdue_tasks, overdueTasks, overdueTasks)
+        }
+        habitCompletionPercentage >= 0.5f -> stringResource(R.string.dashboard_summary_decent_progress)
+        else -> stringResource(R.string.dashboard_summary_keep_going)
+    }
+}
+
+@Composable
+private fun generateMotivationalQuote(productivityScore: Int): String {
+    return when (productivityScore) {
+        in 90..100 -> stringResource(R.string.dashboard_quote_excellent)
+        in 70..89 -> stringResource(R.string.dashboard_quote_great)
+        in 50..69 -> stringResource(R.string.dashboard_quote_good)
+        else -> stringResource(R.string.dashboard_quote_default)
+    }
+}
+/**
+ * Genera mensaje de saludo dinámico basado en la hora del día.
+ */
+@Composable
+private fun generateGreetingMessage(): String {
+    val hour = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).hour
+    return when (hour) {
+        in 6..12 -> stringResource(R.string.greeting_morning)
+        in 13..19 -> stringResource(R.string.greeting_afternoon)
+        else -> stringResource(R.string.greeting_evening)
     }
 }

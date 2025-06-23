@@ -65,7 +65,6 @@ class DashboardViewModel @Inject constructor(
                         }
                         is Result.Success -> {
                             val dashboardData = result.data
-                            val (summary, quote) = generateUiMessages(dashboardData)
                             val isEmpty = isDashboardEmpty(dashboardData)
 
                             currentState.copy(
@@ -93,8 +92,6 @@ class DashboardViewModel @Inject constructor(
                                 productivityResult = dashboardData.productivityResult,
                                 // Estado
                                 isEmpty = isEmpty,
-                                summaryMessage = summary,
-                                motivationalQuote = quote
                             )
                         }
                         is Result.Error -> {
@@ -126,69 +123,6 @@ class DashboardViewModel @Inject constructor(
                 data.recentNotes.isEmpty() &&
                 (data.user == null || data.user.name.equals("Usuario", ignoreCase = true) || data.user.name.isEmpty())
     }
-
-    /**
-     * Genera mensajes dinámicos basados en el estado actual del usuario.
-     *
-     * @param data Datos consolidados del dashboard
-     * @return Par de mensajes: (resumen del día, frase motivacional)
-     */
-    private fun generateUiMessages(data: DashboardData): Pair<String, String> {
-        val stats = data.dashboardStats
-        val productivityResult = data.productivityResult
-
-        val stateForCalc = DashboardUiState(
-            isEmpty = isDashboardEmpty(data),
-            completedHabitsToday = stats.completedHabitsToday,
-            totalHabitsToday = stats.totalHabitsToday,
-            overdueTasks = stats.overdueTasks,
-            currentStreak = stats.currentStreak,
-            productivityResult = productivityResult
-        )
-
-        val summary = when {
-            stateForCalc.isEmpty -> resourceProvider.getString(R.string.dashboard_summary_start)
-            stateForCalc.completedHabitsToday == stateForCalc.totalHabitsToday && !stateForCalc.hasOverdueTasks -> {
-                if (stateForCalc.currentStreak > 1) {
-                    resourceProvider.getString(R.string.dashboard_summary_all_habits_completed_with_streak, stateForCalc.currentStreak)
-                } else {
-                    resourceProvider.getString(R.string.dashboard_summary_all_habits_completed_no_streak)
-                }
-            }
-            stateForCalc.habitCompletionPercentage >= 0.8f && !stateForCalc.hasOverdueTasks -> {
-                val percentage = (stateForCalc.habitCompletionPercentage * 100).toInt()
-                resourceProvider.getString(R.string.dashboard_summary_good_progress, percentage)
-            }
-            stateForCalc.hasOverdueTasks -> {
-                resourceProvider.getQuantityString(R.plurals.dashboard_summary_overdue_tasks, stateForCalc.overdueTasks, stateForCalc.overdueTasks)
-            }
-            stateForCalc.habitCompletionPercentage >= 0.5f -> resourceProvider.getString(R.string.dashboard_summary_decent_progress)
-            else -> resourceProvider.getString(R.string.dashboard_summary_keep_going)
-        }
-
-        val quote = when (stateForCalc.productivityScore) {
-            in 90..100 -> resourceProvider.getString(R.string.dashboard_quote_excellent)
-            in 70..89 -> resourceProvider.getString(R.string.dashboard_quote_great)
-            in 50..69 -> resourceProvider.getString(R.string.dashboard_quote_good)
-            else -> resourceProvider.getString(R.string.dashboard_quote_default)
-        }
-
-        return Pair(summary, quote)
-    }
-
-    /**
-     * Genera mensaje de saludo dinámico basado en la hora del día.
-     */
-    val greetingMessage: String
-        get() {
-            val hour = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).hour
-            val greetingResId = when (hour) {
-                in 6..12 -> R.string.greeting_morning
-                in 13..19 -> R.string.greeting_afternoon
-                else -> R.string.greeting_evening
-            }
-            return resourceProvider.getString(greetingResId)
-        }
 
     /**
      * Alterna el estado de completado de un hábito desde el dashboard.
