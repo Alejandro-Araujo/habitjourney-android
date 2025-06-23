@@ -112,7 +112,8 @@ fun CreateEditHabitScreen(
                         text = stringResource(
                             if (uiState.isEditing) R.string.edit_habit_title
                             else R.string.create_habit_title
-                        )
+                        ),
+                        style = Typography.headlineMedium
                     )
                 },
                 navigationIcon = {
@@ -120,7 +121,6 @@ fun CreateEditHabitScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.action_back),
-                            tint = OnPrimary
                         )
                     }
                 },

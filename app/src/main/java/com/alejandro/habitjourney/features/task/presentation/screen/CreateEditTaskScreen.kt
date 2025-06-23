@@ -103,32 +103,6 @@ fun CreateEditTaskScreen(
                         )
                     }
                 },
-                actions = {
-                    if (!isReadOnly && !uiState.isLoading) {
-                        TextButton(
-                            onClick = {
-                                viewModel.saveTask(onSuccess = onNavigateBack)
-                            },
-                            enabled = uiState.isFormValid && !uiState.isSaving
-                        ) {
-                            if (uiState.isSaving) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(16.dp),
-                                    strokeWidth = 2.dp,
-                                    color = AcentoInformativo
-                                )
-                            } else {
-                                Text(
-                                    text = if (taskId != null) {
-                                        stringResource(R.string.save)
-                                    } else {
-                                        stringResource(R.string.create_task)
-                                    }
-                                )
-                            }
-                        }
-                    }
-                },
             )
         }
     ) { paddingValues ->

@@ -74,12 +74,6 @@ data class DashboardUiState(
     /** Días productivos en el mes actual */
     val productiveDaysThisMonth: Int = 0,
 
-    // === MENSAJES UI ===
-    /** Mensaje resumen del estado actual del día */
-    val summaryMessage: String = "",
-
-    /** Frase motivacional basada en el rendimiento */
-    val motivationalQuote: String = ""
 ) {
 
     // === PROPIEDADES CALCULADAS PARA COMPATIBILIDAD ===
