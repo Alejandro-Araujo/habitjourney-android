@@ -49,7 +49,7 @@ data class NoteListItem(
  */
 data class Note(
     val id: Long = 0L,
-    val userId: Long,
+    val userId: String,
     val title: String,
     val content: String,
     val noteType: NoteType = NoteType.TEXT,

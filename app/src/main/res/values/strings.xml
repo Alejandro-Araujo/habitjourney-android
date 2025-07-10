@@ -44,14 +44,13 @@
     <string name="unexpected_network_error">Ha ocurrido un error de red inesperado.</string>
     <string name="unexpected_error">Ha ocurrido un error inesperado.</string>
     <string name="response_body_null">El cuerpo de la respuesta es nulo.</string>
-    <string name="error_unknown">Error desconocido.</string>
     <string name="unknown_error">Error desconocido</string>
 
     <!-- Errores de usuario y autenticación -->
     <string name="error_user_not_logged_in">Usuario no autenticado. Por favor, inicie sesión.</string>
     <string name="error_no_active_session">No hay sesión activa</string>
     <string name="user_not_found">Usuario no encontrado</string>
-    <string name="error_user_not_found_locally">Usuario no encontrado localmente</string>
+    <string name="error_user_not_found_locally">Usuario no encontrado en la base de datos local.</string>
     <string name="error_saving_user_locally">Error al guardar usuario localmente</string>
     <string name="error_recreating_local_user">Error en la recreación del usuario local</string>
     <string name="error_unexpected_loading_state">Estado de carga inesperado</string>
@@ -484,8 +483,8 @@
     <string name="change_password">Cambiar contraseña</string>
     <string name="password_changed_success">Contraseña actualizada correctamente</string>
     <string name="password_requirements_title">Requisitos de contraseña:</string>
-    <string name="password_requirement_length">Mínimo 6 caracteres</string>
-    <string name="password_requirement_letter">Al menos una letra</string>
+    <string name="password_requirement_length">Mínimo 6 caracteres y máximo de 32</string>
+    <string name="password_requirement_letter">Al menos una letra minúscula y otra mayúscula</string>
 
     <!-- Idioma -->
     <string name="language_selection_instructions">Selecciona tu idioma preferido. La aplicación se actualizará automáticamente.</string>
@@ -633,5 +632,120 @@
     <!-- ============================================ -->
     <string name="more_options">Más opciones</string>
     <string name="navigate_back">Volver</string>
+
+    <string name="firebase_error_invalid_custom_token">El token personalizado proporcionado es inválido.</string>
+    <string name="firebase_error_custom_token_mismatch">El token personalizado no coincide con el usuario.</string>
+    <string name="firebase_error_invalid_credential">Las credenciales proporcionadas son inválidas.</string>
+    <string name="firebase_error_invalid_email">El formato del correo electrónico es inválido.</string>
+    <string name="firebase_error_wrong_password">La contraseña es incorrecta.</string>
+    <string name="firebase_error_user_not_found">No existe un usuario con este correo electrónico.</string>
+    <string name="firebase_error_user_disabled">Tu cuenta ha sido deshabilitada.</string>
+    <string name="firebase_error_too_many_requests">Demasiados intentos de inicio de sesión. Inténtalo de nuevo más tarde.</string>
+    <string name="firebase_error_operation_not_allowed">Esta operación no está permitida para tu cuenta.</string>
+    <string name="firebase_error_account_exists_with_different_credential">Ya existe una cuenta con este correo electrónico, pero con un método de inicio de sesión diferente.</string>
+    <string name="firebase_error_weak_password">La contraseña es demasiado débil.</string>
+    <string name="firebase_error_email_already_in_use">Este correo electrónico ya está en uso por otra cuenta.</string>
+    <string name="firebase_error_credential_already_in_use">Esta credencial ya está asociada a otra cuenta de usuario.</string>
+    <string name="firebase_error_requires_recent_login">Por favor, inicia sesión de nuevo para completar esta acción.</string>
+    <string name="firebase_error_generic">Ocurrió un error inesperado de Firebase: %1$s</string>
+
+    <string name="error_registration_failed">Fallo en el registro. Inténtalo de nuevo.</string>
+    <string name="error_login_failed">Fallo en el inicio de sesión. Credenciales inválidas.</string>
+    <string name="user_deleted_successfully">Cuenta eliminada exitosamente.</string>
+    <string name="error_google_login_failed">Error en el login con credenciales de Google</string>
+
+    <string name="google_sign_in">Iniciar sesión con Google</string>
+    <string name="google_sign_up">Registrarse con Google</string>
+    <string name="error_google_sign_in_cancelled">Inicio de sesión cancelado</string>
+    <string name="error_google_sign_in_network">Error de red. Verifica tu conexión</string>
+
+    <!-- Errores Firebase adicionales -->
+    <string name="firebase_error_google_login_failed">Error al iniciar sesión con Google</string>
+
+    <string name="default_web_client_id" translatable="false">177368547031-rpbnceb7ha0d26j0omeou24bv5ckjffi.apps.googleusercontent.com</string>
+    <string name="error_no_google_accounts_found">No se encontraron cuentas de Google en este dispositivo.</string>
+    <string name="error_google_signin_failed_with_code">Error al iniciar sesión con Google: %s</string>
+    <string name="error_google_signin_failed_with_code_int">Error al iniciar sesión con Google: %d</string>
+    <string name="sign_in_with_google_text">Iniciar sesión con Google</string>
+    <string name="content_description_google_logo">Logo de Google</string>
+    <string name="error_generic_button">Error</string>
+    <string name="error_google_signin_cancelled">Error: Google Signing cancelado</string>
+
+    <!-- Account Linking -->
+    <string name="error_email_already_in_use">Este email ya está registrado con otro método</string>
+    <string name="error_account_exists_different_credential">Ya existe una cuenta con este email usando un método diferente</string>
+    <string name="error_account_collision">Conflicto con cuenta existente</string>
+    <string name="error_account_exists_with_email_password">Esta cuenta ya existe con email y contraseña. Usa ese método para iniciar sesión o vincúlala.</string>
+    <string name="error_account_exists_different_method">Esta cuenta ya existe con un método diferente</string>
+    <string name="error_linking_failed">Error al vincular las cuentas</string>
+    <string name="error_account_linking">Error en la vinculación de cuentas</string>
+
+    <!-- Firebase Auth Errors -->
+    <string name="error_invalid_email">Email inválido</string>
+    <string name="error_wrong_password">Contraseña incorrecta</string>
+    <string name="error_invalid_credential">Credenciales inválidas</string>
+    <string name="error_invalid_credentials">Las credenciales no son válidas</string>
+    <string name="error_weak_password">La contraseña es demasiado débil</string>
+    <string name="error_user_not_found">Usuario no encontrado</string>
+    <string name="error_user_disabled">Esta cuenta ha sido deshabilitada</string>
+    <string name="error_user_invalid">Usuario inválido</string>
+    <string name="error_recent_login_required">Necesitas iniciar sesión nuevamente para realizar esta acción</string>
+
+
+    <!-- Dialog Messages -->
+    <string name="dialog_link_account_title">Vincular Cuentas</string>
+    <string name="dialog_link_account_message">Ya tienes una cuenta con este email. ¿Quieres vincular tu cuenta de Google?</string>
+    <string name="dialog_link_account_positive">Vincular</string>
+    <string name="dialog_link_account_negative">Cancelar</string>
+    <string name="error_email_already_exists_try_signin">Esta dirección de email ya está registrada. Intenta iniciar sesión.</string>
+    <string name="error_account_exists_try_other_method">Ya existe una cuenta con este email. Intenta con el método original de registro.</string>
+    <string name="error_unlinking_failed">Error. Desvinculación de métodos de autenticación ha fallado.</string>
+    <string name="error_action_label">ERROR</string>
+    <string name="account_exists_title">Cuenta registrada</string>
+    <string name="account_exists_collision_message">La cuenta utilizada ya se encuentra registrada mediante otro método.</string>
+    <string name="error_google_login_failed_internal">Error interno en el proceso de login con Google</string>
+    <string name="or_continue_with">Continúa con</string>
+    <string name="sign_up_with_google">Regístrate con tu cuenta de Google</string>
+    <string name="registration_success_check_email">Registro exitoso. Se ha enviado un email de verificación a la cuenta indicada. Por favor, confirme su email.</string>
+    <string name="registration_success_but_email_fail">El registro de cuenta ha sido exitoso, pero no se ha podido enviar el email de verificación a la dirección indicada.</string>
+    <string name="error_google_reauth_required">Error. Se requiere reautenticación con Google.</string>
+    <string name="error_generic_reauth_issue">Error de reautenticación</string>
+    <string name="reauthenticate_title">Reautenticación</string>
+    <string name="reauthenticate_message">Se requiere reautenticación. Por favor, ingrese de nuevo sus credenciales</string>
+    <string name="reauthenticate_google_instructions">Se requiere reautenticación con Google</string>
+    <string name="error_password_required">La contraseña es obligatoria</string>
+
+    <string name="error_google_token_missing">No se pudo obtener el token de Google.</string>
+    <string name="error_google_sign_in_failed">Error al iniciar sesión con Google: %d</string>
+    <string name="error_unknown">Error desconocido</string>
+    <string name="error_reauth_failed">Fallo en la reautenticación: %s</string> <string name="error_reauth_failed_generic">Fallo en la reautenticación: %s</string> <string name="error_unsupported_credential_type">Tipo de credencial no soportado.</string>
+    <string name="error_no_credentials_found">No se encontraron credenciales disponibles.</string>
+    <string name="error_unknown_credential_type">Tipo de credencial desconocido.</string>
+    <string name="error_credential_manager_failed">Error de Credential Manager: %s</string>
+    <string name="error_google_token_parsing">Error al analizar el token de Google.</string>
+    <string name="error_starting_google_reauth">Error al iniciar la reautenticación de Google: %s</string>
+    <string name="error_no_email_associated">Error. Email no asociado a la cuenta.</string>
+    <string name="error_too_many_requests">Error: demasiadas peticiones</string>
+    <string name="error_cannot_determine_auth_method">Error: No se ha podido determinar el método de autenticación</string>
+    <string name="password_requirement_digit">Al menos un dígito</string>
+    <string name="password_requirement_special_character">Al menos un carácter especial</string>
+    <string name="profile_updated_but_email_verification_failed">Perfil actualizado correctamente pero no se ha podido enviar email de verificación</string>
+    <string name="profile_updated_success_email_changed">Perfil actualizado exitosamente. Tu email ha sido cambiado</string>
+    <string name="profile_updated_success_with_email_verification">Perfil actualizado exitosamente. Se ha enviado un correo de verificación a tu nueva dirección de email</string>
+    <string name="error_reauthentication_already_in_progress">Error: reautenticación ya se encuentra en progreso.</string>
+    <string name="error_no_pending_action">No hay acción pendiente</string>
+    <string name="logout_success">Ha salido de la sesión correctamente.</string>
+    <string name="error_invalid_current_password">Error: contraseña actual no válida</string>
+    <string name="error_loading_user_data">Error al cargar datos del usuario</string>
+    <string name="email_verification_sent_success">Se ha enviado correo para la verificación de su email</string>
+    <string name="email_verified_content_description">Dirección de correo electróno verificada</string>
+    <string name="email_verified_label">Email verificado</string>
+    <string name="email_not_verified_content_description">Email no verificado</string>
+    <string name="email_not_verified_label">Email no verificado</string>
+    <string name="resend_verification_email_button">Reenviar email de verificación</string>
+    <string name="email_verification_sent_logout_required">Se ha enviado un email de verificación. Por seguridad, debe cerrar sesión y volver a iniciarla.</string>
+    <string name="email_verification_dialog_message">Se ha enviado un email de verificación a su nueva dirección. Por razones de seguridad, debe cerrar sesión y volver a iniciarla.</string>
+    <string name="go_to_login">Ir al Login</string>
+    <string name="email_verification_dialog_instructions">1. Revise su email y haga clic en el enlace de verificación\n2. Cierre esta sesión\n3. Inicie sesión nuevamente con su email actual\n4. Una vez verificado, use el nuevo email para futuras sesiones</string>
 
 </resources>

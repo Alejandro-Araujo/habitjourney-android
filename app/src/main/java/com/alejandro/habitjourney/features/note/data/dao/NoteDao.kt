@@ -51,7 +51,7 @@ interface NoteDao {
         AND is_archived = 0 
         ORDER BY updated_at DESC
     """)
-    fun getActiveNotes(userId: Long): Flow<List<NoteEntity>>
+    fun getActiveNotes(userId: String): Flow<List<NoteEntity>>
 
     /**
      * Obtiene todas las notas de un usuario, incluyendo las archivadas, ordenadas por la más reciente.
@@ -63,7 +63,7 @@ interface NoteDao {
         WHERE user_id = :userId 
         ORDER BY updated_at DESC
     """)
-    fun getAllNotes(userId: Long): Flow<List<NoteEntity>>
+    fun getAllNotes(userId: String): Flow<List<NoteEntity>>
 
     /**
      * Obtiene todas las notas archivadas de un usuario, ordenadas por la más reciente.
@@ -76,7 +76,7 @@ interface NoteDao {
         AND is_archived = 1 
         ORDER BY updated_at DESC
     """)
-    fun getArchivedNotes(userId: Long): Flow<List<NoteEntity>>
+    fun getArchivedNotes(userId: String): Flow<List<NoteEntity>>
 
     /**
      * Obtiene todas las notas favoritas y activas de un usuario, ordenadas por la más reciente.
@@ -90,7 +90,7 @@ interface NoteDao {
         AND is_archived = 0 
         ORDER BY updated_at DESC
     """)
-    fun getFavoriteNotes(userId: Long): Flow<List<NoteEntity>>
+    fun getFavoriteNotes(userId: String): Flow<List<NoteEntity>>
 
     /**
      * Busca en las notas activas de un usuario por título o contenido.
@@ -105,7 +105,7 @@ interface NoteDao {
         AND (title LIKE '%' || :searchQuery || '%' OR content LIKE '%' || :searchQuery || '%')
         ORDER BY updated_at DESC
     """)
-    fun searchNotes(userId: Long, searchQuery: String): Flow<List<NoteEntity>>
+    fun searchNotes(userId: String, searchQuery: String): Flow<List<NoteEntity>>
 
     /**
      * Cambia el estado de archivado de una nota.
@@ -136,7 +136,7 @@ interface NoteDao {
      * @return El número de notas activas.
      */
     @Query("SELECT COUNT(*) FROM notes WHERE user_id = :userId AND is_archived = 0")
-    suspend fun getActiveNotesCount(userId: Long): Int
+    suspend fun getActiveNotesCount(userId: String): Int
 
     /**
      * Obtiene la suma total de palabras de todas las notas activas de un usuario.
@@ -144,5 +144,5 @@ interface NoteDao {
      * @return El conteo total de palabras, o null si no hay notas.
      */
     @Query("SELECT SUM(word_count) FROM notes WHERE user_id = :userId AND is_archived = 0")
-    suspend fun getTotalWordCount(userId: Long): Int?
+    suspend fun getTotalWordCount(userId: String): Int?
 }

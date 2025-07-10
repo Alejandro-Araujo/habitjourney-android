@@ -60,7 +60,7 @@ interface HabitDao {
         WHERE user_id = :userId
         ORDER BY created_at DESC
     """)
-    fun getAllHabitsForUser(userId: Long): Flow<List<HabitEntity>>
+    fun getAllHabitsForUser(userId: String): Flow<List<HabitEntity>>
 
     /**
      * Obtiene solo hábitos activos (no archivados) de un usuario.
@@ -71,7 +71,7 @@ interface HabitDao {
         AND is_archived = 0
         ORDER BY created_at DESC
     """)
-    fun getActiveHabitsForUser(userId: Long): Flow<List<HabitEntity>>
+    fun getActiveHabitsForUser(userId: String): Flow<List<HabitEntity>>
 
     /**
      * Consulta compleja para obtener hábitos que deben realizarse en un día específico.
@@ -103,7 +103,7 @@ interface HabitDao {
             end_date IS NULL OR end_date >= date('now', 'localtime')
         )
     """)
-    fun getHabitsForDay(userId: Long, weekdayIndex: Int): Flow<List<HabitEntity>>
+    fun getHabitsForDay(userId: String, weekdayIndex: Int): Flow<List<HabitEntity>>
 
     /**
      * Obtiene un hábito con todos sus logs usando relación de Room.
@@ -152,7 +152,7 @@ interface HabitDao {
         ORDER BY h.created_at DESC
     """)
     fun getHabitsDueTodayWithLogCounts(
-        userId: Long,
+        userId: String,
         today: LocalDate,
         weekdayIndex: Int
     ): Flow<List<HabitWithCompletionCount>>

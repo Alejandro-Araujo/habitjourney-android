@@ -8,7 +8,7 @@ import com.alejandro.habitjourney.core.data.local.enums.LogStatus
 import com.alejandro.habitjourney.core.util.TestCoroutineRule
 import com.alejandro.habitjourney.core.util.TestDataFactory
 import com.alejandro.habitjourney.features.habit.data.entity.HabitLogEntity
-import com.alejandro.habitjourney.features.user.data.local.dao.UserDao
+import com.alejandro.habitjourney.features.user.data.dao.UserDao
 import kotlinx.coroutines.flow.first
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
@@ -34,7 +34,7 @@ class HabitLogDaoTest {
     private lateinit var habitDao: HabitDao
     private lateinit var habitLogDao: HabitLogDao
     private lateinit var userDao: UserDao
-    private var userId: Long = 0
+    private var userId: String = "0"
     private var habitId: Long = 0
 
     private val today = TestDataFactory.TODAY
@@ -54,7 +54,7 @@ class HabitLogDaoTest {
                 name = "testuser",
                 email = "test@example.com"
             )
-            userId = userDao.insertUser(user)
+            userId = userDao.insertUser(user).toString()
 
             val habit = TestDataFactory.createHabitEntity(
                 userId = userId,

@@ -1,7 +1,6 @@
 package com.alejandro.habitjourney.features.settings.presentation.viewmodel
 
 import android.content.Context
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alejandro.habitjourney.R
 import com.alejandro.habitjourney.core.data.remote.exception.ErrorHandler
@@ -11,6 +10,11 @@ import com.alejandro.habitjourney.features.user.domain.usecase.ChangePasswordUse
 import com.alejandro.habitjourney.features.user.domain.util.UserValidationUtils
 import com.alejandro.habitjourney.features.user.domain.util.ValidationResult
 import com.alejandro.habitjourney.features.settings.presentation.state.ChangePasswordUiState
+import com.alejandro.habitjourney.features.user.domain.manager.ReauthenticationManager
+import com.alejandro.habitjourney.features.user.domain.usecase.ReauthenticateUserUseCase
+import com.alejandro.habitjourney.features.user.domain.usecase.ReauthenticateWithGoogleUseCase
+import com.alejandro.habitjourney.features.user.presentation.mixin.ReauthenticationMixin
+import com.alejandro.habitjourney.navigation.AuthFlowCoordinator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.*
@@ -20,22 +24,55 @@ import javax.inject.Inject
 /**
  * ViewModel para gestionar el cambio de contraseña del usuario.
  *
+ * Extiende ReauthenticationMixin para manejar automáticamente la reautenticación
+ * cuando sea necesaria para operaciones sensibles.
+ *
  * Responsabilidades:
  * - Validar campos de contraseña en tiempo real
  * - Gestionar el proceso de cambio de contraseña
  * - Manejar estados de carga y errores
  * - Proporcionar mensajes de error localizados
+ * - Manejar el flujo de reautenticación cuando sea necesario
  */
 @HiltViewModel
 class ChangePasswordViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val changePasswordUseCase: ChangePasswordUseCase,
     private val errorHandler: ErrorHandler,
-    private val resourceProvider: ResourceProvider
-) : ViewModel() {
-
+    resourceProvider: ResourceProvider,
+    reauthenticationManager: ReauthenticationManager,
+    authFlowCoordinator: AuthFlowCoordinator,
+    reauthenticateWithGoogleUseCase: ReauthenticateWithGoogleUseCase,
+    reauthenticateUserUseCase: ReauthenticateUserUseCase,
+    googleWebClientId: String
+) : ReauthenticationMixin(
+    reauthenticationManager,
+    authFlowCoordinator,
+    resourceProvider,
+    errorHandler,
+    reauthenticateWithGoogleUseCase,
+    reauthenticateUserUseCase,
+    googleWebClientId
+){
     private val _uiState = MutableStateFlow(ChangePasswordUiState())
-    val uiState: StateFlow<ChangePasswordUiState> = _uiState.asStateFlow()
+
+    /**
+     * Combina el estado de la UI con el estado de reautenticación
+     */
+    val combinedState: StateFlow<ChangePasswordUiState> = combine(
+        _uiState,
+        reauthState
+    ) { uiState, reauthState ->
+        uiState.copy(
+            isLoading = uiState.isLoading || reauthState.isLoading,
+            errorMessage = uiState.errorMessage ?: reauthState.errorMessage
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = _uiState.value
+    )
+
 
     /**
      * Actualiza la contraseña actual y valida el campo.
@@ -112,23 +149,24 @@ class ChangePasswordViewModel @Inject constructor(
      */
     fun changePassword() {
         val state = _uiState.value
-
-        // Validar todos los campos
         validateCurrentPassword(state.currentPassword)
         validateNewPassword(state.newPassword)
         validateConfirmPassword(state.confirmPassword)
-
         if (!state.isValid) return
 
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
+            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
 
-            when (val result = changePasswordUseCase(state.currentPassword, state.newPassword)) {
+            // **CAMBIO 2: Manejamos el NetworkResponse que 'executeWithReauth' devuelve.**
+            when (val result = executeWithReauth { changePasswordUseCase(state.currentPassword, state.newPassword) }) {
                 is NetworkResponse.Success -> {
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            isSuccess = true
+                            isSuccess = true,
+                            currentPassword = "",
+                            newPassword = "",
+                            confirmPassword = ""
                         )
                     }
                 }
@@ -136,24 +174,40 @@ class ChangePasswordViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            errorMessage = resourceProvider.getString(
-                                R.string.error_changing_password,
-                                errorHandler.getErrorMessage(result.exception)
-                            )
+                            // El Mixin ya actualiza su 'reauthState.errorMessage'.
+                            // Si el error no es de reauth, lo ponemos aquí.
+                            errorMessage = errorHandler.getErrorMessage(result.exception)
                         )
                     }
                 }
-                is NetworkResponse.Loading -> {
-                    // Estado ya manejado
-                }
+                is NetworkResponse.Loading -> { /* No debería ocurrir aquí */ }
             }
+        }
+    }
+
+
+    /**
+     * Dispara la reautenticación con Email/Password cuando el usuario confirma en el diálogo.
+     */
+    fun confirmEmailPasswordReauthFromUi() {
+        viewModelScope.launch {
+            confirmEmailPasswordReauth()
         }
     }
 
     /**
      * Limpia el mensaje de error actual.
+     * También limpia el error del Mixin.
      */
     fun clearError() {
         _uiState.update { it.copy(errorMessage = null) }
+        dismissReauthenticationDialog() // Esto también limpia el errorMessage del Mixin
+    }
+
+    /**
+     * Resetea el estado de éxito para permitir navegación.
+     */
+    fun resetSuccessState() {
+        _uiState.update { it.copy(isSuccess = false) }
     }
 }

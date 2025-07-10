@@ -89,7 +89,7 @@ class HabitRepositoryImpl @Inject constructor(
      * @param userId El ID del usuario.
      * @return Un [Flow] que emite la lista de [Habit].
      */
-    override fun getAllHabitsForUser(userId: Long): Flow<List<Habit>> {
+    override fun getAllHabitsForUser(userId: String): Flow<List<Habit>> {
         return habitDao.getAllHabitsForUser(userId).map { entities ->
             habitMapper.habitEntityListToDomain(entities)
         }
@@ -100,7 +100,7 @@ class HabitRepositoryImpl @Inject constructor(
      * @param userId El ID del usuario.
      * @return Un [Flow] que emite la lista de [Habit] activos.
      */
-    override fun getActiveHabitsForUser(userId: Long): Flow<List<Habit>> {
+    override fun getActiveHabitsForUser(userId: String): Flow<List<Habit>> {
         return habitDao.getActiveHabitsForUser(userId).map { entities ->
             habitMapper.habitEntityListToDomain(entities)
         }
@@ -112,7 +112,7 @@ class HabitRepositoryImpl @Inject constructor(
      * @param weekdayIndex El índice del día de la semana (ej: 0 para Lunes).
      * @return Un [Flow] que emite la lista de [Habit] para ese día.
      */
-    override fun getHabitsForDay(userId: Long, weekdayIndex: Int): Flow<List<Habit>> {
+    override fun getHabitsForDay(userId: String, weekdayIndex: Int): Flow<List<Habit>> {
         return habitDao.getHabitsForDay(userId, weekdayIndex).map { entities ->
             habitMapper.habitEntityListToDomain(entities)
         }
@@ -249,7 +249,7 @@ class HabitRepositoryImpl @Inject constructor(
      * [Habit] y su conteo de completados hoy (Int).
      */
     override fun getHabitsDueTodayWithCompletionCount(
-        userId: Long,
+        userId: String,
         today: LocalDate,
         weekdayIndex: Int
     ): Flow<List<Pair<Habit, Int>>> {

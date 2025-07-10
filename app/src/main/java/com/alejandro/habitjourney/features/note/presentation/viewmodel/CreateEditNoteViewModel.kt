@@ -9,7 +9,7 @@ import com.alejandro.habitjourney.features.note.domain.model.Note
 import com.alejandro.habitjourney.features.note.domain.model.NoteListItem
 import com.alejandro.habitjourney.features.note.domain.usecase.*
 import com.alejandro.habitjourney.features.note.presentation.state.CreateEditNoteUiState
-import com.alejandro.habitjourney.features.user.data.local.preferences.UserPreferences
+import com.alejandro.habitjourney.features.user.data.preferences.UserPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

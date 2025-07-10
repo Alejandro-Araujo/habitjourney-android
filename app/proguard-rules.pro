@@ -27,3 +27,27 @@
     public <init>(android.content.Context,androidx.work.WorkerParameters);
 }
 -keep class com.alejandro.habitjourney.features.task.data.worker.** { *; }
+
+
+-if class androidx.credentials.CredentialManager
+-keep class androidx.credentials.playservices.** {
+  *;
+}
+
+
+# Keep all members of Google Play Services Auth related classes
+-keep class com.google.android.gms.auth.** { *; }
+-keep interface com.google.android.gms.auth.** { *; }
+
+# Keep all members of Google Identity Services related classes (especially GoogleIdTokenCredential)
+-keep class com.google.android.libraries.identity.** { *; }
+-keep interface com.google.android.libraries.identity.** { *; }
+
+# General rules for Credential Manager and Play Services adapter
+-keep class androidx.credentials.** { *; }
+-keep interface androidx.credentials.** { *; }
+-keep class androidx.credentials.playservices.** { *; }
+
+# If GoogleIdTokenCredential is still not recognized, explicitly keep it
+-keep class com.google.android.libraries.identity.googleid.GoogleIdTokenCredential { *; }
+-keep class com.google.android.libraries.identity.googleid.GoogleIdTokenCredential$Builder { *; }

@@ -61,7 +61,7 @@ interface TaskDao {
         ORDER BY CASE WHEN due_date IS NULL THEN 1 ELSE 0 END, due_date ASC, 
                  CASE priority WHEN 'HIGH' THEN 1 WHEN 'MEDIUM' THEN 2 WHEN 'LOW' THEN 3 ELSE 4 END ASC
     """)
-    fun getActiveTasks(userId: Long): Flow<List<TaskEntity>>
+    fun getActiveTasks(userId: String): Flow<List<TaskEntity>>
 
     /**
      * Obtiene todas las tareas completadas para un usuario específico.
@@ -76,7 +76,7 @@ interface TaskDao {
         AND is_completed = 1
         ORDER BY completion_date DESC 
     """)
-    fun getCompletedTasks(userId: Long): Flow<List<TaskEntity>>
+    fun getCompletedTasks(userId: String): Flow<List<TaskEntity>>
 
     /**
      * Obtiene todas las tareas archivadas para un usuario específico.
@@ -90,7 +90,7 @@ interface TaskDao {
         AND is_archived = 1
         ORDER BY created_at DESC 
     """)
-    fun getArchivedTasks(userId: Long): Flow<List<TaskEntity>>
+    fun getArchivedTasks(userId: String): Flow<List<TaskEntity>>
 
     /**
      * Obtiene todas las tareas vencidas (no completadas, no archivadas y con fecha de vencimiento anterior a la actual)
@@ -108,7 +108,7 @@ interface TaskDao {
         AND due_date < :currentDate
         ORDER BY due_date ASC
     """)
-    fun getOverdueTasks(userId: Long, currentDate: LocalDate): Flow<List<TaskEntity>>
+    fun getOverdueTasks(userId: String, currentDate: LocalDate): Flow<List<TaskEntity>>
 
     /**
      * Obtiene todas las tareas no archivadas para un usuario específico.
@@ -122,7 +122,7 @@ interface TaskDao {
         AND is_archived = 0 
         ORDER BY created_at DESC
     """)
-    fun getAllTasks(userId: Long): Flow<List<TaskEntity>>
+    fun getAllTasks(userId: String): Flow<List<TaskEntity>>
 
     /**
      * Marca una tarea como completada o incompleta y actualiza su fecha de finalización.
@@ -161,7 +161,7 @@ interface TaskDao {
         AND title LIKE '%' || :searchQuery || '%'
         ORDER BY created_at DESC
     """)
-    fun searchTasks(userId: Long, searchQuery: String): Flow<List<TaskEntity>>
+    fun searchTasks(userId: String, searchQuery: String): Flow<List<TaskEntity>>
 
     /**
      * Obtiene tareas no archivadas para un usuario específico filtradas por prioridad.
@@ -177,7 +177,7 @@ interface TaskDao {
         AND priority = :priority
         ORDER BY due_date ASC
     """)
-    fun getTasksByPriority(userId: Long, priority: String): Flow<List<TaskEntity>>
+    fun getTasksByPriority(userId: String, priority: String): Flow<List<TaskEntity>>
 
     /**
      * Elimina una tarea específica de la base de datos.
@@ -215,7 +215,7 @@ interface TaskDao {
         AND completion_date = :date
         ORDER BY completion_date DESC
     """)
-    fun getCompletedTasksByDate(userId: Long, date: LocalDate): Flow<List<TaskEntity>>
+    fun getCompletedTasksByDate(userId: String, date: LocalDate): Flow<List<TaskEntity>>
 
     /**
      * Obtiene las tareas relevantes para una fecha específica para un usuario.
@@ -237,7 +237,7 @@ interface TaskDao {
     )
     ORDER BY due_date ASC, priority ASC
 """)
-    fun getTasksForDate(userId: Long, date: LocalDate): Flow<List<TaskEntity>>
+    fun getTasksForDate(userId: String, date: LocalDate): Flow<List<TaskEntity>>
 
     /**
      * Cuenta el número de tareas programadas o relevantes para un día específico para un usuario.
@@ -258,7 +258,7 @@ interface TaskDao {
         OR (due_date IS NULL AND DATE(created_at/1000, 'unixepoch') <= :date)
     )
 """)
-    suspend fun getTaskCountForDate(userId: Long, date: LocalDate): Int
+    suspend fun getTaskCountForDate(userId: String, date: LocalDate): Int
 
     /**
      * Cuenta el número de tareas completadas en un día específico para un usuario.
@@ -274,5 +274,5 @@ interface TaskDao {
     AND is_completed = 1
     AND completion_date = :date
 """)
-    suspend fun getCompletedTaskCountForDate(userId: Long, date: LocalDate): Int
+    suspend fun getCompletedTaskCountForDate(userId: String, date: LocalDate): Int
 }

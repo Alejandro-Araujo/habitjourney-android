@@ -30,7 +30,6 @@
     <string name="unexpected_network_error">Une erreur réseau inattendue s\'est produite.</string>
     <string name="unexpected_error">Une erreur inattendue s\'est produite.</string>
     <string name="response_body_null">Le corps de la réponse est nul.</string>
-    <string name="error_unknown">Erreur inconnue.</string>
     <string name="unknown_error">Erreur inconnue</string>
 
     <string name="error_user_not_logged_in">Utilisateur non authentifié. Veuillez vous connecter.</string>
@@ -402,8 +401,8 @@
     <string name="change_password">Changer le mot de passe</string>
     <string name="password_changed_success">Mot de passe mis à jour avec succès</string>
     <string name="password_requirements_title">Exigences du mot de passe :</string>
-    <string name="password_requirement_length">Minimum 6 caractères</string>
-    <string name="password_requirement_letter">Au moins une lettre</string>
+    <string name="password_requirement_length">Minimum 6 caractères et maximum 32</string>
+    <string name="password_requirement_letter">Au moins une lettre minuscule et une lettre majuscule</string>
 
     <string name="language_selection_instructions">Sélectionnez votre langue préférée. L\'application sera mise à jour automatiquement.</string>
 
@@ -446,8 +445,7 @@
     <string name="stats_info_streak_desc_simple">Votre série augmente chaque jour où vous complétez 100% des habitudes programmées. Si vous manquez un jour, la série est réinitialisée à zéro. Les tâches n\'affectent pas la série !</string>
     <string name="stats_info_score_title">Score de productivité</string>
     <string name="stats_info_score_desc_main">C\'est un indicateur de votre performance globale du jour, de 0 à 100.</string>
-    <string name="stats_info_score_desc_breakdown">Il est calculé en combinant le pourcentage d\'habitudes complétées (60% du poids) et l\'état de vos tâches (40% du poids), avec un petit bonus pour le maintien d\'une série active.</string>
-
+    <string name="stats_info_score_desc_breakdown" formatted="false">Il est calculé en combinant le pourcentage d\'habitudes complétées (60% du poids) et l\'état de vos tâches (40% du poids), avec un petit bonus pour le maintien d\'une série active.</string>
     <string name="dialog_confirm_button_text">Confirmer</string>
     <string name="dialog_cancel_button_text">Annuler</string>
     <string name="dialog_ok_button_text">OK</string>
@@ -518,4 +516,112 @@
     <string name="more_options">Plus d\'options</string>
     <string name="navigate_back">Retour</string>
 
+    <string name="error_registration_failed">Échec de l\'inscription</string>
+    <string name="error_login_failed">Échec de la connexion</string>
+    <string name="user_deleted_successfully">Utilisateur supprimé avec succès</string>
+    <string name="firebase_error_invalid_custom_token">Jeton invalide</string>
+    <string name="firebase_error_custom_token_mismatch">Le jeton ne correspond pas</string>
+    <string name="firebase_error_invalid_credential">Identifiants invalides</string>
+    <string name="firebase_error_invalid_email">Adresse e-mail invalide</string>
+    <string name="firebase_error_user_not_found">Utilisateur introuvable</string>
+    <string name="firebase_error_user_disabled">Utilisateur désactivé</string>
+    <string name="firebase_error_too_many_requests">Trop de tentatives</string>
+    <string name="firebase_error_operation_not_allowed">Opération non autorisée</string>
+    <string name="firebase_error_account_exists_with_different_credential">Le compte existe avec d\'autres identifiants</string>
+    <string name="firebase_error_weak_password">Mot de passe faible</string>
+    <string name="firebase_error_email_already_in_use">L\'adresse e-mail est déjà utilisée</string>
+    <string name="firebase_error_credential_already_in_use">L\'identifiant est déjà utilisé</string>
+    <string name="firebase_error_requires_recent_login">Connexion récente requise</string>
+    <string name="firebase_error_generic">Erreur générique</string>
+    <string name="firebase_error_wrong_password">Le mot de passe est incorrect</string>
+    <string name="error_google_login_failed">Échec de la connexion Google</string>
+
+    <string name="google_sign_in">Se connecter avec Google</string>
+    <string name="google_sign_up">S\'inscrire avec Google</string>
+    <string name="error_google_sign_in_cancelled">Connexion annulée</string>
+    <string name="error_google_sign_in_network">Erreur réseau. Vérifiez votre connexion.</string>
+
+    <string name="firebase_error_google_login_failed">Erreur lors de la connexion avec Google</string>
+    <string name="error_no_google_accounts_found">Aucun compte Google trouvé sur cet appareil.</string>
+    <string name="error_google_signin_failed_with_code">Erreur lors de la connexion avec Google : %s</string>
+    <string name="error_google_signin_failed_with_code_int">Erreur lors de la connexion avec Google : %d</string>
+    <string name="sign_in_with_google_text">Se connecter avec Google</string>
+    <string name="content_description_google_logo">Logo Google</string>
+    <string name="error_generic_button">Erreur</string>
+    <string name="error_google_signin_cancelled">Erreur : Connexion Google annulée</string>
+
+    <string name="error_email_already_in_use">Cet e-mail est déjà enregistré avec une autre méthode</string>
+    <string name="error_account_exists_different_credential">Un compte existe déjà avec cet e-mail utilisant une méthode différente</string>
+    <string name="error_account_collision">Conflit avec un compte existant</string>
+    <string name="error_account_exists_with_email_password">Ce compte existe déjà avec e-mail et mot de passe. Utilisez cette méthode pour vous connecter ou le lier.</string>
+    <string name="error_account_exists_different_method">Ce compte existe déjà avec une méthode différente</string>
+    <string name="error_linking_failed">Échec de la liaison de compte</string>
+    <string name="error_account_linking">Erreur de liaison de compte</string>
+
+    <string name="error_invalid_email">E-mail invalide</string>
+    <string name="error_wrong_password">Mot de passe incorrect</string>
+    <string name="error_invalid_credential">Identifiants invalides</string>
+    <string name="error_invalid_credentials">Les identifiants ne sont pas valides</string>
+    <string name="error_weak_password">Le mot de passe est trop faible</string>
+    <string name="error_user_not_found">Utilisateur introuvable</string>
+    <string name="error_user_disabled">Ce compte a été désactivé</string>
+    <string name="error_user_invalid">Utilisateur invalide</string>
+    <string name="error_recent_login_required">Vous devez vous reconnecter pour effectuer cette action</string>
+
+    <string name="dialog_link_account_title">Lier les comptes</string>
+    <string name="dialog_link_account_message">Vous avez déjà un compte avec cet e-mail. Voulez-vous lier votre compte Google ?</string>
+    <string name="dialog_link_account_positive">Lier</string>
+    <string name="dialog_link_account_negative">Annuler</string>
+    <string name="error_email_already_exists_try_signin">Cette adresse e-mail est déjà enregistrée. Veuillez essayer de vous connecter.</string>
+    <string name="error_account_exists_try_other_method">Un compte existe déjà avec cet e-mail. Veuillez essayer avec la méthode d\'enregistrement d\'origine.</string>
+    <string name="error_unlinking_failed">Erreur. La dissociation des méthodes d\'authentification a échoué.</string>
+    <string name="error_action_label">ERREUR</string>
+    <string name="account_exists_title">Compte enregistré</string>
+    <string name="account_exists_collision_message">Le compte utilisé est déjà enregistré via une autre méthode.</string>
+    <string name="error_google_login_failed_internal">Erreur interne lors du processus de connexion Google</string>
+    <string name="or_continue_with">Ou continuer avec</string>
+    <string name="sign_up_with_google">S\'inscrire avec votre compte Google</string>
+    <string name="registration_success_check_email">Inscription réussie. Un e-mail de vérification a été envoyé au compte indiqué. Veuillez confirmer votre e-mail.</string>
+    <string name="registration_success_but_email_fail">L\'inscription du compte a réussi, mais l\'e-mail de vérification n\'a pas pu être envoyé à l\'adresse indiquée.</string>
+    <string name="error_google_reauth_required">Erreur. Réauthentification Google requise.</string>
+    <string name="error_generic_reauth_issue">Erreur de réauthentification</string>
+    <string name="reauthenticate_title">Réauthentification</string>
+    <string name="reauthenticate_message">Réauthentification requise. Veuillez saisir à nouveau vos identifiants.</string>
+    <string name="reauthenticate_google_instructions">Réauthentification Google requise.</string>
+    <string name="error_password_required">Le mot de passe est obligatoire.</string>
+
+    <string name="error_google_token_missing">Impossible d\'obtenir le jeton Google.</string>
+    <string name="error_google_sign_in_failed">Erreur lors de la connexion avec Google : %d</string>
+    <string name="error_unknown">Erreur inconnue</string>
+    <string name="error_reauth_failed">Échec de la réauthentification : %s</string>
+    <string name="error_reauth_failed_generic">Échec de la réauthentification : %s</string>
+    <string name="error_unsupported_credential_type">Type d\'identifiant non pris en charge.</string>
+    <string name="error_no_credentials_found">Aucun identifiant disponible trouvé.</string>
+    <string name="error_unknown_credential_type">Type d\'identifiant inconnu.</string>
+    <string name="error_credential_manager_failed">Erreur du gestionnaire d\'identifiants : %s</string>
+    <string name="error_google_token_parsing">Erreur lors de l\'analyse du jeton Google.</string>
+    <string name="error_starting_google_reauth">Erreur lors du démarrage de la réauthentification Google : %s</string>
+    <string name="error_no_email_associated">Erreur. Aucun e-mail associé au compte.</string>
+    <string name="error_too_many_requests">Erreur : Trop de requêtes.</string>
+    <string name="error_cannot_determine_auth_method">Erreur : Impossible de déterminer la méthode d\'authentification.</string>
+    <string name="password_requirement_digit">Au moins un chiffre</string>
+    <string name="password_requirement_special_character">Au moins un caractère spécial</string>
+    <string name="profile_updated_but_email_verification_failed">Profil mis à jour avec succès, mais l\'e-mail de vérification n\'a pas pu être envoyé.</string>
+    <string name="profile_updated_success_email_changed">Profil mis à jour avec succès. Votre e-mail a été modifié.</string>
+    <string name="profile_updated_success_with_email_verification">Profil mis à jour avec succès. Un e-mail de vérification a été envoyé à votre nouvelle adresse e-mail.</string>
+    <string name="error_reauthentication_already_in_progress">Erreur : Réauthentification déjà en cours.</string>
+    <string name="error_no_pending_action">Aucune action en attente.</string>
+    <string name="logout_success">Vous vous êtes déconnecté avec succès.</string>
+    <string name="error_invalid_current_password">Erreur : Mot de passe actuel invalide.</string>
+    <string name="error_loading_user_data">Erreur lors du chargement des données utilisateur.</string>
+    <string name="email_verification_sent_success">E-mail de vérification envoyé avec succès.</string>
+    <string name="email_verified_content_description">Adresse e-mail vérifiée</string>
+    <string name="email_verified_label">E-mail vérifié</string>
+    <string name="email_not_verified_content_description">E-mail non vérifié</string>
+    <string name="email_not_verified_label">E-mail non vérifié</string>
+    <string name="resend_verification_email_button">Renvoyer l\'e-mail de vérification</string>
+    <string name="email_verification_sent_logout_required">Un e-mail de vérification a été envoyé. Pour des raisons de sécurité, vous devez vous déconnecter et vous reconnecter.</string>
+    <string name="email_verification_dialog_message">Un e-mail de vérification a été envoyé à votre nouvelle adresse. Pour des raisons de sécurité, vous devez vous déconnecter et vous reconnecter.</string>
+    <string name="go_to_login">Aller à la connexion</string>
+    <string name="email_verification_dialog_instructions">1. Vérifiez votre e-mail et cliquez sur le lien de vérification.\n2. Déconnectez-vous de cette session.\n3. Reconnectez-vous avec votre e-mail actuel.\n4. Une fois vérifié, utilisez le nouvel e-mail pour les futures sessions.</string>
 </resources>

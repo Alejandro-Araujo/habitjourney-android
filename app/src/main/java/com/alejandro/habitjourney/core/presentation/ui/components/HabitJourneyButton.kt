@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import com.alejandro.habitjourney.R
@@ -42,6 +43,7 @@ enum class HabitJourneyButtonType {
  * @param enabled Si el botón está habilitado
  * @param isLoading Muestra spinner en lugar de contenido
  * @param leadingIcon Icono al inicio del texto
+ * @param leadingIconPainter Painter para el icono al inicio del texto (para Drawables, etc.)
  * @param trailingIcon Icono al final del texto
  */
 @Composable
@@ -53,6 +55,7 @@ fun HabitJourneyButton(
     enabled: Boolean = true,
     isLoading: Boolean = false,
     leadingIcon: ImageVector? = null,
+    leadingIconPainter: Painter? = null,
     trailingIcon: ImageVector? = null,
     iconContentDescription: String? = null,
     contentPadding: PaddingValues = ButtonDefaults.ContentPadding
@@ -79,7 +82,15 @@ fun HabitJourneyButton(
                     modifier = Modifier.size(Dimensions.IconSizeButton)
                 )
                 Spacer(modifier = Modifier.width(Dimensions.SpacingSmall))
+            } else if (leadingIconPainter != null) {
+                Icon(
+                    painter = leadingIconPainter,
+                    contentDescription = iconContentDescription ?: stringResource(R.string.content_description_leading_icon),
+                    modifier = Modifier.size(Dimensions.IconSizeButton)
+                )
+                Spacer(modifier = Modifier.width(Dimensions.SpacingSmall))
             }
+
 
             Text(
                 text = text,

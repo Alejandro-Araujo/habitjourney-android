@@ -30,7 +30,6 @@
     <string name="unexpected_network_error">Ein unerwarteter Netzwerkfehler ist aufgetreten.</string>
     <string name="unexpected_error">Ein unerwarteter Fehler ist aufgetreten.</string>
     <string name="response_body_null">Der Antworttext ist null.</string>
-    <string name="error_unknown">Unbekannter Fehler.</string>
     <string name="unknown_error">Unbekannter Fehler</string>
 
     <string name="error_user_not_logged_in">Benutzer nicht authentifiziert. Bitte melden Sie sich an.</string>
@@ -404,8 +403,8 @@
     <string name="change_password">Passwort ändern</string>
     <string name="password_changed_success">Passwort erfolgreich aktualisiert</string>
     <string name="password_requirements_title">Passwort-Anforderungen:</string>
-    <string name="password_requirement_length">Mindestens 6 Zeichen</string>
-    <string name="password_requirement_letter">Mindestens ein Buchstabe</string>
+    <string name="password_requirement_length">Mindestens 6 und höchstens 32 Zeichen</string>
+    <string name="password_requirement_letter">Mindestens ein Kleinbuchstabe und ein Großbuchstabe</string>
 
     <string name="language_selection_instructions">Wählen Sie Ihre bevorzugte Sprache. Die Anwendung wird automatisch aktualisiert.</string>
 
@@ -519,5 +518,115 @@
 
     <string name="more_options">Weitere Optionen</string>
     <string name="navigate_back">Zurück</string>
+
+
+    <string name="error_registration_failed">Registrierung fehlgeschlagen</string>
+    <string name="error_login_failed">Anmeldung fehlgeschlagen</string>
+    <string name="user_deleted_successfully">Benutzer erfolgreich gelöscht</string>
+    <string name="firebase_error_invalid_custom_token">Ungültiges Token</string>
+    <string name="firebase_error_custom_token_mismatch">Token stimmt nicht überein</string>
+    <string name="firebase_error_invalid_credential">Ungültige Anmeldeinformationen</string>
+    <string name="firebase_error_invalid_email">Ungültige E-Mail-Adresse</string>
+    <string name="firebase_error_user_not_found">Benutzer nicht gefunden</string>
+    <string name="firebase_error_user_disabled">Benutzer deaktiviert</string>
+    <string name="firebase_error_too_many_requests">Zu viele Anfragen</string>
+    <string name="firebase_error_operation_not_allowed">Vorgang nicht erlaubt</string>
+    <string name="firebase_error_account_exists_with_different_credential">Konto existiert mit anderen Anmeldeinformationen</string>
+    <string name="firebase_error_weak_password">Schwaches Passwort</string>
+    <string name="firebase_error_email_already_in_use">Die E-Mail-Adresse wird bereits verwendet</string>
+    <string name="firebase_error_credential_already_in_use">Die Anmeldeinformationen werden bereits verwendet</string>
+    <string name="firebase_error_requires_recent_login">Aktuelle Anmeldung erforderlich</string>
+    <string name="firebase_error_generic">Allgemeiner Fehler</string>
+    <string name="firebase_error_wrong_password">Falsches Passwort</string>
+    <string name="error_google_login_failed">Google-Anmeldung fehlgeschlagen</string>
+
+    <string name="google_sign_in">Mit Google anmelden</string>
+    <string name="google_sign_up">Mit Google registrieren</string>
+    <string name="error_google_sign_in_cancelled">Anmeldung abgebrochen</string>
+    <string name="error_google_sign_in_network">Netzwerkfehler. Überprüfen Sie Ihre Verbindung.</string>
+
+    <string name="firebase_error_google_login_failed">Fehler bei der Anmeldung mit Google</string>
+    <string name="error_no_google_accounts_found">Keine Google-Konten auf diesem Gerät gefunden.</string>
+    <string name="error_google_signin_failed_with_code">Fehler bei der Anmeldung mit Google: %s</string>
+    <string name="error_google_signin_failed_with_code_int">Fehler bei der Anmeldung mit Google: %d</string>
+    <string name="sign_in_with_google_text">Mit Google anmelden</string>
+    <string name="content_description_google_logo">Google-Logo</string>
+    <string name="error_generic_button">Fehler</string>
+    <string name="error_google_signin_cancelled">Fehler: Google-Anmeldung abgebrochen</string>
+
+    <string name="error_email_already_in_use">Diese E-Mail-Adresse ist bereits mit einer anderen Methode registriert</string>
+    <string name="error_account_exists_different_credential">Ein Konto mit dieser E-Mail-Adresse existiert bereits mit einer anderen Methode</string>
+    <string name="error_account_collision">Konflikt mit bestehendem Konto</string>
+    <string name="error_account_exists_with_email_password">Dieses Konto existiert bereits mit E-Mail und Passwort. Verwenden Sie diese Methode zur Anmeldung oder verknüpfen Sie es.</string>
+    <string name="error_account_exists_different_method">Dieses Konto existiert bereits mit einer anderen Methode</string>
+    <string name="error_linking_failed">Kontoverknüpfung fehlgeschlagen</string>
+    <string name="error_account_linking">Fehler bei der Kontoverknüpfung</string>
+
+    <string name="error_invalid_email">Ungültige E-Mail-Adresse</string>
+    <string name="error_wrong_password">Falsches Passwort</string>
+    <string name="error_invalid_credential">Ungültige Anmeldeinformationen</string>
+    <string name="error_invalid_credentials">Die Anmeldeinformationen sind ungültig</string>
+    <string name="error_weak_password">Das Passwort ist zu schwach</string>
+    <string name="error_user_not_found">Benutzer nicht gefunden</string>
+    <string name="error_user_disabled">Dieses Konto wurde deaktiviert</string>
+    <string name="error_user_invalid">Ungültiger Benutzer</string>
+    <string name="error_recent_login_required">Sie müssen sich erneut anmelden, um diese Aktion auszuführen</string>
+
+    <string name="dialog_link_account_title">Konten verknüpfen</string>
+    <string name="dialog_link_account_message">Sie haben bereits ein Konto mit dieser E-Mail-Adresse. Möchten Sie Ihr Google-Konto verknüpfen?</string>
+    <string name="dialog_link_account_positive">Verknüpfen</string>
+    <string name="dialog_link_account_negative">Abbrechen</string>
+    <string name="error_email_already_exists_try_signin">Diese E-Mail-Adresse ist bereits registriert. Bitte versuchen Sie sich anzumelden.</string>
+    <string name="error_account_exists_try_other_method">Ein Konto mit dieser E-Mail-Adresse existiert bereits. Bitte versuchen Sie es mit der ursprünglichen Registrierungsmethode.</string>
+    <string name="error_unlinking_failed">Fehler. Das Aufheben der Verknüpfung von Authentifizierungsmethoden ist fehlgeschlagen.</string>
+    <string name="error_action_label">FEHLER</string>
+    <string name="account_exists_title">Konto registriert</string>
+    <string name="account_exists_collision_message">Das verwendete Konto ist bereits mit einer anderen Methode registriert.</string>
+    <string name="error_google_login_failed_internal">Interner Fehler im Google-Anmeldeprozess</string>
+    <string name="or_continue_with">Oder fortfahren mit</string>
+    <string name="sign_up_with_google">Mit Ihrem Google-Konto registrieren</string>
+    <string name="registration_success_check_email">Registrierung erfolgreich. Eine Bestätigungs-E-Mail wurde an das angegebene Konto gesendet. Bitte bestätigen Sie Ihre E-Mail.</string>
+    <string name="registration_success_but_email_fail">Die Kontoregistrierung war erfolgreich, aber die Bestätigungs-E-Mail konnte nicht an die angegebene Adresse gesendet werden.</string>
+    <string name="error_google_reauth_required">Fehler. Google-Reauthentifizierung erforderlich.</string>
+    <string name="error_generic_reauth_issue">Reauthentifizierungsfehler</string>
+    <string name="reauthenticate_title">Reauthentifizierung</string>
+    <string name="reauthenticate_message">Reauthentifizierung erforderlich. Bitte geben Sie Ihre Anmeldeinformationen erneut ein.</string>
+    <string name="reauthenticate_google_instructions">Google-Reauthentifizierung erforderlich.</string>
+    <string name="error_password_required">Passwort ist erforderlich.</string>
+
+    <string name="error_google_token_missing">Google-Token konnte nicht abgerufen werden.</string>
+    <string name="error_google_sign_in_failed">Fehler bei der Anmeldung mit Google: %d</string>
+    <string name="error_unknown">Unbekannter Fehler</string>
+    <string name="error_reauth_failed">Reauthentifizierung fehlgeschlagen: %s</string>
+    <string name="error_reauth_failed_generic">Reauthentifizierung fehlgeschlagen: %s</string>
+    <string name="error_unsupported_credential_type">Nicht unterstützter Anmeldeinformationstyp.</string>
+    <string name="error_no_credentials_found">Keine verfügbaren Anmeldeinformationen gefunden.</string>
+    <string name="error_unknown_credential_type">Unbekannter Anmeldeinformationstyp.</string>
+    <string name="error_credential_manager_failed">Credential Manager-Fehler: %s</string>
+    <string name="error_google_token_parsing">Fehler beim Parsen des Google-Tokens.</string>
+    <string name="error_starting_google_reauth">Fehler beim Starten der Google-Reauthentifizierung: %s</string>
+    <string name="error_no_email_associated">Fehler. Keine E-Mail mit dem Konto verknüpft.</string>
+    <string name="error_too_many_requests">Fehler: Zu viele Anfragen.</string>
+    <string name="error_cannot_determine_auth_method">Fehler: Authentifizierungsmethode konnte nicht bestimmt werden.</string>
+    <string name="password_requirement_digit">Mindestens eine Ziffer</string>
+    <string name="password_requirement_special_character">Mindestens ein Sonderzeichen</string>
+    <string name="profile_updated_but_email_verification_failed">Profil erfolgreich aktualisiert, aber E-Mail-Bestätigung konnte nicht gesendet werden.</string>
+    <string name="profile_updated_success_email_changed">Profil erfolgreich aktualisiert. Ihre E-Mail wurde geändert.</string>
+    <string name="profile_updated_success_with_email_verification">Profil erfolgreich aktualisiert. Eine Bestätigungs-E-Mail wurde an Ihre neue E-Mail-Adresse gesendet.</string>
+    <string name="error_reauthentication_already_in_progress">Fehler: Reauthentifizierung bereits im Gange.</string>
+    <string name="error_no_pending_action">Keine ausstehende Aktion.</string>
+    <string name="logout_success">Sie haben sich erfolgreich abgemeldet.</string>
+    <string name="error_invalid_current_password">Fehler: Aktuelles Passwort ungültig.</string>
+    <string name="error_loading_user_data">Fehler beim Laden der Benutzerdaten.</string>
+    <string name="email_verification_sent_success">E-Mail-Bestätigung erfolgreich gesendet.</string>
+    <string name="email_verified_content_description">E-Mail-Adresse verifiziert</string>
+    <string name="email_verified_label">E-Mail verifiziert</string>
+    <string name="email_not_verified_content_description">E-Mail nicht verifiziert</string>
+    <string name="email_not_verified_label">E-Mail nicht verifiziert</string>
+    <string name="resend_verification_email_button">Bestätigungs-E-Mail erneut senden</string>
+    <string name="email_verification_sent_logout_required">Eine Bestätigungs-E-Mail wurde gesendet. Aus Sicherheitsgründen müssen Sie sich abmelden und erneut anmelden.</string>
+    <string name="email_verification_dialog_message">Eine Bestätigungs-E-Mail wurde an Ihre neue Adresse gesendet. Aus Sicherheitsgründen müssen Sie sich abmelden und erneut anmelden.</string>
+    <string name="go_to_login">Zum Login gehen</string>
+    <string name="email_verification_dialog_instructions">1. Überprüfen Sie Ihre E-Mails und klicken Sie auf den Bestätigungslink.\n2. Melden Sie sich von dieser Sitzung ab.\n3. Melden Sie sich erneut mit Ihrer aktuellen E-Mail-Adresse an.\n4. Sobald die Bestätigung erfolgt ist, verwenden Sie die neue E-Mail-Adresse für zukünftige Anmeldungen.</string>
 
 </resources>

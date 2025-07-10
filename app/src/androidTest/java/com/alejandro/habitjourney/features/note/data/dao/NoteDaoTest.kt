@@ -6,7 +6,7 @@ import com.alejandro.habitjourney.core.data.local.database.AppDatabase
 import com.alejandro.habitjourney.core.util.TestCoroutineRule
 import com.alejandro.habitjourney.core.util.TestDataFactory
 import com.alejandro.habitjourney.features.note.data.entity.NoteEntity
-import com.alejandro.habitjourney.features.user.data.local.dao.UserDao
+import com.alejandro.habitjourney.features.user.data.dao.UserDao
 import kotlinx.coroutines.flow.first
 import org.junit.After
 import org.junit.Assert.*
@@ -27,7 +27,7 @@ class NoteDaoTest {
     private lateinit var database: AppDatabase
     private lateinit var noteDao: NoteDao
     private lateinit var userDao: UserDao
-    private var userId: Long = 0
+    private var userId: String = "0"
 
     @Before
     fun setupDatabase() {
@@ -43,7 +43,7 @@ class NoteDaoTest {
                 name = "testuser",
                 email = "test@example.com"
             )
-            userId = userDao.insertUser(user)
+            userId = userDao.insertUser(user).toString()
         }
     }
 

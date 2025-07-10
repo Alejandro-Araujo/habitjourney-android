@@ -29,7 +29,7 @@ class GetHabitsDueTodayWithCompletionCountUseCase @Inject constructor(
      * @return Un [Flow] que emite una lista de pares. Cada par contiene un [Habit]
      * y un [Int] que representa su conteo de completitud para el día de hoy.
      */
-    operator fun invoke(userId: Long, today: LocalDate, weekdayIndex: Int): Flow<List<Pair<Habit, Int>>> {
+    operator fun invoke(userId: String, today: LocalDate, weekdayIndex: Int): Flow<List<Pair<Habit, Int>>> {
         return repository.getHabitsDueTodayWithCompletionCount(userId, today, weekdayIndex)
     }
 }

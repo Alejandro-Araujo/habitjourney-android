@@ -23,7 +23,15 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
+          # Caching de Gradle: solo de lectura para PRs, escritura para main
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+
+      - name: Create google-services.json
+        env:
+          GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
+        run: |
+          mkdir -p app/
+          echo "$GOOGLE_SERVICES_JSON_BASE64" | base64 --decode > app/google-services.json
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew

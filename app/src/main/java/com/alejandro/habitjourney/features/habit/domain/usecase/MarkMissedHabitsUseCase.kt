@@ -17,7 +17,7 @@ import javax.inject.Inject
 class MarkMissedHabitsUseCase @Inject constructor(
     private val repository: HabitRepository
 ) {
-    suspend operator fun invoke(userId: Long, date: LocalDate) {
+    suspend operator fun invoke(userId: String, date: LocalDate) {
 
         val habitsDueOnDate = repository.getHabitsDueTodayWithCompletionCount(userId, date, date.dayOfWeek.ordinal).firstOrNull()?.map { it.first } ?: emptyList()
 

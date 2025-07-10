@@ -7,12 +7,12 @@ import com.alejandro.habitjourney.features.habit.data.dao.HabitDao
 import com.alejandro.habitjourney.features.habit.data.dao.HabitLogDao
 import com.alejandro.habitjourney.features.note.data.dao.NoteDao
 import com.alejandro.habitjourney.features.task.data.dao.TaskDao
-import com.alejandro.habitjourney.features.user.data.local.dao.UserDao
+import com.alejandro.habitjourney.features.user.data.dao.UserDao
 import com.alejandro.habitjourney.features.habit.data.entity.HabitEntity
 import com.alejandro.habitjourney.features.habit.data.entity.HabitLogEntity
 import com.alejandro.habitjourney.features.note.data.entity.NoteEntity
 import com.alejandro.habitjourney.features.task.data.entity.TaskEntity
-import com.alejandro.habitjourney.features.user.data.local.entity.UserEntity
+import com.alejandro.habitjourney.features.user.data.entity.UserEntity
 
 /**
  * La base de datos principal de la aplicación que utiliza Room.
@@ -35,7 +35,7 @@ import com.alejandro.habitjourney.features.user.data.local.entity.UserEntity
         TaskEntity::class,
         NoteEntity::class,
     ],
-    version = 3,
+    version = 4,
     exportSchema = true
 )
 @TypeConverters(Converters::class)

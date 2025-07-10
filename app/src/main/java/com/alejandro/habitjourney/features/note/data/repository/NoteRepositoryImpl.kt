@@ -61,7 +61,7 @@ class NoteRepositoryImpl @Inject constructor(
      * @param userId El ID del usuario.
      * @return Un [Flow] que emite la lista de notas activas.
      */
-    override fun getActiveNotes(userId: Long): Flow<List<Note>> {
+    override fun getActiveNotes(userId: String): Flow<List<Note>> {
         return noteDao.getActiveNotes(userId).map { entities ->
             entities.map { it.toDomain() }
         }
@@ -72,7 +72,7 @@ class NoteRepositoryImpl @Inject constructor(
      * @param userId El ID del usuario.
      * @return Un [Flow] que emite la lista completa de notas.
      */
-    override fun getAllNotes(userId: Long): Flow<List<Note>> {
+    override fun getAllNotes(userId: String): Flow<List<Note>> {
         return noteDao.getAllNotes(userId).map { entities ->
             entities.map { it.toDomain() }
         }
@@ -83,7 +83,7 @@ class NoteRepositoryImpl @Inject constructor(
      * @param userId El ID del usuario.
      * @return Un [Flow] que emite la lista de notas archivadas.
      */
-    override fun getArchivedNotes(userId: Long): Flow<List<Note>> {
+    override fun getArchivedNotes(userId: String): Flow<List<Note>> {
         return noteDao.getArchivedNotes(userId).map { entities ->
             entities.map { it.toDomain() }
         }
@@ -94,7 +94,7 @@ class NoteRepositoryImpl @Inject constructor(
      * @param userId El ID del usuario.
      * @return Un [Flow] que emite la lista de notas favoritas.
      */
-    override fun getFavoriteNotes(userId: Long): Flow<List<Note>> {
+    override fun getFavoriteNotes(userId: String): Flow<List<Note>> {
         return noteDao.getFavoriteNotes(userId).map { entities ->
             entities.map { it.toDomain() }
         }
@@ -106,7 +106,7 @@ class NoteRepositoryImpl @Inject constructor(
      * @param searchQuery El texto a buscar.
      * @return Un [Flow] que emite la lista de notas que coinciden con la búsqueda.
      */
-    override fun searchNotes(userId: Long, searchQuery: String): Flow<List<Note>> {
+    override fun searchNotes(userId: String, searchQuery: String): Flow<List<Note>> {
         return noteDao.searchNotes(userId, searchQuery).map { entities ->
             entities.map { it.toDomain() }
         }
@@ -135,7 +135,7 @@ class NoteRepositoryImpl @Inject constructor(
      * @param userId El ID del usuario.
      * @return El número de notas activas.
      */
-    override suspend fun getActiveNotesCount(userId: Long): Int {
+    override suspend fun getActiveNotesCount(userId: String): Int {
         return noteDao.getActiveNotesCount(userId)
     }
 
@@ -144,7 +144,7 @@ class NoteRepositoryImpl @Inject constructor(
      * @param userId El ID del usuario.
      * @return El conteo total de palabras. Devuelve 0 si no hay notas.
      */
-    override suspend fun getTotalWordCount(userId: Long): Int {
+    override suspend fun getTotalWordCount(userId: String): Int {
         return noteDao.getTotalWordCount(userId) ?: 0
     }
 }

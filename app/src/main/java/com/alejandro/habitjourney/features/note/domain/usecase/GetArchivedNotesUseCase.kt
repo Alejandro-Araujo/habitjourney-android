@@ -25,5 +25,5 @@ class GetArchivedNotesUseCase @Inject constructor(
      * @param userId El ID del usuario cuyas notas archivadas se van a recuperar.
      * @return Un [Flow] que emite la lista de [Note] archivadas del usuario.
      */
-    operator fun invoke(userId: Long): Flow<List<Note>> = noteRepository.getArchivedNotes(userId)
+    operator fun invoke(userId: String): Flow<List<Note>> = noteRepository.getArchivedNotes(userId)
 }

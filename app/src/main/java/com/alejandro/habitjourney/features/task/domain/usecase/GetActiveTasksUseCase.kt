@@ -26,7 +26,7 @@ class GetActiveTasksUseCase @Inject constructor(
      * @param userId El **ID** del usuario cuyas tareas activas se desean obtener.
      * @return Un [Flow] que emite una [List] de objetos [Task] que están activas.
      */
-    operator fun invoke(userId: Long): Flow<List<Task>> {
+    operator fun invoke(userId: String): Flow<List<Task>> {
         return taskRepository.getActiveTasks(userId)
     }
 }

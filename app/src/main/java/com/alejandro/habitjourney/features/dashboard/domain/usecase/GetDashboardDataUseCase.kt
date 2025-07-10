@@ -9,7 +9,7 @@ import com.alejandro.habitjourney.features.habit.domain.model.HabitWithLogs
 import com.alejandro.habitjourney.features.habit.domain.repository.HabitRepository
 import com.alejandro.habitjourney.features.note.domain.repository.NoteRepository
 import com.alejandro.habitjourney.features.task.domain.repository.TaskRepository
-import com.alejandro.habitjourney.features.user.data.local.preferences.UserPreferences
+import com.alejandro.habitjourney.features.user.data.preferences.UserPreferences
 import com.alejandro.habitjourney.features.user.domain.repository.UserRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
@@ -71,7 +71,7 @@ class GetDashboardDataUseCase @Inject constructor(
                 val basicDataFlow = combine(
                     userRepository.getLocalUser(),
                     habitRepository.getHabitsDueTodayWithCompletionCount(currentUserId, currentDate, weekdayIndex),
-                    taskRepository.getActiveTasks(currentUserId), // Para mostrar en dashboard
+                    taskRepository.getActiveTasks(currentUserId),
                     taskRepository.getOverdueTasks(currentUserId, currentDate)
                 ) { user, todayHabitsWithCount, activeTasks, overdueTasks ->
                     BasicDashboardData(user, todayHabitsWithCount, activeTasks, overdueTasks)
@@ -192,7 +192,7 @@ class GetDashboardDataUseCase @Inject constructor(
      * @param currentDate Fecha actual como referencia
      * @return Número de días consecutivos con hábitos completados
      */
-    private suspend fun calculateStreak(userId: Long, currentDate: LocalDate): Int {
+    private suspend fun calculateStreak(userId: String, currentDate: LocalDate): Int {
         var currentStreak = 0
         var checkDate = currentDate
 
@@ -227,7 +227,7 @@ class GetDashboardDataUseCase @Inject constructor(
      * @param date Fecha a verificar
      * @return true si el día está completado, false en caso contrario
      */
-    private suspend fun checkIfDayCompleted(userId: Long, date: LocalDate): Boolean {
+    private suspend fun checkIfDayCompleted(userId: String, date: LocalDate): Boolean {
         val weekdayIndex = date.dayOfWeek.ordinal
 
         // Obtener hábitos que deberían ejecutarse ese día
@@ -275,7 +275,7 @@ class GetDashboardDataUseCase @Inject constructor(
      * @param currentDate Fecha actual como referencia
      * @return Porcentaje de completitud semanal (0-100%)
      */
-    private suspend fun calculateWeeklyHabitCompletionRate(userId: Long, currentDate: LocalDate): Float {
+    private suspend fun calculateWeeklyHabitCompletionRate(userId: String, currentDate: LocalDate): Float {
         val weekStart = currentDate.minus(currentDate.dayOfWeek.ordinal, DateTimeUnit.DAY)
         val weekEnd = weekStart.plus(6, DateTimeUnit.DAY)
 
@@ -315,7 +315,7 @@ class GetDashboardDataUseCase @Inject constructor(
      * @param currentDate Fecha actual como referencia
      * @return Número de días productivos en el mes
      */
-    private suspend fun calculateProductiveDays(userId: Long, currentDate: LocalDate): Int {
+    private suspend fun calculateProductiveDays(userId: String, currentDate: LocalDate): Int {
         val monthStart = LocalDate(currentDate.year, currentDate.month, 1)
         var productiveDays = 0
         var checkDate = monthStart

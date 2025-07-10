@@ -26,7 +26,7 @@ class GetArchivedTasksUseCase @Inject constructor(
      * @param userId El **ID** del usuario cuyas tareas archivadas deseas obtener.
      * @return Un [Flow] que emite una [List] de objetos [Task] que están archivadas para el usuario dado.
      */
-    operator fun invoke(userId: Long): Flow<List<Task>> {
+    operator fun invoke(userId: String): Flow<List<Task>> {
         return taskRepository.getArchivedTasks(userId)
     }
 }

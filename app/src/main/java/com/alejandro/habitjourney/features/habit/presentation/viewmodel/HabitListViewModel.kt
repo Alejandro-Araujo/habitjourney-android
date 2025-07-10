@@ -9,7 +9,7 @@ import com.alejandro.habitjourney.features.habit.presentation.screen.HabitIconMa
 import com.alejandro.habitjourney.features.habit.presentation.state.HabitFilterType
 import com.alejandro.habitjourney.features.habit.presentation.state.HabitListUiState
 import com.alejandro.habitjourney.features.habit.presentation.state.HabitsData
-import com.alejandro.habitjourney.features.user.data.local.preferences.UserPreferences
+import com.alejandro.habitjourney.features.user.data.preferences.UserPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*

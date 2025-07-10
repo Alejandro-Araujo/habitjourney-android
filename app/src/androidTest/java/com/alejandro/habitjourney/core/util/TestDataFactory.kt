@@ -12,7 +12,7 @@ import com.alejandro.habitjourney.features.habit.data.entity.HabitEntity
 import com.alejandro.habitjourney.features.habit.data.entity.HabitLogEntity
 import com.alejandro.habitjourney.features.note.data.entity.NoteEntity
 import com.alejandro.habitjourney.features.task.data.entity.TaskEntity
-import com.alejandro.habitjourney.features.user.data.local.entity.UserEntity
+import com.alejandro.habitjourney.features.user.data.entity.UserEntity
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -45,7 +45,7 @@ object TestDataFactory {
      * Crea una entidad de usuario para pruebas
      */
     fun createUserEntity(
-        id: Long = 1L, // Como no es autogenerado, le damos un ID fijo para el test
+        id: String = 1L.toString(), // Como no es autogenerado, le damos un ID fijo para el test
         name: String = "Test User",
         email: String = "test@example.com",
         createdAt: Long = System.currentTimeMillis(),
@@ -64,7 +64,7 @@ object TestDataFactory {
      * Crea una entidad de hábito para pruebas
      */
     fun createHabitEntity(
-        userId: Long,
+        userId: String,
         id: Long = 0,
         name: String = "Test Habit ${System.currentTimeMillis()}",
         description: String? = "Test description",
@@ -74,8 +74,7 @@ object TestDataFactory {
         dailyTarget: Int? = null, // ¡Añadido!
         startDate: LocalDate? = TODAY,
         endDate: LocalDate? = null,
-        // isActive: Boolean = true, // ¡Eliminado!
-        isArchived: Boolean = false, // ¡Renombrado de isDeleted a isArchived!
+        isArchived: Boolean = false,
         createdAt: Long = TEST_TIMESTAMP
     ): HabitEntity {
         return HabitEntity(
@@ -89,8 +88,7 @@ object TestDataFactory {
             dailyTarget = dailyTarget, // ¡Añadido!
             startDate = startDate,
             endDate = endDate,
-            // isActive = isActive, // ¡Eliminado!
-            isArchived = isArchived, // ¡Renombrado!
+            isArchived = isArchived,
             createdAt = createdAt
         )
     }
@@ -120,14 +118,14 @@ object TestDataFactory {
      * Crea una entidad de tarea para pruebas
      */
     fun createTaskEntity(
-        userId: Long,
+        userId: String,
         id: Long = 0,
         title: String = "Test Task ${System.currentTimeMillis()}",
         description: String? = "Test task description",
         dueDate: LocalDate? = TODAY,
         priority: Priority? = null,
         isCompleted: Boolean = false,
-        isDeleted: Boolean = false, // Asumo que `isDeleted` para TaskEntity sigue siendo `isDeleted` y no `isArchived`
+        isDeleted: Boolean = false,
         createdAt: Long = TEST_TIMESTAMP
     ): TaskEntity {
         return TaskEntity(
@@ -147,7 +145,7 @@ object TestDataFactory {
      * Crea una entidad de nota para pruebas
      */
     fun createNoteEntity(
-        userId: Long,
+        userId: String,
         id: Long = 0,
         title: String = "Test Note ${System.currentTimeMillis()}",
         content: String = "Test note content",

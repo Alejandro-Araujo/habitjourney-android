@@ -7,8 +7,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.NavType
-import com.alejandro.habitjourney.features.user.presentation.ui.LoginScreen
-import com.alejandro.habitjourney.features.user.presentation.ui.RegisterScreen
+import com.alejandro.habitjourney.features.user.presentation.screen.LoginScreen
+import com.alejandro.habitjourney.features.user.presentation.screen.RegisterScreen
 import androidx.compose.ui.Modifier
 import com.alejandro.habitjourney.features.habit.presentation.screen.CreateEditHabitScreen
 import com.alejandro.habitjourney.features.habit.presentation.screen.HabitDetailScreen
@@ -20,7 +20,9 @@ import com.alejandro.habitjourney.features.settings.presentation.screen.ChangePa
 import com.alejandro.habitjourney.features.settings.presentation.screen.EditProfileScreen
 import com.alejandro.habitjourney.features.settings.presentation.screen.LanguageSelectionScreen
 import com.alejandro.habitjourney.features.settings.presentation.screen.SettingsScreen
-
+import com.alejandro.habitjourney.features.settings.presentation.viewmodel.ChangePasswordViewModel
+import com.alejandro.habitjourney.features.settings.presentation.viewmodel.EditProfileViewModel
+import com.alejandro.habitjourney.features.user.presentation.viewmodel.AuthViewModel
 
 /**
  * Composable principal que maneja toda la navegación de la aplicación.
@@ -46,10 +48,8 @@ fun NavGraph(
         // ==========================================
 
         composable(Screen.Login.route) { backStackEntry ->
-            val authViewModel =
-                hiltViewModel<com.alejandro.habitjourney.features.user.presentation.viewmodel.AuthViewModel>(
-                    backStackEntry
-                )
+            val authViewModel = hiltViewModel<AuthViewModel>(backStackEntry)
+
             LoginScreen(
                 onNavigateToRegister = {
                     navController.navigate(Screen.Register.route) {
@@ -363,21 +363,35 @@ fun NavGraph(
             )
         }
 
-// Edit Profile Screen
-        composable(Screen.EditProfile.route) {
+        // Edit Profile Screen
+        composable(Screen.EditProfile.route) { backStackEntry ->
+            val editProfileViewModel = hiltViewModel<EditProfileViewModel>(backStackEntry)
+
             EditProfileScreen(
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                onForceSignOut = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(navController.graph.id) {
+                            inclusive = true
+                        }
+                    }
+                },
+                viewModel = editProfileViewModel
             )
         }
 
-// Change Password Screen
-        composable(Screen.ChangePassword.route) {
+
+        // Change Password Screen
+        composable(Screen.ChangePassword.route) { backStackEntry ->
+            val changePasswordViewModel = hiltViewModel<ChangePasswordViewModel>(backStackEntry)
+
             ChangePasswordScreen(
                 onNavigateBack = { navController.popBackStack() }
             )
         }
 
-// Language Selection Screen
+
+        // Language Selection Screen
         composable(Screen.LanguageSelection.route) {
             LanguageSelectionScreen(
                 onNavigateBack = { navController.popBackStack() }

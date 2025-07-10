@@ -25,5 +25,5 @@ class GetActiveNotesUseCase @Inject constructor(
      * @param userId El ID del usuario cuyas notas activas se quieren obtener.
      * @return Un [Flow] que emite la lista de [Note] activas.
      */
-    operator fun invoke(userId: Long): Flow<List<Note>> = noteRepository.getActiveNotes(userId)
+    operator fun invoke(userId: String): Flow<List<Note>> = noteRepository.getActiveNotes(userId)
 }

@@ -30,7 +30,6 @@
     <string name="unexpected_network_error">An unexpected network error occurred.</string>
     <string name="unexpected_error">An unexpected error occurred.</string>
     <string name="response_body_null">Response body is null.</string>
-    <string name="error_unknown">Unknown error.</string>
     <string name="unknown_error">Unknown error</string>
 
     <string name="error_user_not_logged_in">User not authenticated. Please log in.</string>
@@ -402,8 +401,8 @@
     <string name="change_password">Change password</string>
     <string name="password_changed_success">Password updated successfully</string>
     <string name="password_requirements_title">Password requirements:</string>
-    <string name="password_requirement_length">Minimum 6 characters</string>
-    <string name="password_requirement_letter">At least one letter</string>
+    <string name="password_requirement_length">Minimum 6 characters, max 32 characters</string>
+    <string name="password_requirement_letter">At least one lowercase and one uppercase letter</string>
 
     <string name="language_selection_instructions">Select your preferred language. The application will update automatically.</string>
 
@@ -517,5 +516,114 @@
 
     <string name="more_options">More options</string>
     <string name="navigate_back">Go back</string>
+
+    <string name="error_registration_failed">Registration failed</string>
+    <string name="error_login_failed">Login failed</string>
+    <string name="user_deleted_successfully">User deleted successfully</string>
+    <string name="firebase_error_invalid_custom_token">Invalid token</string>
+    <string name="firebase_error_custom_token_mismatch">Token mismatch</string>
+    <string name="firebase_error_invalid_credential">Invalid credentials</string>
+    <string name="firebase_error_invalid_email">Invalid email</string>
+    <string name="firebase_error_user_not_found">User not found</string>
+    <string name="firebase_error_user_disabled">User disabled</string>
+    <string name="firebase_error_too_many_requests">Too many requests</string>
+    <string name="firebase_error_operation_not_allowed">Operation not allowed</string>
+    <string name="firebase_error_account_exists_with_different_credential">Account exists with different credential</string>
+    <string name="firebase_error_weak_password">Weak password</string>
+    <string name="firebase_error_email_already_in_use">The email address is already in use</string>
+    <string name="firebase_error_credential_already_in_use">The credential is already in use</string>
+    <string name="firebase_error_requires_recent_login">Recent login required</string>
+    <string name="firebase_error_generic">Generic error</string>
+    <string name="firebase_error_wrong_password">Wrong password</string>
+    <string name="error_google_login_failed">Google login failed</string>
+
+    <string name="google_sign_in">Sign in with Google</string>
+    <string name="google_sign_up">Sign up with Google</string>
+    <string name="error_google_sign_in_cancelled">Sign in cancelled</string>
+    <string name="error_google_sign_in_network">Network error. Check your connection.</string>
+
+    <string name="firebase_error_google_login_failed">Error signing in with Google</string>
+    <string name="error_no_google_accounts_found">No Google accounts found on this device.</string>
+    <string name="error_google_signin_failed_with_code">Error signing in with Google: %s</string>
+    <string name="error_google_signin_failed_with_code_int">Error signing in with Google: %d</string>
+    <string name="sign_in_with_google_text">Sign in with Google</string>
+    <string name="content_description_google_logo">Google logo</string>
+    <string name="error_generic_button">Error</string>
+    <string name="error_google_signin_cancelled">Error: Google Sign-in cancelled</string>
+
+    <string name="error_email_already_in_use">This email is already registered with another method</string>
+    <string name="error_account_exists_different_credential">An account already exists with this email using a different method</string>
+    <string name="error_account_collision">Conflict with existing account</string>
+    <string name="error_account_exists_with_email_password">This account already exists with email and password. Use that method to sign in or link it.</string>
+    <string name="error_account_exists_different_method">This account already exists with a different method</string>
+    <string name="error_linking_failed">Account linking failed</string>
+    <string name="error_account_linking">Account linking error</string>
+
+    <string name="error_invalid_email">Invalid email</string>
+    <string name="error_wrong_password">Incorrect password</string>
+    <string name="error_invalid_credential">Invalid credential</string>
+    <string name="error_invalid_credentials">Invalid credentials</string>
+    <string name="error_weak_password">Password is too weak</string>
+    <string name="error_user_not_found">User not found</string>
+    <string name="error_user_disabled">This account has been disabled</string>
+    <string name="error_user_invalid">Invalid user</string>
+    <string name="error_recent_login_required">You need to sign in again to perform this action</string>
+
+    <string name="dialog_link_account_title">Link Accounts</string>
+    <string name="dialog_link_account_message">You already have an account with this email. Do you want to link your Google account?</string>
+    <string name="dialog_link_account_positive">Link</string>
+    <string name="dialog_link_account_negative">Cancel</string>
+    <string name="error_email_already_exists_try_signin">This email address is already registered. Please try signing in.</string>
+    <string name="error_account_exists_try_other_method">An account already exists with this email. Please try with the original registration method.</string>
+    <string name="error_unlinking_failed">Error. Unlinking authentication methods failed.</string>
+    <string name="error_action_label">ERROR</string>
+    <string name="account_exists_title">Account Registered</string>
+    <string name="account_exists_collision_message">The account used is already registered with another method.</string>
+    <string name="error_google_login_failed_internal">Internal error in Google login process</string>
+    <string name="or_continue_with">Or continue with</string>
+    <string name="sign_up_with_google">Sign up with your Google account</string>
+    <string name="registration_success_check_email">Registration successful. A verification email has been sent to the provided account. Please confirm your email.</string>
+    <string name="registration_success_but_email_fail">Account registration was successful, but the verification email could not be sent to the provided address.</string>
+    <string name="error_google_reauth_required">Error. Google reauthentication required.</string>
+    <string name="error_generic_reauth_issue">Reauthentication error</string>
+    <string name="reauthenticate_title">Reauthentication</string>
+    <string name="reauthenticate_message">Reauthentication required. Please enter your credentials again.</string>
+    <string name="reauthenticate_google_instructions">Google reauthentication required.</string>
+    <string name="error_password_required">Password is required.</string>
+
+    <string name="error_google_token_missing">Could not get Google token.</string>
+    <string name="error_google_sign_in_failed">Error signing in with Google: %d</string>
+    <string name="error_unknown">Unknown error</string>
+    <string name="error_reauth_failed">Reauthentication failed: %s</string>
+    <string name="error_reauth_failed_generic">Reauthentication failed: %s</string>
+    <string name="error_unsupported_credential_type">Unsupported credential type.</string>
+    <string name="error_no_credentials_found">No available credentials found.</string>
+    <string name="error_unknown_credential_type">Unknown credential type.</string>
+    <string name="error_credential_manager_failed">Credential Manager error: %s</string>
+    <string name="error_google_token_parsing">Error parsing Google token.</string>
+    <string name="error_starting_google_reauth">Error starting Google reauthentication: %s</string>
+    <string name="error_no_email_associated">Error. No email associated with the account.</string>
+    <string name="error_too_many_requests">Error: Too many requests.</string>
+    <string name="error_cannot_determine_auth_method">Error: Could not determine authentication method.</string>
+    <string name="password_requirement_digit">At least one digit</string>
+    <string name="password_requirement_special_character">At least one special character</string>
+    <string name="profile_updated_but_email_verification_failed">Profile updated successfully but email verification could not be sent.</string>
+    <string name="profile_updated_success_email_changed">Profile updated successfully. Your email has been changed.</string>
+    <string name="profile_updated_success_with_email_verification">Profile updated successfully. A verification email has been sent to your new email address.</string>
+    <string name="error_reauthentication_already_in_progress">Error: Reauthentication already in progress.</string>
+    <string name="error_no_pending_action">No pending action.</string>
+    <string name="logout_success">You have successfully logged out.</string>
+    <string name="error_invalid_current_password">Error: Invalid current password.</string>
+    <string name="error_loading_user_data">Error loading user data.</string>
+    <string name="email_verification_sent_success">Email verification sent successfully.</string>
+    <string name="email_verified_content_description">Email address verified</string>
+    <string name="email_verified_label">Email verified</string>
+    <string name="email_not_verified_content_description">Email not verified</string>
+    <string name="email_not_verified_label">Email not verified</string>
+    <string name="resend_verification_email_button">Resend verification email</string>
+    <string name="email_verification_sent_logout_required">A verification email has been sent. For security, you must log out and log in again.</string>
+    <string name="email_verification_dialog_message">A verification email has been sent to your new address. For security reasons, you must log out and log in again.</string>
+    <string name="go_to_login">Go to login</string>
+    <string name="email_verification_dialog_instructions">1. Check your email and click the verification link.\n2. Log out of this session.\n3. Log in again with your current email.\n4. Once verified, use the new email for future sessions.</string>
 
 </resources>

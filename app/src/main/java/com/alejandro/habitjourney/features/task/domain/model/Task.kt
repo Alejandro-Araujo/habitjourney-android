@@ -25,7 +25,7 @@ import kotlinx.datetime.LocalDateTime
  */
 data class Task(
     val id: Long = 0L,
-    val userId: Long,
+    val userId: String,
     val title: String,
     val description: String? = null,
     val dueDate: LocalDate? = null,

@@ -5,7 +5,6 @@ import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import androidx.hilt.work.HiltWorkerFactory
-import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import androidx.work.Configuration
 import com.alejandro.habitjourney.core.utils.logging.AppLogger

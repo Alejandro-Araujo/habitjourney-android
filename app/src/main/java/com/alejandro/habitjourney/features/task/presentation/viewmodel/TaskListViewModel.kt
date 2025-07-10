@@ -7,7 +7,7 @@ import com.alejandro.habitjourney.features.task.domain.model.Task
 import com.alejandro.habitjourney.features.task.domain.usecase.*
 import com.alejandro.habitjourney.features.task.presentation.state.TaskFilterType
 import com.alejandro.habitjourney.features.task.presentation.state.TaskListUiState
-import com.alejandro.habitjourney.features.user.data.local.preferences.UserPreferences
+import com.alejandro.habitjourney.features.user.data.preferences.UserPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
