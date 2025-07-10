@@ -3,222 +3,244 @@
 ![Android](https://img.shields.io/badge/Android-8.0+-green?style=for-the-badge&logo=android)
 ![Kotlin](https://img.shields.io/badge/Kotlin-1.9.x-purple?style=for-the-badge&logo=kotlin)
 ![Compose](https://img.shields.io/badge/Jetpack%20Compose-blue?style=for-the-badge&logo=jetpackcompose)
+![Firebase](https://img.shields.io/badge/Firebase-orange?style=for-the-badge&logo=firebase)
 
-Aplicación Android de productividad personal que integra gestión de hábitos, tareas y notas, desarrollada con Kotlin y Jetpack Compose.
+[Leer en Español](README.es.md)
 
-Proyecto final para el CFGS de Desarrollo de Aplicaciones Multiplataforma (DAM) 2025 en IES Los Albares
+Native Android application for habit management, tasks and notes, built with Kotlin, Jetpack Compose and Firebase. Developed as a final project for the Advanced Vocational Training in Cross-Platform Software Development (DAM) 2025 at IES Los Albares.
 
-## 🚀 Características
+---
 
-- ✅ **Gestión de Hábitos** con seguimiento de rachas
-- 📋 **Tareas** con recordatorios y notificaciones
-- 📝 **Notas** simples y listas
-- 📊 **Dashboard** con estadísticas diarias
-- 🌍 **Multiidioma** (ES, EN, DE, FR)
-- 🎨 **Temas** claro, oscuro y del sistema
-- 📱 **Offline-first** con sincronización selectiva
-- 🔔 **Notificaciones** con acciones rápidas
+## Table of Contents
 
-## 📋 Requisitos
+1. [About the project](#about-the-project)
+2. [Recent technical migration](#recent-technical-migration)
+3. [Tech stack](#tech-stack)
+4. [Main features](#main-features)
+5. [App Demos](#app-demos)
+6. [Project architecture](#project-architecture)
+7. [Installation and setup](#installation-and-setup)
+8. [Testing and quality](#testing-and-quality)
+9. [Required permissions](#required-permissions)
+10. [Internationalization](#internationalization)
+11. [Upcoming improvements](#upcoming-improvements)
+12. [Learning and personal approach](#learning-and-personal-approach)
+13. [Contributing](#contributing)
+14. [Contact](#contact)
+15. [License](#license)
 
-- Android Studio Koala (2024.1.1) o superior
+## 🎯 About the project
+
+HabitJourney is a personal productivity app that integrates three main functionalities: habit management with streak tracking, tasks with smart reminders, and simple notes and lists.
+
+The project started as an final project for my degree, but it continues to evolve as a tool for learning and continuous improvement. The philosophy is to build a functional, maintainable, and scalable app, prioritizing code clarity and a robust architecture.
+
+## 🔄 Recent technical migration
+
+Initially, the application communicated with a [backend propio en Spring Boot](https://github.com/Alejandro-Araujo/habitjourney-backend) for user management. However, as a technical decision aimed at simplifying the architecture and facilitating maintenance, it has been migrated to **Firebase Authentication**, and work is underway on full integration with **Firestore** for cloud synchronization.
+
+### Main changes:
+- **Multiple authentication:** Email/password and Google Sign-In
+- **Re-authentication system:** `ReauthenticationManager` with Mixin pattern
+- **Email verification:** Integrated automatic flow
+- **Consistency monitoring:** Detection of external account changes
+- **Data migration:** User ID from Long to String for Firebase UID
+
+## 🛠️ Tech stack
+
+### Architecture
+- **Pattern:** Clean Architecture + MVVM
+- **Modularization:** By features
+- **Dependency injection:** Hilt with KSP
+- **Reactive programming:** Coroutines + StateFlow
+
+### Main technologies
+- **UI:** Jetpack Compose + Material 3
+- **Authentication:** Firebase Auth
+- **Local database:** Room (SQLite)
+- **Navigation:** Navigation Compose
+- **Notifications:** WorkManager + AlarmManager
+
+### Technical features
+- **Multi-language:** Spanish, English, German, French
+- **Adaptive themes:** Light, dark and system
+- **Compatibility:** Android 8.0+ (API 26-35)
+
+## 📱 Main features
+
+### Habits
+- Flexible frequencies: daily or specific days
+- Streak tracking with smart recovery
+- States: completed, skipped, pending
+- Archive without history loss
+
+### Tasks
+- Due dates with reminders
+- Notifications with quick actions (complete/postpone)
+- Visual priorities
+- Support for exact alarms (Android 12+)
+
+### Notes
+- Two types: free text or lists with checkboxes
+- Favorites and archive system
+- Content search
+- Simple and direct interface
+
+### Dashboard
+- Daily summary with visual progress
+- Statistics of completed habits and pending tasks
+- Quick access to day elements
+
+### Settings
+- Profile management and email verification
+- Theme and language change
+- Password update with re-authentication
+- Account deletion
+
+## 🖼️ App Demos
+
+![Login and empty screens demo](assets/login.gif)
+![Create habit demo](assets/create_habit.gif)
+
+![Create task demo](assets/create_task.gif)
+![Change theme and language demo](assets/change_theme_language.gif)
+
+## 🏗️ Project architecture
+
+```
+app/
+├── core/
+│   ├── data/           # Room, enums, configuration
+│   ├── presentation/   # Themes, styles, common components
+│   ├── di/             # Hilt modules
+│   └── utils/          # Logging, providers, utilities
+│
+├── features/           # Feature modules
+│   ├── dashboard/      # Summary view
+│   ├── settings/       # Configuration and profile
+│   ├── habit/          # Habit management
+│   ├── task/           # Tasks and notifications
+│   ├── note/           # Notes and lists
+│   └── user/           # Authentication
+│
+├── navigation/
+│   ├── AuthFlowCoordinator  # Authentication coordinator
+│   ├── HabitJourneyApp      # General structure
+│   ├── NavGraph             # Main navigation
+│   └── Screen               # Route definitions
+│
+├── MainActivity
+└── HabitJourneyApplication
+```
+
+Each feature follows the structure: `data/`, `domain/`, `presentation/`, `di/`
+
+## 🔧 Installation and setup
+
+### Requirements
+- Android Studio Koala (2024.1.1) or higher
 - JDK 17
-- Android SDK con:
-    - compileSdk 35 (Android 15)
-    - minSdk 26 (Android 8.0 Oreo)
-    - targetSdk 35
-- Kotlin 1.9.x
+- Android SDK with compileSdk 35, minSdk 26
 
-## 🔧 Instalación
+### Firebase configuration
+1. Create project in [Firebase Console](https://console.firebase.google.com/)
+2. Add Android application with package `com.habitjourney.app`
+3. Enable Authentication (Email/Password and Google)
+4. Download `google-services.json` and place it in `app/`
+5. Configure SHA-1 and SHA-256 for Google Sign-In
 
-### 1. Clonar el repositorio
-
+### Execution
 ```bash
 git clone https://github.com/Alejandro-Araujo/habitjourney-android.git
 cd habitjourney-android
+# Open in Android Studio and sync Gradle
 ```
 
-### 2. Configurar el backend
+## 🧪 Testing and quality
 
-La aplicación está preconfigurada para usar el backend en producción.
+```bash
+# Unit tests
+./gradlew testDebugUnitTest
 
-Para desarrollo local, puedes modificar el `build.gradle.kts`:
+# Instrumented tests
+./gradlew connectedAndroidTest
 
-```kotlin
-buildTypes {
-    debug {
-        // Para desarrollo local con emulador
-        buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:8080/api/\"")
-        
-        // Para producción (configuración actual)
-        // buildConfigField("String", "API_BASE_URL", "\"https://habitjourney-backend.onrender.com/api/\"")
-    }
-}
+# Code analysis
+./gradlew lintDebug
 ```
 
-**Nota:** El backend ya está desplegado en Render, por lo que no es necesario ejecutarlo localmente a menos que quieras hacer cambios en el servidor.
+GitHub Actions configured for CI/CD with automatic test execution and static analysis on each push.
 
-### 3. Sincronizar y ejecutar
-
-1. Abrir el proyecto en Android Studio
-2. Sincronizar Gradle (`File > Sync Project with Gradle Files`)
-3. Ejecutar en emulador o dispositivo físico
-
-## 🏗️ Arquitectura
-
-El proyecto sigue **Clean Architecture + MVVM** con modularización por features:
-
-```
-features/
-├── dashboard/      # Panel principal y estadísticas
-├── habit/          # Gestión de hábitos
-├── task/           # Gestión de tareas y recordatorios
-├── note/           # Gestión de notas
-├── user/           # Autenticación y perfil
-└── settings/       # Configuración de la app
-
-Cada feature contiene:
-├── data/          # DAOs, entities, repositories
-├── domain/        # Modelos, casos de uso
-├── presentation/  # UI (Screens, ViewModels, States)
-└── di/           # Inyección de dependencias
-```
-
-## 🛠️ Tecnologías Utilizadas
-
-### Core
-- **UI:** Jetpack Compose + Material3
-- **Arquitectura:** MVVM + Clean Architecture
-- **DI:** Hilt (KSP)
-- **Base de datos:** Room
-- **Red:** Retrofit + OkHttp + Gson
-- **Navegación:** Navigation Compose
-- **Async:** Coroutines + Flow
-
-### Adicionales
-- **Notificaciones:** AlarmManager + WorkManager
-- **Persistencia:** DataStore Preferences
-- **Fecha/Hora:** Kotlinx DateTime
-- **UI Utilities:** Accompanist SystemUIController
-
-## 📱 Funcionalidades Principales
-
-### Dashboard
-- Saludo personalizado
-- Estadísticas del día (hábitos completados, tareas pendientes)
-- Progreso diario con cálculo detallado
-- Acceso rápido a hábitos y tareas del día
-
-### Hábitos
-- Frecuencias: diaria o días específicos de la semana
-- Seguimiento automático de rachas
-- Estados: completado, saltado, pendiente
-- Archivo sin pérdida de histórico
-
-### Tareas
-- Fechas y horas de vencimiento
-- Recordatorios con notificaciones push
-- Acciones desde notificación: Completar o Posponer (5/15 min)
-- Prioridades visuales
-- Soporte para alarmas exactas (Android 12+)
-
-### Notas
-- Tipos: texto simple o listas
-- Favoritos
-- Búsqueda
-- Archivo y eliminación
-
-### Configuración
-- Cambio de tema (claro/oscuro/sistema)
-- Selección de idioma
-- Actualización de perfil
-- Cambio de contraseña
-- Eliminación de cuenta
-
-## Capturas de pantalla
-![img.png](img.png)  ![img_1.png](img_1.png)
-![img_2.png](img_2.png) 
-
-## 🔐 Permisos Requeridos
+## 🔐 Required permissions
 
 ```xml
-<!-- Notificaciones -->
+<!-- Notifications -->
 <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
-<!-- Alarmas exactas para recordatorios -->
+<!-- Exact alarms (Android 12+) -->
 <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
 
-<!-- Iniciar al arranque del dispositivo -->
+<!-- Device boot -->
 <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
-<!-- Internet -->
+<!-- Connectivity -->
 <uses-permission android:name="android.permission.INTERNET" />
 ```
 
-## 🧪 Testing
+## 🌍 Internationalization
 
-```bash
-# Tests unitarios
-./gradlew test
+Support for 4 languages:
+- 🇪🇸 Spanish (default)
+- 🇬🇧 English
+- 🇩🇪 German
+- 🇫🇷 French
 
-# Tests instrumentados
-./gradlew connectedAndroidTest
-```
+## 📈 Upcoming improvements
 
-## 🚀 Compilación Release
+### Technical
+- [ ] Full integration with Firestore
+- [ ] Advanced statistics with charts
+- [ ] Performance optimization
 
-1. Generar keystore:
-```bash
-keytool -genkey -v -keystore release-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias my-alias
-```
+### Functional
+- [ ] Optional achievement system
+- [ ] Data export
 
-2. Configurar signing en `app/build.gradle.kts`
+## 📚 Learning and personal approach
 
-3. Generar APK:
-```bash
-./gradlew assembleRelease
-```
+This project has allowed me to apply and consolidate knowledge from the DAM cycle:
 
-## 📱 Compatibilidad
+- Modular and maintainable architecture
+- Secure authentication with Firebase
+- Reactive UI with Jetpack Compose
+- State management with MVVM
+- Cloud service integration
+- Professional workflows with Git
 
-- **Versión mínima:** Android 8.0 (API 26) - Oreo
-- **Versión objetivo:** Android 15 (API 35)
-- **Cobertura de mercado:** ~95% de dispositivos Android
-- **Orientación:** Portrait (principalmente)
+The goal has not been to create a commercial app, but a solid foundation that demonstrates technical competencies and capacity for evolution.
 
-## 🌐 Internacionalización
+## 🤝 Contributing
 
-La app soporta 4 idiomas:
-- 🇪🇸 Español (por defecto)
-- 🇬🇧 Inglés
-- 🇩🇪 Alemán
-- 🇫🇷 Francés
+If you find bugs or have suggestions:
 
-Los archivos de traducción están en `res/values-{idioma}/strings.xml`
+1. Fork the project
+2. Create feature branch (`git checkout -b feature/improvement`)
+3. Commit changes (`git commit -m 'Add improvement'`)
+4. Push to branch (`git push origin feature/improvement`)
+5. Create Pull Request
 
-## 🐛 Problemas Conocidos
+## 📞 Contact
 
-- En Android 14+, los permisos de notificaciones exactas requieren aprobación manual
-- El tema del sistema puede requerir reinicio en algunos dispositivos
+**Alejandro Araujo Fernández**
+- 📧 Email: [jandroaraujo@gmail.com](mailto:jandroaraujo@gmail.com)
+- 💼 LinkedIn: [alejandro-araujo-fernandez](https://www.linkedin.com/in/alejandro-araujo-fernandez/)
+- 💻 GitHub: [@Alejandro-Araujo](https://github.com/Alejandro-Araujo)
 
-## 🤝 Contribuir
+## 📝 License
 
-1. Fork el proyecto
-2. Crear rama feature (`git checkout -b feature/NuevaCaracteristica`)
-3. Commit cambios (`git commit -m 'Añadir nueva característica'`)
-4. Push a la rama (`git push origin feature/NuevaCaracteristica`)
-5. Crear Pull Request
+This project is under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 📝 Licencia
+---
 
-Este proyecto está bajo la Licencia MIT - ver [LICENSE](LICENSE) para detalles.
-
-## 👥 Autor
-
-- **[Alejandro Araujo Fernández]** - [GitHub](https://github.com/Alejandro-Araujo)
-
-## 📞 Contacto
-
-- Email: [jandroaraujo@gmail.com]
-- LinkedIn: [https://www.linkedin.com/in/alejandro-araujo-fernandez/]
+*Developed in Murcia, Spain as DAM 2025 final project*

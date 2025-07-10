@@ -92,11 +92,9 @@ abstract class ReauthenticationMixin(
             it.copy(showDialog = true, type = authType, isLoading = false, errorMessage = null)
         }
 
-        // Si es Google, el flujo se inicia de inmediato
         if (authType == ReauthenticationType.GOOGLE) {
             performGoogleReauth()
         }
-        // Si es Email/Password, simplemente mostramos el diálogo y esperamos la llamada a `confirmEmailPasswordReauth`.
     }
 
     /**
@@ -117,11 +115,11 @@ abstract class ReauthenticationMixin(
         when (val authResult = authFlowCoordinator.requestAuth(AuthRequest.GoogleSignIn(requestId, credentialRequest, false))) {
             is AuthResult.Success -> {
                 when (val reauthResult = reauthenticateWithGoogleUseCase(authResult.credentialToken)) {
-                    is NetworkResponse.Success -> retryPendingAction() // Reautenticación exitosa, reintentamos la acción original.
+                    is NetworkResponse.Success -> retryPendingAction()
                     is NetworkResponse.Error -> {
                         val errorMessage = errorHandler.getErrorMessage(reauthResult.exception)
                         setReauthError(errorMessage)
-                        _reauthCompletion?.complete(reauthResult) // **CAMBIO 4: Completar con error**
+                        _reauthCompletion?.complete(reauthResult)
                         resetReauthProcess()
                     }
                     is NetworkResponse.Loading -> {}
@@ -170,12 +168,12 @@ abstract class ReauthenticationMixin(
             val credential = EmailAuthProvider.getCredential(currentUser.email!!, password)
             when (val reauthResult = reauthenticateUserUseCase(credential)) {
                 is NetworkResponse.Success -> {
-                    retryPendingAction() // Reautenticación exitosa, reintentamos la acción original.
+                    retryPendingAction()
                 }
                 is NetworkResponse.Error -> {
                     val errorMessage = errorHandler.getErrorMessage(reauthResult.exception)
                     setReauthError(errorMessage)
-                    _reauthCompletion?.complete(reauthResult) // **CAMBIO 4: Completar con error**
+                    _reauthCompletion?.complete(reauthResult)
                     resetReauthProcess()
                 }
                 is NetworkResponse.Loading -> {}
@@ -196,15 +194,12 @@ abstract class ReauthenticationMixin(
         }
 
         val retryResult = action()
-        // **CAMBIO 5: Completamos el Deferred con el resultado del reintento.**
         _reauthCompletion?.complete(retryResult)
 
-        // La actualización del estado de éxito o error ahora se hará en el ViewModel principal,
-        // pero podemos resetear el estado del diálogo de reautenticación.
         if (retryResult is NetworkResponse.Success) {
-            _reauthState.update { it.copy(isSuccessfullReauthAndAction = true) } // Opcional, para un feedback visual momentáneo.
+            _reauthState.update { it.copy(isSuccessfullReauthAndAction = true) }
         } else if (retryResult is NetworkResponse.Error) {
-            handleError(retryResult.exception) // Puede que quieras mostrar el error del reintento en el diálogo
+            handleError(retryResult.exception)
         }
 
         resetReauthProcess(isSuccess = retryResult is NetworkResponse.Success)
@@ -240,7 +235,6 @@ abstract class ReauthenticationMixin(
     }
 
     fun dismissReauthenticationDialog() {
-        // Si el usuario cierra el diálogo, lo consideramos un error/cancelación.
         val errorResponse = NetworkResponse.Error(Exception("Reauthentication cancelled by user."))
         _reauthCompletion?.complete(errorResponse)
         resetReauthProcess()
@@ -248,13 +242,12 @@ abstract class ReauthenticationMixin(
 
     private fun resetReauthProcess(isSuccess: Boolean = false) {
         if(isSuccess){
-            // Esperamos un poco para que el usuario vea el feedback de éxito si lo hay
             viewModelScope.launch {
                 kotlinx.coroutines.delay(500)
                 _reauthState.update { ReauthenticationState() }
             }
         } else {
-            _reauthState.update { it.copy(showDialog = false, isLoading = false) } // No reseteamos todo para que pueda ver el error
+            _reauthState.update { it.copy(showDialog = false, isLoading = false) }
         }
         _pendingActionForReauth = null
         _reauthCompletion = null
