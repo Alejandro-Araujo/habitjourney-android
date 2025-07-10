@@ -59,14 +59,14 @@ interface HabitRepository {
      * @param userId El ID del usuario.
      * @return Un [Flow] que emite la lista de todos los [Habit].
      */
-    fun getAllHabitsForUser(userId: Long): Flow<List<Habit>>
+    fun getAllHabitsForUser(userId: String): Flow<List<Habit>>
 
     /**
      * Obtiene todos los hábitos activos de un usuario.
      * @param userId El ID del usuario.
      * @return Un [Flow] que emite la lista de [Habit] activos.
      */
-    fun getActiveHabitsForUser(userId: Long): Flow<List<Habit>>
+    fun getActiveHabitsForUser(userId: String): Flow<List<Habit>>
 
     /**
      * Obtiene los hábitos programados para un día específico de la semana.
@@ -74,7 +74,7 @@ interface HabitRepository {
      * @param weekdayIndex El índice del día de la semana.
      * @return Un [Flow] que emite la lista de [Habit] para ese día.
      */
-    fun getHabitsForDay(userId: Long, weekdayIndex: Int): Flow<List<Habit>>
+    fun getHabitsForDay(userId: String, weekdayIndex: Int): Flow<List<Habit>>
 
     /**
      * Obtiene un hábito junto con todos sus registros de seguimiento.
@@ -144,5 +144,5 @@ interface HabitRepository {
      * @param weekdayIndex El índice del día de la semana de hoy.
      * @return Un [Flow] que emite una lista de pares [Habit] y su conteo (Int).
      */
-    fun getHabitsDueTodayWithCompletionCount(userId: Long, today: LocalDate, weekdayIndex: Int): Flow<List<Pair<Habit, Int>>>
+    fun getHabitsDueTodayWithCompletionCount(userId: String, today: LocalDate, weekdayIndex: Int): Flow<List<Pair<Habit, Int>>>
 }

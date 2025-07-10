@@ -6,7 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.alejandro.habitjourney.core.data.local.enums.Priority
-import com.alejandro.habitjourney.features.user.data.local.entity.UserEntity
+import com.alejandro.habitjourney.features.user.data.entity.UserEntity
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 
@@ -54,7 +54,7 @@ data class TaskEntity(
     val id: Long = 0L,
 
     @ColumnInfo(name = "user_id")
-    val userId: Long,
+    val userId: String,
 
     @ColumnInfo(name = "title")
     val title: String,

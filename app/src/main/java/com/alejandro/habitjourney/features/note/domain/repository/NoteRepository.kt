@@ -42,28 +42,28 @@ interface NoteRepository {
      * @param userId El ID del usuario.
      * @return Un [Flow] que emite la lista de notas activas.
      */
-    fun getActiveNotes(userId: Long): Flow<List<Note>>
+    fun getActiveNotes(userId: String): Flow<List<Note>>
 
     /**
      * Obtiene todas las notas de un usuario, incluyendo las archivadas.
      * @param userId El ID del usuario.
      * @return Un [Flow] que emite la lista completa de notas del usuario.
      */
-    fun getAllNotes(userId: Long): Flow<List<Note>>
+    fun getAllNotes(userId: String): Flow<List<Note>>
 
     /**
      * Obtiene todas las notas archivadas de un usuario.
      * @param userId El ID del usuario.
      * @return Un [Flow] que emite la lista de notas archivadas.
      */
-    fun getArchivedNotes(userId: Long): Flow<List<Note>>
+    fun getArchivedNotes(userId: String): Flow<List<Note>>
 
     /**
      * Obtiene todas las notas favoritas (y no archivadas) de un usuario.
      * @param userId El ID del usuario.
      * @return Un [Flow] que emite la lista de notas favoritas.
      */
-    fun getFavoriteNotes(userId: Long): Flow<List<Note>>
+    fun getFavoriteNotes(userId: String): Flow<List<Note>>
 
     /**
      * Busca en las notas activas de un usuario por título o contenido.
@@ -71,7 +71,7 @@ interface NoteRepository {
      * @param searchQuery El texto a buscar.
      * @return Un [Flow] que emite la lista de notas que coinciden con la búsqueda.
      */
-    fun searchNotes(userId: Long, searchQuery: String): Flow<List<Note>>
+    fun searchNotes(userId: String, searchQuery: String): Flow<List<Note>>
 
     /**
      * Cambia el estado de archivado de una nota.
@@ -92,12 +92,12 @@ interface NoteRepository {
      * @param userId El ID del usuario.
      * @return El número de notas activas.
      */
-    suspend fun getActiveNotesCount(userId: Long): Int
+    suspend fun getActiveNotesCount(userId: String): Int
 
     /**
      * Obtiene la suma total de palabras de todas las notas activas de un usuario.
      * @param userId El ID del usuario.
      * @return El conteo total de palabras.
      */
-    suspend fun getTotalWordCount(userId: Long): Int
+    suspend fun getTotalWordCount(userId: String): Int
 }

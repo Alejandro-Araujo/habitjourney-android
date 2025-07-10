@@ -10,7 +10,7 @@ import com.alejandro.habitjourney.features.habit.domain.usecase.CreateHabitUseCa
 import com.alejandro.habitjourney.features.habit.domain.usecase.GetHabitByIdUseCase
 import com.alejandro.habitjourney.features.habit.domain.usecase.UpdateHabitUseCase
 import com.alejandro.habitjourney.features.habit.presentation.state.CreateEditHabitUiState
-import com.alejandro.habitjourney.features.user.data.local.preferences.UserPreferences
+import com.alejandro.habitjourney.features.user.data.preferences.UserPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

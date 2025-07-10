@@ -67,7 +67,7 @@ class TaskRepositoryImpl @Inject constructor(
      * @param userId El ID del usuario.
      * @return Un [Flow] que emite una lista de modelos de dominio [Task] activos.
      */
-    override fun getActiveTasks(userId: Long): Flow<List<Task>> {
+    override fun getActiveTasks(userId: String): Flow<List<Task>> {
         return taskDao.getActiveTasks(userId).map { entities ->
             entities.toDomain()
         }
@@ -79,7 +79,7 @@ class TaskRepositoryImpl @Inject constructor(
      * @param userId El ID del usuario.
      * @return Un [Flow] que emite una lista de modelos de dominio [Task] completados.
      */
-    override fun getCompletedTasks(userId: Long): Flow<List<Task>> {
+    override fun getCompletedTasks(userId: String): Flow<List<Task>> {
         return taskDao.getCompletedTasks(userId).map { entities ->
             entities.toDomain()
         }
@@ -91,7 +91,7 @@ class TaskRepositoryImpl @Inject constructor(
      * @param userId El ID del usuario.
      * @return Un [Flow] que emite una lista de modelos de dominio [Task] archivados.
      */
-    override fun getArchivedTasks(userId: Long): Flow<List<Task>> {
+    override fun getArchivedTasks(userId: String): Flow<List<Task>> {
         return taskDao.getArchivedTasks(userId).map { entities ->
             entities.toDomain()
         }
@@ -104,7 +104,7 @@ class TaskRepositoryImpl @Inject constructor(
      * @param currentDate La fecha actual para la comparación.
      * @return Un [Flow] que emite una lista de modelos de dominio [Task] vencidos.
      */
-    override fun getOverdueTasks(userId: Long, currentDate: LocalDate): Flow<List<Task>> {
+    override fun getOverdueTasks(userId: String, currentDate: LocalDate): Flow<List<Task>> {
         return taskDao.getOverdueTasks(userId, currentDate).map { entities ->
             entities.toDomain()
         }
@@ -116,7 +116,7 @@ class TaskRepositoryImpl @Inject constructor(
      * @param userId El ID del usuario.
      * @return Un [Flow] que emite una lista de todos los modelos de dominio [Task] no archivados.
      */
-    override fun getAllTasks(userId: Long): Flow<List<Task>> {
+    override fun getAllTasks(userId: String): Flow<List<Task>> {
         return taskDao.getAllTasks(userId).map { entities ->
             entities.toDomain()
         }
@@ -156,7 +156,7 @@ class TaskRepositoryImpl @Inject constructor(
      * @param date La fecha para la que se buscan las tareas completadas.
      * @return Un [Flow] que emite una lista de modelos de dominio [Task] completadas en la fecha dada.
      */
-    override fun getCompletedTasksToday(userId: Long, date: LocalDate): Flow<List<Task>> {
+    override fun getCompletedTasksToday(userId: String, date: LocalDate): Flow<List<Task>> {
         return taskDao.getCompletedTasksByDate(userId, date).map { entities ->
             entities.map { it.toDomain() }
         }
@@ -171,7 +171,7 @@ class TaskRepositoryImpl @Inject constructor(
      * @param date La fecha para la que se buscan las tareas.
      * @return Un [Flow] que emite una lista de modelos de dominio [Task] relevantes para la fecha.
      */
-    override fun getTasksForDate(userId: Long, date: LocalDate): Flow<List<Task>> {
+    override fun getTasksForDate(userId: String, date: LocalDate): Flow<List<Task>> {
         return taskDao.getTasksForDate(userId, date).map { entities ->
             entities.map { it.toDomain() }
         }
@@ -183,7 +183,7 @@ class TaskRepositoryImpl @Inject constructor(
      * @param date La fecha para la que se cuentan las tareas.
      * @return El número de tareas para la fecha especificada.
      */
-    override suspend fun getTaskCountForDate(userId: Long, date: LocalDate): Int {
+    override suspend fun getTaskCountForDate(userId: String, date: LocalDate): Int {
         return taskDao.getTaskCountForDate(userId, date)
     }
 
@@ -193,7 +193,7 @@ class TaskRepositoryImpl @Inject constructor(
      * @param date La fecha para la que se cuentan las tareas completadas.
      * @return El número de tareas completadas en la fecha especificada.
      */
-    override suspend fun getCompletedTaskCountForDate(userId: Long, date: LocalDate): Int {
+    override suspend fun getCompletedTaskCountForDate(userId: String, date: LocalDate): Int {
         return taskDao.getCompletedTaskCountForDate(userId, date)
     }
 }

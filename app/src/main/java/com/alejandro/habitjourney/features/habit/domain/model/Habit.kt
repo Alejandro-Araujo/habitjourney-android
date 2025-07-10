@@ -26,7 +26,7 @@ import kotlinx.datetime.LocalDate
  */
 data class Habit(
     val id: Long,
-    val userId: Long,
+    val userId: String,
     val name: String,
     val description: String?,
     val type: HabitType,

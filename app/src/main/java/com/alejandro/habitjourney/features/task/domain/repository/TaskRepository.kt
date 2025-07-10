@@ -41,21 +41,21 @@ interface TaskRepository {
      * @param userId El ID del usuario.
      * @return Un [Flow] que emite una lista de [Task] activas.
      */
-    fun getActiveTasks(userId: Long): Flow<List<Task>>
+    fun getActiveTasks(userId: String): Flow<List<Task>>
 
     /**
      * Obtiene todas las tareas completadas para un usuario específico.
      * @param userId El ID del usuario.
      * @return Un [Flow] que emite una lista de [Task] completadas.
      */
-    fun getCompletedTasks(userId: Long): Flow<List<Task>>
+    fun getCompletedTasks(userId: String): Flow<List<Task>>
 
     /**
      * Obtiene todas las tareas archivadas para un usuario específico.
      * @param userId El ID del usuario.
      * @return Un [Flow] que emite una lista de [Task] archivadas.
      */
-    fun getArchivedTasks(userId: Long): Flow<List<Task>>
+    fun getArchivedTasks(userId: String): Flow<List<Task>>
 
     /**
      * Obtiene todas las tareas vencidas (con fecha de vencimiento anterior a la actual y no completadas/archivadas)
@@ -64,14 +64,14 @@ interface TaskRepository {
      * @param currentDate La fecha actual para comparar con las fechas de vencimiento.
      * @return Un [Flow] que emite una lista de [Task] vencidas.
      */
-    fun getOverdueTasks(userId: Long, currentDate: LocalDate): Flow<List<Task>>
+    fun getOverdueTasks(userId: String, currentDate: LocalDate): Flow<List<Task>>
 
     /**
      * Obtiene todas las tareas (no archivadas) para un usuario específico.
      * @param userId El ID del usuario.
      * @return Un [Flow] que emite una lista de todas las [Task] no archivadas.
      */
-    fun getAllTasks(userId: Long): Flow<List<Task>>
+    fun getAllTasks(userId: String): Flow<List<Task>>
 
     /**
      * Cambia el estado de completado de una tarea y actualiza su fecha de finalización.
@@ -94,7 +94,7 @@ interface TaskRepository {
      * @param date La fecha para la cual se quieren obtener las tareas completadas.
      * @return Un [Flow] que emite una lista de [Task] completadas en la fecha especificada.
      */
-    fun getCompletedTasksToday(userId: Long, date: LocalDate): Flow<List<Task>>
+    fun getCompletedTasksToday(userId: String, date: LocalDate): Flow<List<Task>>
 
     /**
      * Obtiene todas las tareas relevantes para un día específico para un usuario.
@@ -103,7 +103,7 @@ interface TaskRepository {
      * @param date La fecha para la que se buscan las tareas relevantes.
      * @return Un [Flow] que emite una lista de [Task] relevantes para la fecha.
      */
-    fun getTasksForDate(userId: Long, date: LocalDate): Flow<List<Task>>
+    fun getTasksForDate(userId: String, date: LocalDate): Flow<List<Task>>
 
     /**
      * Cuenta el número total de tareas programadas o relevantes para una fecha específica para un usuario.
@@ -111,7 +111,7 @@ interface TaskRepository {
      * @param date La fecha para la que se cuentan las tareas.
      * @return El número total de tareas relevantes para la fecha especificada.
      */
-    suspend fun getTaskCountForDate(userId: Long, date: LocalDate): Int
+    suspend fun getTaskCountForDate(userId: String, date: LocalDate): Int
 
     /**
      * Cuenta el número de tareas completadas por un usuario en una fecha específica.
@@ -119,5 +119,5 @@ interface TaskRepository {
      * @param date La fecha para la que se cuentan las tareas completadas.
      * @return El número de tareas completadas en la fecha especificada.
      */
-    suspend fun getCompletedTaskCountForDate(userId: Long, date: LocalDate): Int
+    suspend fun getCompletedTaskCountForDate(userId: String, date: LocalDate): Int
 }

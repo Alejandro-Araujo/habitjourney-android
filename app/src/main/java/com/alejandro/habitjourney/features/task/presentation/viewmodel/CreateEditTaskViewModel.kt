@@ -1,6 +1,5 @@
 package com.alejandro.habitjourney.features.task.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alejandro.habitjourney.R
@@ -12,7 +11,7 @@ import com.alejandro.habitjourney.features.task.data.local.PermissionType
 import com.alejandro.habitjourney.features.task.domain.model.Task
 import com.alejandro.habitjourney.features.task.domain.usecase.*
 import com.alejandro.habitjourney.features.task.presentation.state.CreateEditTaskUiState
-import com.alejandro.habitjourney.features.user.data.local.preferences.UserPreferences
+import com.alejandro.habitjourney.features.user.data.preferences.UserPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

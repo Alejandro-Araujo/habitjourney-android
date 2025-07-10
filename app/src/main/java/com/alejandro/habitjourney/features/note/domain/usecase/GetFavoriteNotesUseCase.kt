@@ -25,5 +25,5 @@ class GetFavoriteNotesUseCase @Inject constructor(
      * @param userId El ID del usuario cuyas notas favoritas se van a recuperar.
      * @return Un [Flow] que emite la lista de [Note] favoritas y activas del usuario.
      */
-    operator fun invoke(userId: Long): Flow<List<Note>> = noteRepository.getFavoriteNotes(userId)
+    operator fun invoke(userId: String): Flow<List<Note>> = noteRepository.getFavoriteNotes(userId)
 }

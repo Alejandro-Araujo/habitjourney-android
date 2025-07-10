@@ -7,7 +7,7 @@ import com.alejandro.habitjourney.features.dashboard.domain.usecase.GetDashboard
 import com.alejandro.habitjourney.features.habit.domain.repository.HabitRepository
 import com.alejandro.habitjourney.features.note.domain.repository.NoteRepository
 import com.alejandro.habitjourney.features.task.domain.repository.TaskRepository
-import com.alejandro.habitjourney.features.user.data.local.preferences.UserPreferences
+import com.alejandro.habitjourney.features.user.data.preferences.UserPreferences
 import com.alejandro.habitjourney.features.user.domain.repository.UserRepository
 import dagger.Module
 import dagger.Provides

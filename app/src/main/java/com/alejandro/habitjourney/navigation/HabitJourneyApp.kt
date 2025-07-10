@@ -8,11 +8,15 @@ import androidx.compose.material.icons.automirrored.filled.Note
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.alejandro.habitjourney.R
@@ -20,18 +24,30 @@ import com.alejandro.habitjourney.core.presentation.ui.theme.AcentoInformativo
 import com.alejandro.habitjourney.features.user.presentation.viewmodel.AuthViewModel
 
 /**
- * Composable principal de la aplicación que maneja la navegación
- * y la estructura general
+ * Composable principal de la aplicación que maneja la navegación y la estructura general
+ *
  */
 @Composable
-fun HabitJourneyApp() {
+fun HabitJourneyApp(
+) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
     val authViewModel: AuthViewModel = hiltViewModel()
+
     val isLoggedIn by authViewModel.isLoggedIn.collectAsState()
     val isLoadingAuth by authViewModel.isLoading.collectAsState()
+
+    LaunchedEffect(key1 = Unit) {
+        authViewModel.forceLogoutEvent.collect {
+            navController.navigate(Screen.Login.route) {
+                popUpTo(navController.graph.id) {
+                    inclusive = true
+                }
+            }
+        }
+    }
 
     val showBottomNav = isLoggedIn && (currentDestination?.route in NavigationRoutes.bottomNavRoutes)
 
@@ -42,6 +58,7 @@ fun HabitJourneyApp() {
     } else {
         Screen.Login.route
     }
+
 
     Scaffold(
         bottomBar = {
@@ -56,7 +73,7 @@ fun HabitJourneyApp() {
         NavGraph(
             navController = navController,
             startDestination = startDestination,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
         )
     }
 }
@@ -66,8 +83,8 @@ fun HabitJourneyApp() {
  */
 @Composable
 private fun HabitJourneyBottomNavigation(
-    navController: androidx.navigation.NavHostController,
-    currentDestination: androidx.navigation.NavDestination?
+    navController: NavHostController,
+    currentDestination: NavDestination?
 ) {
     NavigationBar(
         containerColor = AcentoInformativo
@@ -110,7 +127,7 @@ private fun HabitJourneyBottomNavigation(
  */
 private data class BottomNavItem(
     val route: String,
-    val icon: androidx.compose.ui.graphics.vector.ImageVector,
+    val icon: ImageVector,
     val titleResId: Int,
     val contentDescriptionResId: Int
 )

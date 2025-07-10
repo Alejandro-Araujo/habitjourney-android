@@ -1,13 +1,21 @@
 package com.alejandro.habitjourney.features.user.presentation.viewmodel
 
+import androidx.credentials.GetCredentialRequest
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alejandro.habitjourney.R
 import com.alejandro.habitjourney.core.data.remote.exception.ErrorHandler
 import com.alejandro.habitjourney.core.data.remote.network.NetworkResponse
+import com.alejandro.habitjourney.core.utils.logging.AppLogger
 import com.alejandro.habitjourney.core.utils.resources.ResourceProvider
+import com.alejandro.habitjourney.features.user.domain.usecase.GoogleSignInUseCase
 import com.alejandro.habitjourney.features.user.domain.usecase.RegisterUseCase
+import com.alejandro.habitjourney.features.user.domain.usecase.SendEmailVerificationUseCase
 import com.alejandro.habitjourney.features.user.presentation.state.RegisterState
+import com.alejandro.habitjourney.navigation.AuthFlowCoordinator
+import com.alejandro.habitjourney.navigation.AuthRequest
+import com.alejandro.habitjourney.navigation.AuthResult
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,12 +34,20 @@ import javax.inject.Inject
  * @property registerUseCase Caso de uso para la operación de registro.
  * @property errorHandler Manejador de errores para convertir excepciones en mensajes legibles.
  * @property resourceProvider Proveedor de recursos para obtener cadenas localizadas.
+ * @property googleSignInUseCase Caso de uso para la operación de registro/inicio de sesión con Google.
+ * @property sendEmailVerificationUseCase Caso de uso para enviar el email de verificación.
+ * @property authFlowCoordinator Coordinador para iniciar flujos de autenticación en la Activity.
+ * @property googleWebClientId ID de cliente web de Google para la configuración de OAuth.
  */
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val registerUseCase: RegisterUseCase,
     private val errorHandler: ErrorHandler,
     private val resourceProvider: ResourceProvider,
+    private val googleSignInUseCase: GoogleSignInUseCase,
+    private val sendEmailVerificationUseCase: SendEmailVerificationUseCase,
+    private val authFlowCoordinator: AuthFlowCoordinator,
+    private val googleWebClientId: String
 ) : ViewModel() {
 
     private val _registerState = MutableStateFlow<RegisterState>(RegisterState.Initial)
@@ -106,6 +122,9 @@ class RegisterViewModel @Inject constructor(
      * Es `null` si no hay error.
      */
     val confirmPasswordError: StateFlow<String?> = _confirmPasswordError.asStateFlow()
+
+    private val _isGoogleSignInLoading = MutableStateFlow(false)
+    val isGoogleSignInLoading: StateFlow<Boolean> = _isGoogleSignInLoading.asStateFlow()
 
     /**
      * **Actualiza el nombre y limpia cualquier mensaje de error previo.**
@@ -272,6 +291,7 @@ class RegisterViewModel @Inject constructor(
      *
      * Primero valida los campos del formulario. Si son válidos, cambia el estado a [RegisterState.Loading],
      * invoca el [RegisterUseCase] y actualiza el [registerState] con el resultado (éxito o error).
+     * Si el registro es exitoso, intenta enviar un email de verificación.
      */
     fun register() {
         if (!validateFields()) {
@@ -281,15 +301,89 @@ class RegisterViewModel @Inject constructor(
         _registerState.value = RegisterState.Loading
 
         viewModelScope.launch {
-            val response = registerUseCase(_name.value.trim(), _email.value.trim(), _password.value)
-            _registerState.value = when (response) {
-                is NetworkResponse.Success -> RegisterState.Success
+            when (val response = registerUseCase(_name.value.trim(), _email.value.trim(), _password.value)) {
+                is NetworkResponse.Success -> {
+                    val emailVerificationResponse = sendEmailVerificationUseCase()
+                    when (emailVerificationResponse) {
+                        is NetworkResponse.Success -> {
+                            _registerState.value = RegisterState.Success
+                        }
+                        is NetworkResponse.Error -> {
+                            val errorMessage = errorHandler.getErrorMessage(emailVerificationResponse.exception)
+                            _registerState.value = RegisterState.Error(
+                                resourceProvider.getString(R.string.registration_success_but_email_fail) + " " + errorMessage
+                            )
+                        }
+                        else -> { }
+                    }
+                }
                 is NetworkResponse.Error -> {
                     val errorMessage = errorHandler.getErrorMessage(response.exception)
-                    RegisterState.Error(errorMessage)
+                    _registerState.value = RegisterState.Error(errorMessage)
                 }
-                is NetworkResponse.Loading -> RegisterState.Loading
+                is NetworkResponse.Loading -> {  }
             }
+        }
+    }
+
+    /**
+     * **Inicia el proceso de registro/inicio de sesión con Google.**
+     *
+     * Utiliza el [AuthFlowCoordinator] para obtener el ID Token de Google
+     * y luego el [GoogleSignInUseCase] para autenticar al usuario en el backend.
+     * Este método se usa tanto si el usuario ya existe como si se registra por primera vez
+     * a través de Google.
+     */
+    fun registerWithGoogle() {
+        _isGoogleSignInLoading.value = true
+        _registerState.value = RegisterState.Loading
+
+        viewModelScope.launch {
+            val requestId = authFlowCoordinator.generateRequestId()
+            val googleIdOption = GetGoogleIdOption.Builder()
+                .setFilterByAuthorizedAccounts(false)
+                .setServerClientId(googleWebClientId)
+                .setAutoSelectEnabled(false)
+                .build()
+
+            val getCredentialRequest = GetCredentialRequest.Builder()
+                .addCredentialOption(googleIdOption)
+                .build()
+
+            when (val authResult = authFlowCoordinator.requestAuth(
+                AuthRequest.GoogleSignIn(requestId, getCredentialRequest, false)
+            )) {
+                is AuthResult.Success -> {
+                    // Una vez obtenido el ID Token de Google a través del coordinador,
+                    // lo pasamos al GoogleSignInUseCase.
+                    when (val signInResult = googleSignInUseCase(authResult.credentialToken)) {
+                        is NetworkResponse.Success -> {
+                            _registerState.value = RegisterState.Success
+                        }
+                        is NetworkResponse.Error -> {
+                            val errorMessage = errorHandler.getErrorMessage(signInResult.exception)
+                            _registerState.value = RegisterState.Error(errorMessage)
+                        }
+                        else -> { }
+                    }
+                }
+                is AuthResult.Error -> {
+                    // Manejo de errores específicos del flujo de Credential Manager.
+                    val errorMessage = authResult.message
+                    if (errorMessage.contains(resourceProvider.getString(R.string.error_google_signin_cancelled), ignoreCase = true)) {
+                        AppLogger.d("RegisterViewModel", "Google Sign-In cancelado por el usuario (registro).")
+                        _registerState.value = RegisterState.Initial
+                    } else {
+                        _registerState.value = RegisterState.Error(errorMessage)
+                    }
+                }
+                is AuthResult.Cancelled -> {
+                    // El usuario canceló explícitamente el flujo de Credential Manager.
+                    AppLogger.d("RegisterViewModel", "Google Sign-In cancelado por el usuario (registro).")
+                    _registerState.value = RegisterState.Initial
+                }
+            }
+            _isGoogleSignInLoading.value = false
         }
     }
 
@@ -301,9 +395,16 @@ class RegisterViewModel @Inject constructor(
      */
     fun resetState() {
         _registerState.value = RegisterState.Initial
+        _name.value = ""
+        _email.value = ""
+        _password.value = ""
+        _confirmPassword.value = ""
         _nameError.value = null
         _emailError.value = null
         _passwordError.value = null
         _confirmPasswordError.value = null
+        _isPasswordVisible.value = false
+        _isConfirmPasswordVisible.value = false
+        _isGoogleSignInLoading.value = false
     }
 }

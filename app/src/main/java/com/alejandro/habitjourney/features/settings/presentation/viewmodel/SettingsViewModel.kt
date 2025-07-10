@@ -1,18 +1,24 @@
 package com.alejandro.habitjourney.features.settings.presentation.viewmodel
 
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alejandro.habitjourney.R
 import com.alejandro.habitjourney.core.data.remote.exception.ErrorHandler
 import com.alejandro.habitjourney.core.data.remote.network.NetworkResponse
 import com.alejandro.habitjourney.core.utils.resources.ResourceProvider
-import com.alejandro.habitjourney.features.settings.domain.repository.SettingsRepository
+import com.alejandro.habitjourney.features.settings.domain.usecase.GetAppSettingsUseCase
+import com.alejandro.habitjourney.features.settings.domain.usecase.UpdateThemeUseCase
 import com.alejandro.habitjourney.features.settings.presentation.state.Language
 import com.alejandro.habitjourney.features.settings.presentation.state.SettingsUiState
 import com.alejandro.habitjourney.features.settings.presentation.state.ThemeMode
-import com.alejandro.habitjourney.features.user.domain.repository.UserRepository
+import com.alejandro.habitjourney.features.user.domain.manager.ReauthenticationManager
 import com.alejandro.habitjourney.features.user.domain.usecase.DeleteUserUseCase
+import com.alejandro.habitjourney.features.user.domain.usecase.GetLocalUserUseCase
+import com.alejandro.habitjourney.features.user.domain.usecase.LogoutUseCase
+import com.alejandro.habitjourney.features.user.domain.usecase.ReauthenticateUserUseCase
+import com.alejandro.habitjourney.features.user.domain.usecase.ReauthenticateWithGoogleUseCase
+import com.alejandro.habitjourney.features.user.presentation.mixin.ReauthenticationMixin
+import com.alejandro.habitjourney.navigation.AuthFlowCoordinator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -29,15 +35,45 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val userRepository: UserRepository,
-    private val settingsRepository: SettingsRepository,
+    private val getLocalUserUseCase: GetLocalUserUseCase,
+    private val logoutUseCase: LogoutUseCase,
     private val deleteUserUseCase: DeleteUserUseCase,
+    private val getAppSettingsUseCase: GetAppSettingsUseCase,
+    private val updateThemeUseCase: UpdateThemeUseCase,
     private val errorHandler: ErrorHandler,
-    private val resourceProvider: ResourceProvider,
-) : ViewModel() {
+    resourceProvider: ResourceProvider,
+    reauthenticationManager: ReauthenticationManager,
+    authFlowCoordinator: AuthFlowCoordinator,
+    reauthenticateWithGoogleUseCase: ReauthenticateWithGoogleUseCase,
+    reauthenticateUserUseCase: ReauthenticateUserUseCase,
+    googleWebClientId: String
+) : ReauthenticationMixin(
+    reauthenticationManager,
+    authFlowCoordinator,
+    resourceProvider,
+    errorHandler,
+    reauthenticateWithGoogleUseCase,
+    reauthenticateUserUseCase,
+    googleWebClientId
+) {
 
     private val _uiState = MutableStateFlow(SettingsUiState())
-    val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
+    /**
+     * Combina el estado de la UI específica de Settings con el estado de reautenticación del Mixin.
+     */
+    val combinedState: StateFlow<SettingsUiState> = combine(
+        _uiState,
+        reauthState
+    ) { uiState, reauthMixinState ->
+        uiState.copy(
+            isLoading = uiState.isLoading || reauthMixinState.isLoading,
+            message = uiState.message ?: reauthMixinState.errorMessage
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = _uiState.value
+    )
 
     init {
         loadUserData()
@@ -45,22 +81,23 @@ class SettingsViewModel @Inject constructor(
     }
 
     /**
-     * Carga los datos del usuario actual desde el repositorio local.
+     * Carga los datos del usuario actual usando el caso de uso correspondiente.
      */
     private fun loadUserData() {
         viewModelScope.launch {
-            userRepository.getLocalUser().collect { user ->
-                _uiState.update { it.copy(user = user) }
+            _uiState.update { it.copy(isLoading = true) }
+            getLocalUserUseCase().collect { user ->
+                _uiState.update { it.copy(user = user, isLoading = false) }
             }
         }
     }
 
     /**
-     * Carga las configuraciones actuales de la aplicación.
+     * Carga las configuraciones actuales de la aplicación usando el caso de uso correspondiente.
      */
     private fun loadSettings() {
         viewModelScope.launch {
-            settingsRepository.getAppSettings().collect { settings ->
+            getAppSettingsUseCase().collect { settings ->
                 _uiState.update {
                     it.copy(
                         currentTheme = mapToThemeMode(settings.theme),
@@ -72,7 +109,7 @@ class SettingsViewModel @Inject constructor(
     }
 
     /**
-     * Actualiza el tema de la aplicación.
+     * Actualiza el tema de la aplicación usando el caso de uso correspondiente.
      * Aplica el cambio tanto en el repositorio como en AppCompatDelegate.
      */
     fun updateTheme(themeMode: ThemeMode) {
@@ -82,7 +119,9 @@ class SettingsViewModel @Inject constructor(
                 ThemeMode.DARK -> "dark"
                 ThemeMode.SYSTEM -> "system"
             }
-            settingsRepository.updateTheme(themeString)
+
+            // Usar el caso de uso en lugar del repositorio directamente
+            updateThemeUseCase(themeString)
 
             // Aplicar el cambio a nivel de aplicación
             val appCompatThemeMode = when (themeMode) {
@@ -97,18 +136,19 @@ class SettingsViewModel @Inject constructor(
     }
 
     /**
-     * Cierra la sesión del usuario actual.
+     * Cierra la sesión del usuario actual usando el caso de uso correspondiente.
      */
     fun logout() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
+            _uiState.update { it.copy(isLoading = true, message = null) }
 
-            when (val result = userRepository.logout()) {
+            when (val result = logoutUseCase()) {
                 is NetworkResponse.Success -> {
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            navigateToAuth = true
+                            navigateToAuth = true,
+                            message = resourceProvider.getString(R.string.logout_success)
                         )
                     }
                 }
@@ -124,7 +164,7 @@ class SettingsViewModel @Inject constructor(
                     }
                 }
                 is NetworkResponse.Loading -> {
-                    // Estado ya manejado arriba
+                    // Estado de carga ya manejado arriba
                 }
             }
         }
@@ -132,44 +172,47 @@ class SettingsViewModel @Inject constructor(
 
     /**
      * Elimina permanentemente la cuenta del usuario.
-     * Requiere confirmación del usuario.
+     * Usa el ReauthenticationMixin para manejar la reautenticación si es necesaria.
      */
     fun deleteAccount() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
+            _uiState.update { it.copy(isLoading = true, message = null) }
 
-            when (val result = deleteUserUseCase()) {
+            // **CAMBIO 2: Manejamos el NetworkResponse que 'executeWithReauth' devuelve.**
+            when (val result = executeWithReauth { deleteUserUseCase() }) {
                 is NetworkResponse.Success -> {
+                    // ¡Éxito! La cuenta fue eliminada (con posible reautenticación).
+                    // Actualizamos el estado para navegar fuera.
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            navigateToAuth = true
+                            navigateToAuth = true,
+                            message = resourceProvider.getString(R.string.user_deleted_successfully)
                         )
                     }
                 }
                 is NetworkResponse.Error -> {
+                    // La operación falló.
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            message = resourceProvider.getString(
-                                R.string.error_deleting_account,
-                                errorHandler.getErrorMessage(result.exception)
-                            )
+                            // El Mixin ya se encarga de mostrar el error en el diálogo de re-auth.
+                            // Este mensaje es un fallback por si el error ocurre fuera de ese flujo.
+                            message = errorHandler.getErrorMessage(result.exception)
                         )
                     }
                 }
-                is NetworkResponse.Loading -> {
-                    // Estado ya manejado arriba
-                }
+                is NetworkResponse.Loading -> { /* No debería ocurrir aquí */ }
             }
         }
     }
 
     /**
-     * Limpia el mensaje de estado actual.
+     * Limpia el mensaje de estado actual del UI State principal y también limpia los errores del Mixin.
      */
     fun clearMessage() {
         _uiState.update { it.copy(message = null) }
+        dismissReauthenticationDialog()
     }
 
     /**

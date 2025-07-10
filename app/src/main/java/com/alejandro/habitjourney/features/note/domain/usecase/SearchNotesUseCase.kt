@@ -26,6 +26,6 @@ class SearchNotesUseCase @Inject constructor(
      * @param searchQuery El texto a buscar.
      * @return Un [Flow] que emite la lista de [Note] que coinciden con la búsqueda.
      */
-    operator fun invoke(userId: Long, searchQuery: String): Flow<List<Note>> =
+    operator fun invoke(userId: String, searchQuery: String): Flow<List<Note>> =
         noteRepository.searchNotes(userId, searchQuery)
 }

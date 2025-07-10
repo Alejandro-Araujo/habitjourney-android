@@ -29,9 +29,8 @@ class LoginUseCase @Inject constructor(
      * @param email El correo electrónico del usuario.
      * @param password La contraseña del usuario.
      * @return Un [NetworkResponse] que indica el éxito o error de la operación.
-     * Si es exitoso, contendrá un [Pair] del [User] y el token de autenticación.
      */
-    suspend operator fun invoke(email: String, password: String): NetworkResponse<Pair<User, String>> {
+    suspend operator fun invoke(email: String, password: String): NetworkResponse<User> {
         if (email.isBlank()) {
             return NetworkResponse.Error(Exception(resourceProvider.getString(R.string.error_email_empty)))
         }

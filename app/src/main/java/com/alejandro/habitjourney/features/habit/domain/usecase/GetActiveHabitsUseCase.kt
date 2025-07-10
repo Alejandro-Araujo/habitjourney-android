@@ -25,7 +25,7 @@ class GetActiveHabitsUseCase @Inject constructor(
      * @param userId El ID del usuario cuyos hábitos activos se quieren obtener.
      * @return Un [Flow] que emite una lista de [Habit] activos para el usuario especificado.
      */
-    operator fun invoke(userId: Long): Flow<List<Habit>> {
+    operator fun invoke(userId: String): Flow<List<Habit>> {
         return repository.getActiveHabitsForUser(userId)
     }
 }

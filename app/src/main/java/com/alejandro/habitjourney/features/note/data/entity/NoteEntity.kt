@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.alejandro.habitjourney.features.user.data.local.entity.UserEntity
+import com.alejandro.habitjourney.features.user.data.entity.UserEntity
 
 
 /**
@@ -50,7 +50,7 @@ data class NoteEntity(
     val id: Long = 0L,
 
     @ColumnInfo(name = "user_id")
-    val userId: Long,
+    val userId: String,
 
     @ColumnInfo(name = "title")
     val title: String,

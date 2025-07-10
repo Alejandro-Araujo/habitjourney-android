@@ -31,7 +31,7 @@ class GetOverdueTasksUseCase @Inject constructor(
      * @param userId El **ID** del usuario cuyas tareas vencidas se desean obtener.
      * @return Un [Flow] que emite una [List] de objetos [Task] que están vencidas para el usuario dado.
      */
-    operator fun invoke(userId: Long): Flow<List<Task>> {
+    operator fun invoke(userId: String): Flow<List<Task>> {
         val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
         return taskRepository.getOverdueTasks(userId, currentDate)
     }

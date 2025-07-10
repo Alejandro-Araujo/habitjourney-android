@@ -1,10 +1,10 @@
 package com.alejandro.habitjourney.features.settings.presentation.state
 
+
 /**
  * Representa el estado de la UI para la pantalla de cambio de contraseña.
  *
- * Contiene los datos del formulario, los posibles errores de validación de cada campo,
- * y las banderas de estado para la operación de cambio de contraseña.
+ * El estado de reautenticación se maneja por separado a través del ReauthenticationMixin.
  *
  * @property currentPassword La contraseña actual introducida por el usuario.
  * @property newPassword La nueva contraseña introducida.
@@ -25,7 +25,7 @@ data class ChangePasswordUiState(
     val confirmPasswordError: String? = null,
     val isLoading: Boolean = false,
     val isSuccess: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
 ) {
     /**
      * Propiedad computada que determina si el formulario es válido para enviar.

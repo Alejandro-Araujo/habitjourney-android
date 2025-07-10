@@ -25,6 +25,8 @@ import com.alejandro.habitjourney.core.presentation.ui.theme.*
 import com.alejandro.habitjourney.features.settings.presentation.state.ThemeMode
 import com.alejandro.habitjourney.features.settings.presentation.viewmodel.SettingsViewModel
 import com.alejandro.habitjourney.features.user.domain.model.User
+import com.alejandro.habitjourney.features.user.presentation.components.ReauthenticationDialog
+import com.alejandro.habitjourney.features.user.presentation.state.ReauthenticationType
 
 /**
  * Pantalla principal de Configuración de la aplicación.
@@ -50,7 +52,8 @@ fun SettingsScreen(
     onNavigateToAuth: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.combinedState.collectAsStateWithLifecycle()
+    val reauthState by viewModel.reauthState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
     // Estados para los diálogos
@@ -219,6 +222,21 @@ fun SettingsScreen(
         )
     }
 
+    // Este diálogo se muestra cuando el Mixin detecta que se necesita reautenticación.
+    ReauthenticationDialog(
+        state = reauthState,
+        onPasswordChange = viewModel::updateReauthPasswordInput,
+        onConfirm = {
+            when (reauthState.type) {
+                ReauthenticationType.EMAIL_PASSWORD -> viewModel.confirmEmailPasswordReauth()
+                ReauthenticationType.GOOGLE -> {
+                }
+                null -> {}
+            }
+        },
+        onDismiss = viewModel::dismissReauthenticationDialog,
+    )
+
     // Handle navigation events
     LaunchedEffect(uiState.navigateToAuth) {
         if (uiState.navigateToAuth) {
@@ -227,7 +245,7 @@ fun SettingsScreen(
         }
     }
 
-    // Handle messages
+    // Handle messages (tanto del UI State principal como los errores del Mixin)
     uiState.message?.let { message ->
         LaunchedEffect(message) {
             snackbarHostState.showSnackbar(
@@ -235,6 +253,18 @@ fun SettingsScreen(
                 duration = SnackbarDuration.Short
             )
             viewModel.clearMessage()
+        }
+    }
+
+    reauthState.errorMessage?.let { reauthError ->
+        LaunchedEffect(reauthError) {
+            if (reauthError.isNotBlank() && uiState.message != reauthError) {
+                snackbarHostState.showSnackbar(
+                    message = reauthError,
+                    duration = SnackbarDuration.Long
+                )
+                viewModel.dismissReauthenticationDialog()
+            }
         }
     }
 }

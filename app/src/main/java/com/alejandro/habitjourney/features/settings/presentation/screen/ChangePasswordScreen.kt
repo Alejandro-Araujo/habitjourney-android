@@ -23,6 +23,8 @@ import com.alejandro.habitjourney.R
 import com.alejandro.habitjourney.core.presentation.ui.components.*
 import com.alejandro.habitjourney.core.presentation.ui.theme.*
 import com.alejandro.habitjourney.features.settings.presentation.viewmodel.ChangePasswordViewModel
+import com.alejandro.habitjourney.features.user.presentation.components.ReauthenticationDialog
+import com.alejandro.habitjourney.features.user.presentation.state.ReauthenticationType
 
 /**
  * Pantalla que permite al usuario cambiar su contraseña.
@@ -31,7 +33,9 @@ import com.alejandro.habitjourney.features.settings.presentation.viewmodel.Chang
  * la nueva contraseña y la confirmación. Proporciona validación en tiempo real
  * y gestiona el estado de carga y los mensajes de éxito o error.
  *
- * @param onNavigateBack Callback para navegar a la pantalla anterior, típicamente tras un cambio exitoso.
+ * También maneja automáticamente la reautenticación cuando sea necesaria.
+ *
+ * @param onNavigateBack Callback para navegar a la pantalla anterior.
  * @param viewModel El [ChangePasswordViewModel] que gestiona el estado y la lógica de esta pantalla.
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,9 +44,11 @@ fun ChangePasswordScreen(
     onNavigateBack: () -> Unit,
     viewModel: ChangePasswordViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.combinedState.collectAsStateWithLifecycle()
+    val reauthState by viewModel.reauthState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
+
 
     Scaffold(
         topBar = {
@@ -175,25 +181,50 @@ fun ChangePasswordScreen(
         }
     }
 
-    // Handle success
-    LaunchedEffect(uiState.isSuccess) {
-        if (uiState.isSuccess) {
-            snackbarHostState.showSnackbar(
-                message = context.getString(R.string.password_changed_success),
-                duration = SnackbarDuration.Short
-            )
-            onNavigateBack()
+    ReauthenticationDialog(
+        state = reauthState,
+        onPasswordChange = viewModel::updateReauthPasswordInput,
+        onConfirm = {
+            when (reauthState.type) {
+                ReauthenticationType.EMAIL_PASSWORD -> viewModel.confirmEmailPasswordReauthFromUi()
+                ReauthenticationType.GOOGLE -> {
+                }
+                null -> {}
+            }
+        },
+        onDismiss = viewModel::dismissReauthenticationDialog,
+        onGoogleSignIn = null
+    )
+
+    // Handle success and errors
+    LaunchedEffect(uiState.isSuccess, uiState.errorMessage) {
+        when {
+            uiState.isSuccess -> {
+                snackbarHostState.showSnackbar(
+                    message = context.getString(R.string.password_changed_success),
+                    duration = SnackbarDuration.Short
+                )
+                viewModel.resetSuccessState()
+                onNavigateBack()
+            }
+            uiState.errorMessage != null -> {
+                snackbarHostState.showSnackbar(
+                    message = uiState.errorMessage!!,
+                    duration = SnackbarDuration.Short
+                )
+                viewModel.clearError()
+            }
         }
     }
 
-    // Handle errors
-    uiState.errorMessage?.let { error ->
-        LaunchedEffect(error) {
+// Observar errores específicos del Mixin que podrían no pasar al errorMessage principal
+    reauthState.errorMessage?.let { reauthError ->
+        LaunchedEffect(reauthError) {
             snackbarHostState.showSnackbar(
-                message = error,
-                duration = SnackbarDuration.Short
+                message = reauthError,
+                duration = SnackbarDuration.Long
             )
-            viewModel.clearError()
+            viewModel.dismissReauthenticationDialog()
         }
     }
 }
@@ -225,6 +256,16 @@ private fun PasswordRequirements(
             )
             Text(
                 text = "• ${stringResource(R.string.password_requirement_letter)}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = "• ${stringResource(R.string.password_requirement_digit)}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = "• ${stringResource(R.string.password_requirement_special_character)}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

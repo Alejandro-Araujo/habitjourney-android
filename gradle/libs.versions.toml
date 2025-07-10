@@ -1,5 +1,11 @@
 [versions]
 agp = "8.8.2"
+androidxCredentials = "<latest version>"
+credentials = "1.5.0"
+credentialsPlayServicesAuth = "<latest version>"
+firebaseBom = "33.16.0"
+googleid = "1.1.1"
+googleidVersion = "<latest version>"
 kotlin = "2.1.20"
 coreKtx = "1.16.0"
 junit = "4.13.2"
@@ -12,6 +18,7 @@ hiltAndroid = "2.56.2"
 hiltNavigationCompose = "1.2.0"
 hiltCompiler = "2.56.2"
 comGoogleDevtoolsKspGradlePlugin = "2.1.21-2.0.1"
+playServicesAuth = "21.3.0"
 symbolProcessingApi = "2.1.21-2.0.1"
 symbolProcessingGradlePlugin = "2.1.21-2.0.1"
 roomRuntime = "2.7.1"
@@ -22,10 +29,6 @@ kotlinxDatetime = "0.6.2"
 kotlinxCoroutinesTest = "1.10.2"
 runner = "1.6.1"
 coreTesting = "2.2.0"
-retrofit = "3.0.0"
-converterGson = "3.0.0"
-okhttp = "5.0.0-alpha.14"
-loggingInterceptor = "5.0.0-alpha.14"
 datastoreCoreAndroid = "1.2.0-alpha02"
 datastorePreferencesCoreAndroid = "1.2.0-alpha02"
 datastorePreferencesVersion = "1.2.0-alpha02"
@@ -52,6 +55,13 @@ hiltAndroidX = "1.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
+androidx-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-auth = { module = "com.google.firebase:firebase-auth" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
+googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -69,6 +79,7 @@ hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hiltCompiler" }
 com-google-devtools-ksp-gradle-plugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "comGoogleDevtoolsKspGradlePlugin" }
+play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 symbol-processing-api = { group = "com.google.devtools.ksp", name = "symbol-processing-api", version.ref = "symbolProcessingApi" }
 symbol-processing-gradle-plugin = { group = "com.google.devtools.ksp", name = "symbol-processing-gradle-plugin", version.ref = "symbolProcessingGradlePlugin" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomRuntime" }
@@ -79,10 +90,6 @@ kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime",
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
 androidx-core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "coreTesting" }
-retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "converterGson" }
-okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "loggingInterceptor" }
 androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version.ref = "datastoreCoreAndroid" }
 androidx-datastore-preferences-core-android = { group = "androidx.datastore", name = "datastore-preferences-core-android", version.ref = "datastorePreferencesCoreAndroid" }
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastorePreferencesVersion" }

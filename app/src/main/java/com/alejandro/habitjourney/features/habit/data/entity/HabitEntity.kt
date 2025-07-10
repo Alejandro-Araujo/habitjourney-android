@@ -7,7 +7,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.alejandro.habitjourney.core.data.local.enums.HabitType
 import com.alejandro.habitjourney.core.data.local.enums.Weekday
-import com.alejandro.habitjourney.features.user.data.local.entity.UserEntity
+import com.alejandro.habitjourney.features.user.data.entity.UserEntity
 import kotlinx.datetime.LocalDate
 
  /**
@@ -34,7 +34,7 @@ data class HabitEntity(
     val id: Long = 0L,
 
     @ColumnInfo(name = "user_id")
-    val userId: Long,
+    val userId: String,
 
     @ColumnInfo(name = "name")
     val name: String,

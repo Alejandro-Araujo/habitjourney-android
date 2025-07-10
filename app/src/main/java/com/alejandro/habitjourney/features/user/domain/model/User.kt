@@ -12,7 +12,7 @@ package com.alejandro.habitjourney.features.user.domain.model
  * @property email La dirección de correo electrónico del usuario, utilizada a menudo para la autenticación.
  */
 data class User(
-    val id: Long,
+    val id: String,
     val name: String,
     val email: String,
 )

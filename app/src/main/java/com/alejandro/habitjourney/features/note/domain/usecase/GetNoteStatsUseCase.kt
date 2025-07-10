@@ -24,7 +24,7 @@ class GetNoteStatsUseCase @Inject constructor(
      * @param userId El ID del usuario cuyas estadísticas se van a calcular.
      * @return Un objeto [NoteStats] que contiene el conteo de notas activas y el conteo total de palabras.
      */
-    suspend operator fun invoke(userId: Long): NoteStats {
+    suspend operator fun invoke(userId: String): NoteStats {
         val activeCount = noteRepository.getActiveNotesCount(userId)
         val totalWordCount = noteRepository.getTotalWordCount(userId)
         return NoteStats(
